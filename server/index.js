@@ -15,6 +15,8 @@ app.use(express.static('public'));
 // Use the user routes
 app.use('/api/user', userRoutes);
 
+app.use('/api/credentials', router); // Use the router instance
+
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}!`);
 });
