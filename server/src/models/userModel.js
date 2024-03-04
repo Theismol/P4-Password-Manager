@@ -1,11 +1,12 @@
-// models/UserModel.js
 const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
-const userSchema = new mongoose.Schema({
-  // Define your user schema fields here
+const userSchema = new Schema({
   username: { type: String, required: true },
-  email: { type: String, required: true, unique: true },
-  // ... other fields
+  password: { type: String, required: true },
+  email: { type: String, required: true },
+  organizations: [{ type: Schema.Types.ObjectId, ref: 'Organization' }],
+  passwords: [{ type: Schema.Types.ObjectId, ref: 'Password' }] // Array of references to password documents
 });
 
 const User = mongoose.model('User', userSchema);
