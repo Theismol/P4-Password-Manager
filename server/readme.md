@@ -19,3 +19,26 @@
     "token": "string"
 }
 ```
+
+
+## User routes 
+   - **/user/getAll `get`**
+
+```
+header={Authorization: Bearer <token>}
+```
+
+>**Outcome**
+```JSON
+[
+    {
+        "_id": "string",
+        "username": "string",
+        "password": "string",
+        "email": "string",
+        "organizations": [],
+        "passwords": [],
+        "__v": 0
+    }
+]
+```
