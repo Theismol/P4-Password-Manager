@@ -3,7 +3,7 @@
 > all routes start with http://localhost:4000/api
 
 ## Login routes 
-   -**/login `post`**
+   - **/login `post`**
 
 ```JSON
 {
