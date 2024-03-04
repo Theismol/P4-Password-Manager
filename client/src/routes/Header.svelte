@@ -6,7 +6,7 @@
 
 <header>
 	<div class="corner">
-		<a href="https://kit.svelte.dev">
+		<a href="http://localhost:5173/about/test">
 			<img src={logo} alt="SvelteKit" />
 		</a>
 	</div>
