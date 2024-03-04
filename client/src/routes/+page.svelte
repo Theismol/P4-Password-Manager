@@ -1,35 +1,15 @@
-<script >
-import { focusTrap } from '@skeletonlabs/skeleton';
+<!-- YOU CAN DELETE EVERYTHING IN THIS PAGE -->
 
-</script>
-  
-
-
-<main>
-    <form use:focusTrap={true}>
-        
-        <input data-focusindex="1" type="text" placeholder="Username" />
-        <!-- Email will be the first focused -->
-        <input data-focusindex="0" type="password" placeholder="Password" />
-        <button class="btn variant-filled-primary">Submit</button>
-    </form>
-</main>
-
-
-<style>
-    /* Custom styles */
-    header {
-        text-align: center;
-        margin-bottom: 20px;
-    }
-
-    main {
-        margin-bottom: 20px;
-        text-align: center;
-    }
-
-    footer {
-        text-align: center;
-        font-size: 0.8em;
-    }
-</style>
+<div class="container h-full mx-auto flex justify-center items-center">
+	<div class="space-y-5">
+		<h1 class="h1">Let's get cracking bones!</h1>
+		<p>Start by exploring:</p>
+		<ul>
+			<li><code class="code">/src/routes/+layout.svelte</code> - barebones layout</li>
+			<li><code class="code">/src/app.postcss</code> - app wide css</li>
+			<li>
+				<code class="code">/src/routes/+page.svelte</code> - this page, you can replace the contents
+			</li>
+		</ul>
+	</div>
+</div>
