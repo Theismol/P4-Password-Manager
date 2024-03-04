@@ -1,13 +1,44 @@
 ## This contains the documentation for API´s
 
+> all routes start with http://localhost:4000/api
 
-```json
+## Login routes 
+   - **/login `post`**
+
+```JSON
+{
+    "username": "string",
+    "password" : "string"
+}
+
+```
+
+>**Outcome**
+```JSON
+{
+    "token": "string"
+}
+```
+
+
+## User routes 
+   - **/user/getAll `get`**
+
+```
+header={Authorization: Bearer <token>}
+```
+
+>**Outcome**
+```JSON
 [
     {
-        "_id": "65e593b6ac33d901a7d1d617",  
-  	    "username": "asdasdvdsdfdsffdfbgasd",  
- 	    "email": "sdfsdfsdfsdsfsdfsfdfdsf",  
-        "__v": 0  
- 	}
+        "_id": "string",
+        "username": "string",
+        "password": "string",
+        "email": "string",
+        "organizations": [],
+        "passwords": [],
+        "__v": 0
+    }
 ]
 ```
