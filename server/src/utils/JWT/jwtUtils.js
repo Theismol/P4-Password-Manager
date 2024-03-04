@@ -1,10 +1,12 @@
 const e = require('express');
 const jwt = require('jsonwebtoken');
+require('dotenv').config();
+const expiresIn = 60*60;
 
-const JWT_SECRET = 'AAA';
+const JWT_SECRET = process.env.JWT_SECRET ;
 
 const generateToken = (payload) => {
-    const expiresIn = 1; // 1 hour
+
     console.log('payload',payload);
     return jwt.sign(payload, JWT_SECRET, { expiresIn });
 }
