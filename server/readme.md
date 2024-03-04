@@ -5,14 +5,15 @@
 ## Login routes 
 **/login `post`**
 
->```JSON
->{
->    "username": "string",
->    "password" : "string"
->}
->```
+```JSON
+{
+    "username": "string",
+    "password" : "string"
+}
 
+```
 
+>**Outcome**
 ```JSON
 {
     "token": "string"
