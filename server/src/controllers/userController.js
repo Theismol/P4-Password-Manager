@@ -1,44 +1,20 @@
 const bcrypt = require('bcrypt');
 const User = require('../models/userModel');
-const auth = require('../middlewares/Auth/JwtAuth');
+
 
 const salt = 10;
 
 
 
 
-const login = async (req, res) => {
-    const { username, password } = req.body;
-  
+const getAll = async (req, res) => {
     try {
-      const user = await User.findOne({ username: username });
-      if (!user) {
-        return res.status(401.1).json({ message: 'Invalid username or password' });
-      }
-      const isMatch = await bcrypt.compare(password, user.password);
-      if (!isMatch) {
-        return res.status(401.1).json({ message: 'Invalid username or password' });
-      } else {
-        req.user = user;
-        await auth.generateToken(req, res); // Note the await here
-        return res.status(200).json({ message: 'Logged in' });
-      }
-    } catch (err) {
-      return res.status(500).json({ message: err.message });
-    }
-  };
-
-
-const createUser = async (req, res) => {
-    const { username, password, email } = req.body;
-    try{
-        const hashedPassword = await bcrypt.hash(password, salt);
-        const user = await User.create({ username, password: hashedPassword, email });
-        return res.status(201).json({ user });
-    }
-    catch(err){
-        return res.status(500).json({ message: err.message });
+        const users = await User.find();
+        res.status(200).json(users);
+    } catch (error) {
+        console.error('Error during fetching users:', error);
+        res.status(500).json({ message: 'Internal server error' });
     }
 }
 
-module.exports = {login, createUser}
+module.exports =  getAll;
