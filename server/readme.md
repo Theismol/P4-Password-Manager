@@ -2,13 +2,13 @@
 
 > all routes start with http://localhost:4000/api
 
-## Login routes
-> /login
+## Login routes 
+> /login `post`
 
 ```JSON
 {
-    "username": string,
-    "password" : string
+    "username": "string",
+    "password" : "string"
 }
 
 ```
@@ -18,6 +18,6 @@
 > outcome
 ```JSON
 {
-    "token": string
+    "token": "string"
 }
 ´´´
