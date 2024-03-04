@@ -15,9 +15,9 @@
 
 
 
-> outcome
-```JSON
-{
-    "token": "string"
-}
-```
+
+>```JSON
+>{
+>    "token": "string"
+>}
+>```
