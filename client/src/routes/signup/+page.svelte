@@ -1,6 +1,8 @@
-
+<script lang="ts">
+    import {handleSignUp} from './signUpLogic';
+</script>
 <div class="container h-screen text-center justify-center  flex mx-auto">
-    <form class="m-auto grid grid-cols-3 gap-4 flex-1">
+    <form method="POST" action="/signup" class="m-auto grid grid-cols-3 gap-4 flex-1" on:submit={handleSignUp}>
         <div class="m-4 col-span-3">
             <h1 class="h1">Sign up</h1>
         </div>
