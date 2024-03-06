@@ -1,10 +1,13 @@
-import bcrypt from 'bcrypt';
-import { Request, Response } from 'express';
-import User from '../models/userModel';
+const bcrypt = require('bcrypt');
+const User = require('../models/userModel');
+
 
 const salt = 10;
 
-const getAll = async (req: Request, res: Response): Promise<void> => {
+
+
+
+const getAll = async (req, res) => {
     try {
         const users = await User.find();
         res.status(200).json(users);
@@ -12,6 +15,6 @@ const getAll = async (req: Request, res: Response): Promise<void> => {
         console.error('Error during fetching users:', error);
         res.status(500).json({ message: 'Internal server error' });
     }
-};
+}
 
-export default getAll;
+module.exports =  getAll;
