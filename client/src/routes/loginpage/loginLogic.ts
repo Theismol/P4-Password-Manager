@@ -27,8 +27,9 @@ const fetchUser = async (username: string,password:string) => {
         const data = await response.json();
 
 
-        
+
         // Assuming the JWT token is received in the response data
+        //io
         const jwtToken = data.token;
 
         // Set the JWT token in an HTTP-only cookie with the secure flag
