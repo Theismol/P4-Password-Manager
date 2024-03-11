@@ -1,10 +1,21 @@
 <script lang="ts">
-    import {enhance} from '$app/forms';
-    //import type {PageData, ActionData} from './$types';
-    //export let data : PageData;
+    import {enhance, applyAction} from '$app/forms';
+    import type {PageData, ActionData} from './$types';
+    export let form: ActionData | undefined;
+    export let data: PageData;
+    let success = false;
+    $: {
+        if (form && form?.success) {
+            console.log("Success");
+            success = true;
+            setTimeout(() => {
+                success = false;
+            }, 3000);
+        }
+    }
 </script>
-<div class="container h-screen text-center justify-center  flex mx-auto">
-    <form method="POST" action="/signup" class="m-auto grid grid-cols-3 gap-4 flex-1" use:enhance>
+<div class="container h-screen text-center justify-center flex mx-auto">
+    <form method="POST" action="?/signup" class="m-auto grid grid-cols-3 gap-4 flex-1" use:enhance>
         <div class="m-4 col-span-3">
             <h1 class="h1">Sign up</h1>
         </div>
