@@ -2,7 +2,8 @@
 
 > all routes start with http://localhost:4000/api
 
-## Login routes 
+
+## auth routes start with /auth 
    - **/login `post`**
 
 ```JSON
@@ -20,9 +21,44 @@
 }
 ```
 
+   - **/tokenRefresh `post`**
 
-## User routes 
-   - **/user/getAll `get`**
+```JSON
+{
+    "username": "string",
+    "refreshToken" : "string"
+}
+
+```
+
+>**Outcome**
+```JSON
+{
+    "message":"string",
+    "token": "string"
+}
+```
+
+   - **/logout `post`**
+
+```JSON
+{
+    "username": "string",
+    "refreshToken" : "string"
+}
+
+```
+
+>**Outcome**
+```JSON
+{
+    "message":"string"
+}
+```
+
+
+## User routes start with /user
+   - **getAll `get`**
 
 ```
 header={Authorization: Bearer <token>}

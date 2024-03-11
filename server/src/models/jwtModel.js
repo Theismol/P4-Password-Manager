@@ -9,4 +9,4 @@ const jwtScema = new Schema({
 
 const jwtModel = mongoose.model('JWT', jwtScema);
 
-module.exports = jwtmodel;
+module.exports = jwtModel;
