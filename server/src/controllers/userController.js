@@ -10,6 +10,7 @@ const salt = 10;
 const getAll = async (req, res) => {
     try {
         const users = await User.find();
+        res.cookie("test", "test", { httpOnly: true, secure: true, sameSite: 'none' })
         res.status(200).json(users);
     } catch (error) {
         console.error('Error during fetching users:', error);
