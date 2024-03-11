@@ -8,6 +8,7 @@ app.use(express.json());
 const connectDB = require('./src/utils/DB/Mongo.js');
 const userRoutes = require('./src/routes/userRoutes.js');
 const loginRoutes = require('./src/routes/loginRoutes.js');
+const signupRoutes = require('./src/routes/signupRoutes.js');
 
 connectDB();
 
@@ -16,6 +17,7 @@ app.use(express.static('public'));
 // Use the user routes
 app.use('/api/user', userRoutes);
 app.use('/api/login', loginRoutes);
+app.use('/api/signup', signupRoutes);
 
 
 app.listen(port, () => {
