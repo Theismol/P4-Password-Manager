@@ -7,7 +7,6 @@ const JWT_SECRET = process.env.JWT_SECRET ;
 
 const generateToken = (payload) => {
 
-    console.log('payload',payload);
     return jwt.sign(payload, JWT_SECRET, { expiresIn });
 }
 
