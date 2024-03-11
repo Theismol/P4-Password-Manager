@@ -26,6 +26,8 @@ const fetchUser = async (username: string,password:string) => {
 
         const data = await response.json();
 
+
+        
         // Assuming the JWT token is received in the response data
         const jwtToken = data.token;
 
