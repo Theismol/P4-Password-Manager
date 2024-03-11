@@ -23,7 +23,7 @@ const login = async (req, res) => {
 
     
 
-        res.status(200).json({ message: token}).cookie("token", token, { httpOnly: true, secure: true, sameSite: 'none' });
+        res.status(200).json({ message: token}).cookie("token", token, { httpOnly: true, secure: true, sameSite: 'none'});
     } catch (error) {
         console.error('Error during login:', error);
         res.status(500).json({ message: 'Internal server error' });
