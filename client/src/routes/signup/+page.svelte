@@ -1,11 +1,11 @@
 <script lang="ts">
     import {enhance, applyAction} from '$app/forms';
     import type {PageData, ActionData} from './$types';
-    export let form: ActionData | undefined;
+    export let form: ActionData;
     export let data: PageData;
     let success = false;
     $: {
-        if (form && form?.success) {
+        if (form && form.success) {
             console.log("Success");
             success = true;
             setTimeout(() => {
@@ -14,8 +14,9 @@
         }
     }
 </script>
+
 <div class="container h-screen text-center justify-center flex mx-auto">
-    <form method="POST" action="?/signup" class="m-auto grid grid-cols-3 gap-4 flex-1" use:enhance>
+    <form method="POST" class="m-auto grid grid-cols-3 gap-4 flex-1" use:enhance>
         <div class="m-4 col-span-3">
             <h1 class="h1">Sign up</h1>
         </div>
@@ -39,4 +40,7 @@
             <button class="btn variant-filled-primary w-1/6" type="submit">Sign Up</button>
         </div>
     </form>
-</div>
+    {#if success}
+        <p>Success</p>
+    {/if}
+</div>*/

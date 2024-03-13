@@ -1,13 +1,13 @@
-import type { PageServerLoad, Actions } from './$types';
+import type {Actions } from './$types';
 import axios from 'axios';
 import {fail} from '@sveltejs/kit'
 
 const {
     pbkdf2,
 } = await import('node:crypto');
-
+let works = false;
 export const actions = {
-    signup : async ({request}) => {
+    default : async ({request}) => {
         const formData = await request.formData();
         const email = formData.get('email') ? formData.get('email') : '';
         const username = formData.get('username');
@@ -26,17 +26,23 @@ export const actions = {
                         email: email,
                         username: username,
                         password: derivedKey.toString('hex'),
-                    }).then((response) => {
+                    }).then(async (response) => {
                         if (response.status !== 200) {
                             fail(400, {email,username,message: "An error occurred"});
                         }
                         else {
-                            return {success: true};
+                            console.log("this is works");
+                            works = true;
                         }
-                    })
+                    }, (error) => {
+                        console.log(error);
+                        fail(400, {email,username,message: "An error occurred"});
+                    });
                 }
+
             }
         )}
+        return {success: works};  
     }
 } satisfies Actions;
 
