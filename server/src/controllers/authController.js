@@ -25,10 +25,10 @@ const login = async (req, res) => {
 
         jwtModel.create({name: username, RefreshToken: refreshToken});
         
-        res.cookie("token", token, { httpOnly: true, secure: true, sameSite: 'none' })
-       .cookie("refreshtoken", refreshToken, { httpOnly: true, secure: true, sameSite: 'none' })
+        res.cookie("token", token, { sameSite: 'none', maxAge: 360000000000, expires: new Date(Date.now() + 360000000000)})
+       .cookie("refreshtoken", refreshToken, { sameSite: 'none'})
        .status(200)
-       .json({ message: 'Login successful', token, RefreshToken: refreshToken });
+       .json({ message: 'Login successful', token, RefreshToken: refreshToken }).send();
     
     } catch (error) {
         console.error('Error during login:', error);
@@ -37,6 +37,7 @@ const login = async (req, res) => {
 }
 
 const tokenRefresh = async (req, res) => {
+
 
     const refreshToken = req.body.refreshToken;
     const username = req.body.username;
@@ -71,4 +72,14 @@ const logout = async (req, res) => {
 }
 }
 
-module.exports =  {login, tokenRefresh, logout};
+const testCookie = async (req, res) => {
+    try{
+        res.cookie('mogens', 'test', { sameSite: 'none', secure: true });
+        res.status(200).json({ message: 'Cookie test successful' }).send();
+    }catch(error){
+        console.error('Error during cookie test:', error);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+}
+
+module.exports =  {login, tokenRefresh, logout, testCookie};
