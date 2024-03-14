@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { writable } from "svelte/store";
+
   export let password : Passwords = {id: "", Username: "", Password:"", URL: ""};
 </script>
 

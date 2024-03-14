@@ -1,5 +1,20 @@
 <script lang="ts">
-  import PasswordTableComponent from "$lib/passwordTableComponent.svelte";
+  import { onMount } from "svelte";
+  import ModalChangePasswordComponent from "$lib/modalChangePasswordComponent.svelte";
+  import PasswordTableComponent from "$lib/passwordTableComponent.svelte"; 
+	import { writable, readable } from "svelte/store";
+  let isModalCP = false;
+  let isModalAddNew = false;
+
+  function openModalCP() {
+    isModalCP = true;
+  }
+
+  function openModalAddNew() {
+    isModalAddNew = true;
+  }
+  
+
   const passwords : Passwords[] = [
     // {
     //   id: "1",
@@ -33,10 +48,17 @@
 </div>
 
 <div class="button-container">
-    <button class="bg-blue-500 text-white px-4 py-2 rounded">+ Add new</button>
+    <button class="bg-blue-500 text-white px-4 py-2 rounded" on:click={openModalAddNew}>+ Add new</button>
     <button class="bg-blue-500 text-white px-4 py-2 rounded">Share</button>
-    <button class="bg-blue-500 text-white px-4 py-2 rounded">Change password</button>
+    <button class="bg-blue-500 text-white px-4 py-2 rounded" on:click={openModalCP}>Change password</button>
   </div>
+
+  <!-- the constent of the modal pages goes here  -->
+  <ModalChangePasswordComponent bind:isOpen={isModalAddNew} onClose={() => isModalAddNew = false} 
+    modalTitle ="<p>Add new password</p>" modalContent="<p>the content of add new password page</p>"/>
+
+  <ModalChangePasswordComponent bind:isOpen={isModalCP} onClose={() => isModalCP = false}  
+  modalTitle ="<p>Change password</p>" modalContent="<p>the content of change password page</p>"/> 
 
 <style>
 
