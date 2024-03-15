@@ -16,18 +16,18 @@
   
 
   const passwords : Passwords[] = [
-    // {
-    //   id: "1",
+    //  {
+    //    id: "1",
 
     //   Username: 'hej',
       
-    //   Password: '123',
+    //  Password: '123',
 
-    //   URL: '123sprugt'
+    //    URL: '123sprugt'
 
     // }
 
-    // import data here
+    //  import data here
     
   ]
 
@@ -56,9 +56,6 @@
   <!-- the constent of the modal pages goes here  -->
   <ModalChangePasswordComponent bind:isOpen={isModalAddNew} onClose={() => isModalAddNew = false} 
     modalTitle ="<p>Add new password</p>" modalContent="<p>the content of add new password page</p>"/>
-
-  <ModalChangePasswordComponent bind:isOpen={isModalCP} onClose={() => isModalCP = false}  
-  modalTitle ="<p>Change password</p>" modalContent="<p>the content of change password page</p>"/> 
 
 <style>
 
