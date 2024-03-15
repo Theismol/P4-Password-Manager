@@ -100,8 +100,7 @@ header={Authorization: Bearer <token>}
 ]
 ```
 
-
-   - **getRandom `get`**
+- **getRandom `get`**
 
 
 
