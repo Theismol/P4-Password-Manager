@@ -2,6 +2,9 @@ const bcrypt = require('bcrypt');
 const {generateToken, generateRefreshToken, verifyRefreshToken} = require('../utils/JWT/jwtUtils');
 const User = require('../models/userModel');
 const jwtModel = require('../models/jwtModel');
+require('dotenv').config();
+
+const csrftoken = process.env.CSRF_TOKEN;
 
 const login = async (req, res) => {
     const { username, password } = req.body;
@@ -26,11 +29,12 @@ const login = async (req, res) => {
         
 
         jwtModel.create({name: username, RefreshToken: refreshToken});
+        console.log('Token:', csrftoken);
         
         res.cookie("token", token, { sameSite: 'none', maxAge: 360000000000, expires: new Date(Date.now() + 360000000000)})
        .cookie("refreshtoken", refreshToken, { sameSite: 'none'})
        .status(200)
-       .json({ message: 'Login successful', token, RefreshToken: refreshToken }).send();
+       .json({ csrftoken: csrftoken}).send();
     
     } catch (error) {
         console.error('Error during login:', error);

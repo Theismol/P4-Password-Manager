@@ -1,10 +1,18 @@
 const {verifyToken} = require('../../utils/JWT/jwtUtils.js');
+require('dotenv').config();
+
+const csrftoken = process.env.CSRF_TOKEN;
 
 const authenticateToken = (req, res, next) => {
-    const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1];
-    if (token == null) {
-        return res.sendStatus(401); // Unauthorized
+    const token = req.cookies.token;
+    const receivedCsrftoken = req.body.csrftoken
+    console.log(token);
+    // const authHeader = req.headers['authorization'];
+    // const token = authHeader && authHeader.split(' ')[1];
+    console.log("csrftoken: ", receivedCsrftoken)
+    if (token == null || receivedCsrftoken != csrftoken) {
+        console.log("token is null")
+        return res.sendStatus(401).send(); 
     }
 
     try {
