@@ -9,19 +9,21 @@ const login = async (req, res) => {
     try {
     
         const user = await User.findOne({ username });
+        console.log(user);
         if (!user) {
             return res.status(404).json({ message: 'User not found' }).send();
         }
-
-   
+        
+        
         const isPasswordValid = await bcrypt.compare(password, user.password);
         if (!isPasswordValid) {
             return res.status(401).json({ message: 'Invalid password' }).send();
         }
-
-
-        const token = generateToken({ userId: user._id });
+        
+        
+        const token = generateToken({ userId: user._id, username: user.username, organistations: user.organizations});
         const refreshToken = generateRefreshToken({ userId: user._id })
+        
 
         jwtModel.create({name: username, RefreshToken: refreshToken});
         
@@ -73,14 +75,5 @@ const logout = async (req, res) => {
 }
 }
 
-const testCookie = async (req, res) => {
-    try{
-        res.cookie('mogens', 'test', { sameSite: 'none', secure: true });
-        res.status(200).json({ message: 'Cookie test successful' }).send();
-    }catch(error){
-        console.error('Error during cookie test:', error);
-        res.status(500).json({ message: 'Internal server error' }).send();
-    }
-}
 
-module.exports =  {login, tokenRefresh, logout, testCookie};
+module.exports =  {login, tokenRefresh, logout};

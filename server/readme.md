@@ -78,3 +78,24 @@ header={Authorization: Bearer <token>}
     }
 ]
 ```
+
+
+## Password routes start with /password
+   - **getAllpasswords `get`**
+
+
+
+>**Outcome**
+```JSON
+[
+    {
+    "organization_id":  "string",
+    "user_id": "string",
+    "title": "string",
+    "username": "string",
+    "password": "string",
+    "url": "string" "(optional)",
+    "notes": "string" "(optinal)"
+    }
+]
+```

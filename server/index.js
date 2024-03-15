@@ -13,6 +13,7 @@ app.use(express.json());
 const connectDB = require('./src/utils/DB/Mongo.js');
 const userRoutes = require('./src/routes/userRoutes.js');
 const authRoutes = require('./src/routes/authRoutes.js');
+const passwordRoutes = require('./src/routes/passwordRoutes.js');
 const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: true }));
 const cookieParser = require('cookie-parser');
@@ -26,6 +27,7 @@ app.use(express.static('public'));
 // Use the user routes
 app.use('/api/user', userRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/password', passwordRoutes);
 
 
 
