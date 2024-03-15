@@ -1,13 +1,16 @@
 <script> 
-//put logic script here
+ import {handleLogin} from './loginLogic';
 </script>
 
 <div class="center">
-    <label class="mt-8 sm:mx-auto sm:w-full sm:max-w-md login-label">
-        <span>Login</span>
-        <input class="input mt-4" id="email" name="email" type="email" placeholder="email" />
-        <input class="input mt-4" type="password" placeholder="Password"/>
-    </label>
+    <form on:submit={handleLogin}>
+        <label class="mt-8 sm:mx-auto sm:w-full sm:max-w-md login-label " >
+            <span>Login</span>
+            <input class="input mt-4" id="username" type="username" name="username" placeholder="username" />
+            <input class="input mt-4" type="password" placeholder="Password" name="password"/>
+            <button class="btn variant-filled-primary w-1/6" type="submit">Log in</button>
+        </label>
+    </form>
 </div>
 
 

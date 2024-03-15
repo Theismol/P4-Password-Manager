@@ -4,7 +4,7 @@ const getAll = require('../controllers/userController');
 const authenticateToken = require('../middlewares/Auth/jwtMiddleware');
 
 
-router.get('/getAll',authenticateToken, getAll);
+router.get('/getAll', authenticateToken, getAll);
 
 
 
