@@ -9,19 +9,21 @@ const login = async (req, res) => {
     try {
     
         const user = await User.findOne({ username });
+        console.log(user);
         if (!user) {
-            return res.status(404).json({ message: 'User not found' });
+            return res.status(404).json({ message: 'User not found' }).send();
         }
-
-   
+        
+        
         const isPasswordValid = await bcrypt.compare(password, user.password);
         if (!isPasswordValid) {
-            return res.status(401).json({ message: 'Invalid password' });
+            return res.status(401).json({ message: 'Invalid password' }).send();
         }
-
-
-        const token = generateToken({ userId: user._id });
+        
+        
+        const token = generateToken({ userId: user._id, username: user.username, organistations: user.organizations});
         const refreshToken = generateRefreshToken({ userId: user._id })
+        
 
         jwtModel.create({name: username, RefreshToken: refreshToken});
         
@@ -32,7 +34,7 @@ const login = async (req, res) => {
     
     } catch (error) {
         console.error('Error during login:', error);
-        res.status(500).json({ message: 'Internal server error' });
+        res.status(500).json({ message: 'Internal server error' }).send();
     }
 }
 
@@ -46,40 +48,32 @@ const tokenRefresh = async (req, res) => {
         const out = verifyRefreshToken(refreshToken);
        
         if(jwt === null){
-            return res.status(401).json({ message: 'Invalid refresh token' });
+            return res.status(401).json({ message: 'Invalid refresh token' }).send();
         }
         const token = generateToken({ userId: out.userId });
         res.cookie("token", token, { httpOnly: true, secure: true, sameSite: 'none' })
         console.log(out);
-        res.status(200).json({ message: 'Token refreshed', token });
+        res.status(200).json({ message: 'Token refreshed', token }).send();
     }catch(error){
         console.error('Error during token refresh:', error);
-        res.status(500).json({ message: 'Internal server error' });
+        res.status(500).json({ message: 'Internal server error' }).send();
     }
 }
 
 const logout = async (req, res) => {
     try{
-        const username = req.body.username;
-        const output = await jwtModel.deleteOne({username: username,RefreshToken: req.body.refreshToken});
+        const refreshToken = req.cookies.refreshtoken;
+
+        const output = await jwtModel.deleteOne({RefreshToken: refreshToken});
         console.log(output);
         res.clearCookie('token');
-        res.clearCookie('refreshToken');
-        res.status(200).json({ message: 'Logout successful' });
+        res.clearCookie('refreshtoken');
+        res.status(200).json({ message: 'Logout successful' }).send();
     }catch(error){
         console.error('Error during logout:', error);
-        res.status(500).json({ message: 'Internal server error' });
+        res.status(500).json({ message: 'Internal server error' }).send();
 }
 }
 
-const testCookie = async (req, res) => {
-    try{
-        res.cookie('mogens', 'test', { sameSite: 'none', secure: true });
-        res.status(200).json({ message: 'Cookie test successful' }).send();
-    }catch(error){
-        console.error('Error during cookie test:', error);
-        res.status(500).json({ message: 'Internal server error' });
-    }
-}
 
-module.exports =  {login, tokenRefresh, logout, testCookie};
+module.exports =  {login, tokenRefresh, logout};
