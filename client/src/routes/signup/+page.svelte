@@ -1,21 +1,37 @@
 <script lang="ts">
-    import {enhance, applyAction} from '$app/forms';
-    import type {PageData, ActionData} from './$types';
+    import {enhance} from '$app/forms';
+    import { fade } from 'svelte/transition';
+    import type {ActionData} from './$types';
     export let form: ActionData;
-    export let data: PageData;
-    let success = false;
+    let responseReceived = false;
     $: {
-        if (form && form.success) {
-            console.log("Success");
-            success = true;
+        if (form) {
+            responseReceived = true;
             setTimeout(() => {
-                success = false;
+                responseReceived = false;
             }, 3000);
         }
     }
 </script>
 
-<div class="container h-screen text-center justify-center flex mx-auto">
+{#if responseReceived}
+    {#if form?.success}
+        <aside class="alert variant-ghost-success z-10">
+            <div class="alert-message">
+                <h3 class="h3">{form?.message}</h3>
+            </div>
+            </aside>
+    {/if}
+    {#if !form?.success}
+        <aside class="alert variant-ghost-error">
+            <div class="alert-message">
+                <h3 class="h3">{form?.message}</h3>
+            </div>
+        </aside>
+    {/if}
+{/if}
+
+<div class="container h-screen text-center justify-center flex mx-auto z-0">
     <form method="POST" class="m-auto grid grid-cols-3 gap-4 flex-1" use:enhance>
         <div class="m-4 col-span-3">
             <h1 class="h1">Sign up</h1>
@@ -39,8 +55,11 @@
         <div class="my-4 col-span-3">
             <button class="btn variant-filled-primary w-1/6" type="submit">Sign Up</button>
         </div>
+        <div class="col-span-3">
+                <p>Already have an account? <a href="/loginpage" class="anchor">Log in</a> </p>
+
+        </div>
+
     </form>
-    {#if success}
-        <p>Success</p>
-    {/if}
+
 </div>*/

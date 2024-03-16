@@ -1,11 +1,13 @@
 import type {Actions } from './$types';
 import axios from 'axios';
-import {fail} from '@sveltejs/kit'
-
 const {
     pbkdf2,
 } = await import('node:crypto');
-let works = false;
+
+
+let signupSuccesful : boolean = false;
+let message : string = "";
+
 export const actions = {
     default : async ({request}) => {
         const formData = await request.formData();
@@ -13,36 +15,35 @@ export const actions = {
         const username = formData.get('username');
         const password = formData.get('password');
         const confirmPassword = formData.get('confirmPassword')?.toString();
+        let hashedPassword : string = "";
         if (password !== confirmPassword) {
-            fail(400, {email,username,message: "Passwords do not match"});
+            return {success: false, message: "Passwords do not match"};
         }
         else {
             pbkdf2(password, '', 600000, 256, 'sha512', (err, derivedKey) => {
                 if (err) {
-                    return({success: false, message: "An error occurred"});
+                    signupSuccesful = false;
+                    message = "Internal server error";
                 }
                 else {
-                    axios.post('http://localhost:4000/api/signup', {
-                        email: email,
-                        username: username,
-                        password: derivedKey.toString('hex'),
-                    }).then(async (response) => {
-                        if (response.status !== 200) {
-                            fail(400, {email,username,message: "An error occurred"});
-                        }
-                        else {
-                            console.log("this is works");
-                            works = true;
-                        }
-                    }, (error) => {
-                        console.log(error);
-                        fail(400, {email,username,message: "An error occurred"});
-                    });
+                    hashedPassword = derivedKey.toString('hex'); 
                 }
-
             }
         )}
-        return {success: works};  
+        console.log(hashedPassword);
+        await axios.post('http://localhost:4000/api/signup', {
+            email: email,
+            username: username,
+            password: hashedPassword,
+        }).then((response) => {
+            message = response.data.message;
+            signupSuccesful = true;
+        }).catch((error) => {
+            message = error.response.data.message;
+            signupSuccesful = false;
+        });
+        console.log(signupSuccesful, message);
+        return {success: signupSuccesful, message: message};  
     }
 } satisfies Actions;
 
