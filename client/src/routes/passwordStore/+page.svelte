@@ -1,8 +1,9 @@
 <script lang="ts">
-  import { onMount } from "svelte";
   import ModalChangePasswordComponent from "$lib/modalChangePasswordComponent.svelte";
   import PasswordTableComponent from "$lib/passwordTableComponent.svelte"; 
 	import { writable, readable } from "svelte/store";
+  export let data;
+
   let isModalCP = false;
   let isModalAddNew = false;
 
@@ -13,7 +14,7 @@
   function openModalAddNew() {
     isModalAddNew = true;
   }
-  
+
 
   const passwords : Passwords[] = [
     //  {
@@ -41,10 +42,11 @@
     </div>
 </div>
 
-<div>
-  {#each passwords as password}
+<div> 
+
+  <!-- {#each passwords as password}
       <PasswordTableComponent password={password}/>
-      {/each}
+      {/each} -->
 </div>
 
 <div class="button-container">
