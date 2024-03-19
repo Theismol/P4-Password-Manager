@@ -7,6 +7,7 @@ const {
 
 let signupSuccesful : boolean = false;
 let message : string = "";
+let hashedPassword : string = "";
 
 export const actions = {
     default : async ({request}) => {
@@ -15,7 +16,7 @@ export const actions = {
         const username = formData.get('username');
         const password = formData.get('password');
         const confirmPassword = formData.get('confirmPassword')?.toString();
-        let hashedPassword : string = "";
+        console.log("email")
         if (password !== confirmPassword) {
             return {success: false, message: "Passwords do not match"};
         }
@@ -26,16 +27,20 @@ export const actions = {
                     message = "Internal server error";
                 }
                 else {
-                    hashedPassword = derivedKey.toString('hex'); 
+                    hashedPassword = derivedKey?.toString('hex'); 
+                    console.log(hashedPassword);
                 }
             }
         )}
-        console.log(hashedPassword);
+        hashedPassword = await pkFunc(password);
+
+        console.log("hi" + hashedPassword);
         await axios.post('http://localhost:4000/api/signup', {
             email: email,
             username: username,
             password: hashedPassword,
         }).then((response) => {
+            
             message = response.data.message;
             signupSuccesful = true;
         }).catch((error) => {
@@ -47,4 +52,16 @@ export const actions = {
     }
 } satisfies Actions;
 
+const pkFunc = async (password: string) => {
+    return new Promise((resolve, reject) => {
+        pbkdf2(password, '', 600000, 256, 'sha512', (err, derivedKey) => {
+            if (err) {
+                reject(err);
+            }
+            else {
+                resolve(derivedKey?.toString('hex'));
+            }
+        });
+    });
+}
 
