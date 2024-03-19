@@ -45,10 +45,10 @@ const login = async (req, res) => {
 const tokenRefresh = async (req, res) => {
 
 
-    const refreshToken = req.body.refreshToken;
-    const username = req.body.username;
+    const refreshToken = req.cokkoes.refreshToken;
+
     try{
-        const jwt = await jwtModel.findOne({username, RefreshToken: refreshToken})
+        const jwt = await jwtModel.findOne({ RefreshToken: refreshToken})
         const out = verifyRefreshToken(refreshToken);
        
         if(jwt === null){
