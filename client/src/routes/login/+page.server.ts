@@ -1,15 +1,21 @@
-import axios from "axios";
+import type {Actions} from './$types';
+import axios from 'axios';
+const {
+    pbkdf2,
+} = await import('node:crypto');
 
-export const handleLogin = (e: SubmitEvent) => { 
-    const formData = new FormData(e.target as HTMLFormElement);
-    const username = formData.get('username') as string;
-    const password = formData.get('password') as string;
+export const actions =  { 
+    default : async ({request}) => {
+        const formData = await request.formData();
+        const username = formData.get('username') as string;
+        const password = formData.get('password') as string;
 
-    console.log("username is ", username)
-    console.log("password is ", password)
-    fetchData(username, password);
+        console.log("username is ", username)
+        console.log("password is ", password)
+        fetchData(username, password);
+    }
 
-}
+}satisfies Actions;
 
 const fetchData = async (username: string, password: string) => {
     try {
