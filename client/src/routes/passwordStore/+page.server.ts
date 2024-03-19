@@ -22,17 +22,17 @@ import { json } from 'stream/consumers';
 // }
 
 
-  // export const load = ({fetch}) => {
+  export const load = ({fetch}) => {
 
-  //   const fetchdata = async () => {
-  //     const response = await axios.get('http://localhost:4000/api/password/getRandom'); 
-  //     const data = response.data; 
-  //     console.log('Fetched data:', data);
-  //     return data.getRandom;
-  //   }
-  //   return {
-  //     getRandom: fetchdata()
-  //   }
-  // }
+    const fetchdata = async () => {
+      const response = await axios.get('http://localhost:4000/api/password/getRandom'); 
+      const data = response.data; 
+      console.log('Fetched data:', data);
+      return data.getRandom;
+    }
+    return {
+      getRandom: fetchdata()
+    }
+  }
 
 
