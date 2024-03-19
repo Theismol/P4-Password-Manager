@@ -55,6 +55,24 @@
     "message":"string"
 }
 ```
+## signup routes start with /signup 
+   - **/ `post`**
+
+```JSON
+{
+    "email": "string",
+    "username": "string",
+    "password": "string",
+}
+
+```
+
+>**Outcome**
+```JSON
+{
+    "message": "string"
+}
+```
 
 
 ## User routes start with /user
