@@ -61,7 +61,9 @@
    - **getAll `get`**
 
 ```
-header={Authorization: Bearer <token>}
+{
+    "csrftoken": "CSRF_TOKEN"
+}
 ```
 
 >**Outcome**
