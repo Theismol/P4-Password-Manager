@@ -16,10 +16,8 @@ const signup = async (req, res) => {
             return res.status(404).json({ message: 'Email is already taken' });
         }
         else {
-            const pass = String(password);
-            console.log('Creating user:', pass);
+         
             const hashedPassword = await bcrypt.hash(password, 10);
-            console.log('Hashed password:', hashedPassword); 
             User.create({ email: email, username: username, password: hashedPassword });
             res.status(200).json({ message: 'Signup successful!'});
         }

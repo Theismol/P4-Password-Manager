@@ -17,21 +17,7 @@ export const actions = {
         const password = formData.get('password');
         const confirmPassword = formData.get('confirmPassword')?.toString();
         console.log("email")
-        if (password !== confirmPassword) {
-            return {success: false, message: "Passwords do not match"};
-        }
-        else {
-            pbkdf2(password, '', 600000, 256, 'sha512', (err, derivedKey) => {
-                if (err) {
-                    signupSuccesful = false;
-                    message = "Internal server error";
-                }
-                else {
-                    hashedPassword = derivedKey?.toString('hex'); 
-                    console.log(hashedPassword);
-                }
-            }
-        )}
+        
         hashedPassword = await pkFunc(password);
 
         console.log("hi" + hashedPassword);
