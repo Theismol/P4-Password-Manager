@@ -25,7 +25,7 @@ const login = async (req, res) => {
 
 
         const token = generateToken({ userId: user._id, username: user.username, organistations: user.organizations });
-        const refreshToken = generateRefreshToken({ userId: user._id })
+        const refreshToken = generateRefreshToken({ userId: user._id, username: user.username, organistations: user.organizations })
 
         console.log('Token:' + token + '\nRefreshToken:' + refreshToken);
 
@@ -62,7 +62,7 @@ const login = async (req, res) => {
 const tokenRefresh = async (req, res) => {
 
 
-    const refreshToken = req.cookies.refreshToken;
+    const refreshToken = req.cookies.refreshtoken;
 
     try {
         const jwt = await jwtModel.findOne({ RefreshToken: refreshToken })
@@ -71,9 +71,9 @@ const tokenRefresh = async (req, res) => {
         if (jwt === null) {
             return res.status(401).json({ message: 'Invalid refresh token' }).send();
         }
-        const token = generateToken({ userId: out.userId });
+        const token = generateToken({ userId: out.userId, username: out.username, organistations: out.organistations});
         res.cookie("token", token, { httpOnly: true, secure: true, sameSite: 'none' })
-        console.log(out);
+        console.log(out, token);
         res.status(200).json({ message: 'Token refreshed', token }).send();
     } catch (error) {
         console.error('Error during token refresh:', error);

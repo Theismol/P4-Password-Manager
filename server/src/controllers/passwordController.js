@@ -41,18 +41,20 @@ const getRandom = async (req, res) => {
 
 
 const addPasswordToUser = async (req, res) => {
-    try {
-        const newPassword = new password({
-            organization_id: req.body.organization_id,
-            user_id: req.user.userId,
-            title: req.body.title,
-            username: req.body.username,
-            password: req.body.password,
-            url: req.body.url,
-            notes: req.body.notes
-        });
+    const newPassword = new password({
+        organization_id: req.body.organization_id,
+        user_id: req.user.userId,
+        title: req.body.title,
+        username: req.body.username,
+        password: req.body.password,
+        url: req.body.url,
+        notes: req.body.notes
+    });
 
-        await newPassword.save();
+    try {
+
+        const password = await newPassword.save();
+        console.log(password);
         res.status(201).json(newPassword).send();
     } catch (error) {
         console.error('Error during adding password:', error);
@@ -60,4 +62,4 @@ const addPasswordToUser = async (req, res) => {
     }
 }
 
-module.exports = { getAllPasswords, getRandom };
+module.exports = { getAllPasswords, getRandom, addPasswordToUser };
