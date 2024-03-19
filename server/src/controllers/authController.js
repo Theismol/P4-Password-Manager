@@ -27,7 +27,7 @@ const login = async (req, res) => {
         const token = generateToken({ userId: user._id, username: user.username, organistations: user.organizations});
         const refreshToken = generateRefreshToken({ userId: user._id })
         
-
+        console.log('Token:', token);
         jwtModel.create({name: username, RefreshToken: refreshToken});
         console.log('Token:', csrftoken);
         

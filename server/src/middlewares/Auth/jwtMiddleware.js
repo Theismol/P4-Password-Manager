@@ -18,6 +18,7 @@ const authenticateToken = (req, res, next) => {
     try {
         const decoded = verifyToken(token);
         req.user = decoded; // Attach the decoded token payload to the request object
+    
         next(); // Call next middleware or route handler
     } catch (error) {
         

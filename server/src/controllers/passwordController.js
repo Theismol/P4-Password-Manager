@@ -39,4 +39,26 @@ const getRandom = async (req, res) => {
     }
 };
 
+
+
+const addPasswordToUser = async (req, res) => {
+    try {
+        const newPassword = new password({
+            organization_id: req.body.organization_id, 
+            user_id: req.user.userId, 
+            title: req.body.title, 
+            username: req.body.username, 
+            password: req.body.password, 
+            url: req.body.url, 
+            notes: req.body.notes 
+        });
+
+        await newPassword.save();
+        res.status(201).json(newPassword).send();
+    } catch (error) {
+        console.error('Error during adding password:', error);
+        res.status(500).json({ message: 'Internal server error' }).send();
+    }
+}
+
 module.exports = { getAllPasswords, getRandom };
