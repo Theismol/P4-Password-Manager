@@ -1,4 +1,5 @@
 const password = require('../models/passwordModel.js');
+const user = require('../models/userModel.js');
 
 const getAllPasswords = async (req, res) => {
     try {
@@ -55,7 +56,17 @@ const addPasswordToUser = async (req, res) => {
 
         const password = await newPassword.save();
         console.log(password);
-        res.status(201).json(newPassword).send();
+        try {
+            await user.findOneAndUpdate({ _id: req.user.userId }, { $push: { passwords: password._id } });
+        }catch (error) {
+            try {
+                await password.deleteOne({ _id: password._id });
+            }catch (error) {
+                console.error('Error during deleting password:', error);
+                res.status(500).json({ message: 'Internal server error' }).send();
+            }
+        }
+        res.status(200).json(newPassword).send();
     } catch (error) {
         console.error('Error during adding password:', error);
         res.status(500).json({ message: 'Internal server error' }).send();
