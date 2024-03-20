@@ -1,8 +1,9 @@
 <script lang="ts">
   import ModalChangePasswordComponent from "$lib/modalChangePasswordComponent.svelte";
-  import PasswordTableComponent from "$lib/passwordTableComponent.svelte"; 
-	import { writable, readable } from "svelte/store";
-  export let data;
+  import { Table, tableMapperValues } from '@skeletonlabs/skeleton';
+  import type { TableSource } from '@skeletonlabs/skeleton';
+	import type { ActionData } from "./$types";
+  export let data: ActionData;
 
   let isModalCP = false;
   let isModalAddNew = false;
@@ -14,23 +15,19 @@
   function openModalAddNew() {
     isModalAddNew = true;
   }
-
-
-  const passwords : Passwords[] = [
-    //  {
-    //    id: "1",
-
-    //   Username: 'hej',
-      
-    //  Password: '123',
-
-    //    URL: '123sprugt'
-
-    // }
-
-    //  import data here
-    
-  ]
+let tableSimple: TableSource;
+if (data) {
+ tableSimple = {
+	// A list of heading labels.
+	head: ['Username', 'URL', 'Password'],
+	// The data visibly shown in your table body UI.
+	body: tableMapperValues(data.data, ['username', 'url', 'password']),
+	// Optional: The data returned when interactive is enabled and a row is clicked.
+	meta: tableMapperValues(data.data, ['username', 'url', 'password']),
+	// Optional: A list of footer labels.
+	foot: ['Total', '', '<code class="code">5</code>']
+  };
+}
 
 </script>
 
@@ -42,11 +39,10 @@
     </div>
 </div>
 
-<div> 
-
-  <!-- {#each passwords as password}
-      <PasswordTableComponent password={password}/>
-      {/each} -->
+<div role="list" class="container h-full divide-y divide-purple-100 mx-auto flex justify-center items-center">
+  {#if data}
+  <Table source={tableSimple} /> 
+  {/if}
 </div>
 
 <div class="button-container">

@@ -8,10 +8,4 @@ declare namespace App {
 	// interface Platform {}
 }
 
-declare class Passwords {
-	id: string
-	Username: string
-	Password: string
-	URL: string
-}
 
