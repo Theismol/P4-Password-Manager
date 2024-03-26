@@ -1,4 +1,6 @@
+
 import type {Actions} from './$types';
+import { redirect } from '@sveltejs/kit';
 import axios from 'axios';
 const {
     pbkdf2,
@@ -12,10 +14,38 @@ export const actions =  {
 
         console.log("username is ", username)
         console.log("password is ", password)
-        fetchData(username, password);
+
+        const hashedpassword:any = await hashPassword(password);
+        
+        console.log("hashedPassword is ", hashedpassword);
+
+        const code = await fetchData(username, hashedpassword);
+        console.log("code is BUVI BABA ", code);
+        
+        if (code == "200") {
+            throw redirect(303,'/passwordStore');
+        }
+        
+
     }
 
 }satisfies Actions;
+
+const hashPassword = async (password: string) => {
+    return new Promise((resolve, reject) => {
+        pbkdf2(password, '', 600000, 256, 'sha512', (err, derivedKey) => {
+            if (err) {
+                reject(err);
+            }
+            else {
+                resolve(derivedKey.toString('hex'));
+            }
+        });   
+    });
+    
+    
+    
+}
 
 const fetchData = async (username: string, password: string) => {
     try {
@@ -38,8 +68,13 @@ const fetchData = async (username: string, password: string) => {
             });
          }
 
+          
         console.log(response);
+        return JSON.stringify(response.status);
         } catch (error) {
         console.error('Error fetching data:', error);
+        return error
     }
 }
+
+
