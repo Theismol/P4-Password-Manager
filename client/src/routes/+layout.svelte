@@ -40,10 +40,6 @@
 				<a href="https://github.com/Theismol/P4-Password-Manager">
 					<Icon icon="mdi:github" height="auto" />
 				</a>
-				<a href="/">
-					<Icon icon="mdi:settings" height="auto"/>
-				</a>
-
 			</svelte:fragment>
 		</AppBar>
 	</svelte:fragment>
