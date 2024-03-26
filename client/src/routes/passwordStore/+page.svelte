@@ -32,7 +32,7 @@
       tableSimple = {
         head: ['Username', 'URL', 'Password'],
         body: tableMapperValues(data.data, ['username', 'url', 'password']),
-        meta: tableMapperValues(data.data, ['username', 'url', 'password']) // Use the whole row object as metadata
+        meta: data.data// Use the whole row object as metadata
       };
     };
 
@@ -58,14 +58,13 @@
 </div>
 
 <div role="list" class="container min-h-screen divide-y divide-purple-100 mx-auto flex justify-center items-center">
-  <table class="table-hover">
+  <table class="table-hover table-auto">
+    <thead>{tableSimple.head}</thead>
     <tbody>
      {#if tableSimple && tableSimple.meta}
         {#each tableSimple.body as row, rowIndex}
           <tr on:click={() => handleRowClick(tableSimple.meta && tableSimple.meta[rowIndex])}> 
-            <td>
-              <Table source={tableSimple} />
-            </td>
+            <td>{tableSimple.body[rowIndex]}</td>
         </tr>
         {/each}
       {/if}
@@ -83,7 +82,7 @@
     modalTitle ="<p>Add new password</p>" modalContent="<p>the content of add new password page</p>"/>
   
     <ModalChangePasswordComponent bind:isOpen={isModalUserCredentials} onClose={() => isModalUserCredentials = false} 
-      modalTitle ="<p>User credentials</p>" modalContent="<p>add the individual users info here/p>"/>
+      modalTitle ="<p>User credentials</p>" modalContent="<p>add the individual users info here </p>"/>
 <style>
 
    .button-container {
