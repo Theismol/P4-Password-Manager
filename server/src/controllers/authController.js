@@ -24,8 +24,8 @@ const login = async (req, res) => {
         }
 
 
-        const token = generateToken({ userId: user._id, username: user.username, organistations: user.organizations });
-        const refreshToken = generateRefreshToken({ userId: user._id, username: user.username, organistations: user.organizations })
+        const token = generateToken({ userId: user._id, organistations: user.organizations });
+        const refreshToken = generateRefreshToken({ userId: user._id, organistations: user.organizations })
 
         console.log('Token:' + token + '\nRefreshToken:' + refreshToken);
 
@@ -71,7 +71,7 @@ const tokenRefresh = async (req, res) => {
         if (jwt === null) {
             return res.status(401).json({ message: 'Invalid refresh token' }).send();
         }
-        const token = generateToken({ userId: out.userId, username: out.username, organistations: out.organistations});
+        const token = generateToken({ userId: out.userId, organistations: out.organistations});
         res.cookie("token", token, { httpOnly: true, secure: true, sameSite: 'none' })
         console.log(out, token);
         res.status(200).json({ message: 'Token refreshed', token }).send();
