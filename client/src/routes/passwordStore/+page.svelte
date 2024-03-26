@@ -1,37 +1,52 @@
 <script lang="ts">
   import ModalChangePasswordComponent from "$lib/modalChangePasswordComponent.svelte";
-  import PasswordTableComponent from "$lib/passwordTableComponent.svelte"; 
-	import { writable, readable } from "svelte/store";
-  export let data;
+  import { Table} from '@skeletonlabs/skeleton';
+  import type { TableSource } from '@skeletonlabs/skeleton';
+	import type { ActionData } from "./$types";
+ // handle the import of data into the table
+  export let data: ActionData;
 
+
+// the falg for the pop up window
   let isModalCP = false;
   let isModalAddNew = false;
-
+  let isModalUserCredentials = false;
+  
   function openModalCP() {
     isModalCP = true;
+  }
+
+  function openModalUserCredentials() {
+    isModalUserCredentials = true;
+
   }
 
   function openModalAddNew() {
     isModalAddNew = true;
   }
 
+  // <-----------------------------------the table in the passwordstoring page --------------------------------------->
+    let tableSimple: TableSource;
 
-  const passwords : Passwords[] = [
-    //  {
-    //    id: "1",
+    if (data) {
+      tableSimple = {
+        head: ['Username', 'URL', 'Password'],
+        body: tableMapperValues(data.data, ['username', 'url', 'password']),
+        meta: data.data// Use the whole row object as metadata
+      };
+    };
 
-    //   Username: 'hej',
-      
-    //  Password: '123',
+  function tableMapperValues(data: any[], keys: string[]) {
+    return data.map(row => keys.map(key => row[key]));
+  }
 
-    //    URL: '123sprugt'
+  // add functionality to this!!!!
+  function handleRowClick(row: any) {
+    console.log("Row clicked:", row);
+    openModalUserCredentials();
+  }
 
-    // }
-
-    //  import data here
-    
-  ]
-
+//---------------------------------------------------------------------------------------------------------------------
 </script>
 
 <div class="container h-full mx-auto flex justify-center items-center">
@@ -42,23 +57,32 @@
     </div>
 </div>
 
-<div> 
-
-  <!-- {#each passwords as password}
-      <PasswordTableComponent password={password}/>
-      {/each} -->
+<div role="list" class="container min-h-screen divide-y divide-purple-100 mx-auto flex justify-center items-center">
+  <table class="table-hover table-auto">
+    <thead>{tableSimple.head}</thead>
+    <tbody>
+     {#if tableSimple && tableSimple.meta}
+        {#each tableSimple.body as row, rowIndex}
+          <tr on:click={() => handleRowClick(tableSimple.meta && tableSimple.meta[rowIndex])}> 
+            <td>{tableSimple.body[rowIndex]}</td>
+        </tr>
+        {/each}
+      {/if}
+    </tbody>
+  </table>
 </div>
 
 <div class="button-container">
     <button class="bg-blue-500 text-white px-4 py-2 rounded" on:click={openModalAddNew}>+ Add new</button>
     <button class="bg-blue-500 text-white px-4 py-2 rounded">Share</button>
-    <button class="bg-blue-500 text-white px-4 py-2 rounded" on:click={openModalCP}>Change password</button>
   </div>
 
   <!-- the constent of the modal pages goes here  -->
   <ModalChangePasswordComponent bind:isOpen={isModalAddNew} onClose={() => isModalAddNew = false} 
     modalTitle ="<p>Add new password</p>" modalContent="<p>the content of add new password page</p>"/>
-
+  
+    <ModalChangePasswordComponent bind:isOpen={isModalUserCredentials} onClose={() => isModalUserCredentials = false} 
+      modalTitle ="<p>User credentials</p>" modalContent="<p>add the individual users info here </p>"/>
 <style>
 
    .button-container {

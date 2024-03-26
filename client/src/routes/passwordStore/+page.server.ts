@@ -1,38 +1,23 @@
 import type { PageServerLoad } from './$types';
 import axios from 'axios';
-import {fail, type Actions} from '@sveltejs/kit'
-import { writable } from "svelte/store";
-import { userInfo } from 'os';
-import { json } from 'stream/consumers';
 
-// export const GET = async ({request}) => {
-//   const authHeader = request.headers.get('Authorization')
-
-//   if(authHeader !== 'Myauthheader') {
-//     return new Response (JSON.stringify({message: 'Invalid credentials'}), {status: 401})
-
-//   }
-
-//   return new Response(JSON.stringify({message:"hello"}),{status: 200})
-
-// const res = await fetch('http://localhost:4000/api/password/getRandom')
-// const data = await res.json()
-
-// return new Response(JSON.stringify(data), {status: 200})
-// }
-
-
-  export const load = ({fetch}) => {
-
-    const fetchdata = async () => {
-      const response = await axios.get('http://localhost:4000/api/password/getRandom'); 
-      const data = response.data; 
+  export const load: PageServerLoad = async () => {
+    let data: userCredentials | undefined; // Initialize data as undefined
+  
+    await axios.get('http://localhost:4000/api/password/getRandom')
+      .then((response) => {
+        data = response.data; // Assign data inside the then block
+      })
+      .catch((error) => {
+        console.error('Error fetching data:', error);
+      });
+  
+    if (data !== undefined) {
       console.log('Fetched data:', data);
-      return data.getRandom;
+      return {data: data};
+    } else {
+      // Handle the case where data is undefined
+      return null; // Or handle it in any other appropriate way
     }
-    return {
-      getRandom: fetchdata()
-    }
-  }
-
+  };
 
