@@ -1,6 +1,6 @@
 <script lang="ts">
 	import '../app.postcss';
-	import { AppBar, AppShell } from '@skeletonlabs/skeleton';
+
 
 	// Highlight JS
 	/*import hljs from 'highlight.js/lib/core';
@@ -22,13 +22,5 @@
 	import { storePopup } from '@skeletonlabs/skeleton';
 	storePopup.set({ computePosition, autoUpdate, flip, shift, offset, arrow });*/
 </script>
-<AppShell scrollbarGutter="auto">
-	<svelte:fragment slot="header">
-		<AppBar>
-			<svelte:fragment slot="lead">(icon)</svelte:fragment>
-			<svelte:fragment slot="trail">(actions)</svelte:fragment>
-			<svelte:fragment slot="headline">(headline)</svelte:fragment>
-		</AppBar>
-	</svelte:fragment>
-	<slot />
-</AppShell>
+
+<slot />
