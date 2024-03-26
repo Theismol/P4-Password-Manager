@@ -40,6 +40,7 @@
     return data.map(row => keys.map(key => row[key]));
   }
 
+  // add functionality to this!!!!
   function handleRowClick(row: any) {
     console.log("Row clicked:", row);
     openModalUserCredentials();
@@ -82,7 +83,7 @@
     modalTitle ="<p>Add new password</p>" modalContent="<p>the content of add new password page</p>"/>
   
     <ModalChangePasswordComponent bind:isOpen={isModalUserCredentials} onClose={() => isModalUserCredentials = false} 
-      modalTitle ="<p>User credentials</p>" modalContent="<p>the content of add new password page</p>"/>
+      modalTitle ="<p>User credentials</p>" modalContent="<p>add the individual users info here/p>"/>
 <style>
 
    .button-container {
