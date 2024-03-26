@@ -17,6 +17,9 @@ export const actions = {
         const password = formData.get('password');
         const confirmPassword = formData.get('confirmPassword')?.toString();
         console.log("email")
+        if (password !== confirmPassword) {
+            return {success: false, message: "Passwords do not match"};
+        }
         
         hashedPassword = await pkFunc(password);
 
