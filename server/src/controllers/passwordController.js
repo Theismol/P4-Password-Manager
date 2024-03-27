@@ -17,7 +17,7 @@ const getRandom = async (req, res) => {
         const passwords = [];
 
         for (let i = 0; i < numPasswords; i++) {
-            const newPassword = new password({
+            const newPassword = new Password({
                 _id: '65e5d28e1d546bf0e961c358',
                 organization_id: '65e5d28e1d546bf0e961c358',
                 user_id: "65e5d28e1d546bf0e961c358",
