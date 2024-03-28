@@ -51,7 +51,7 @@
   <div class="border border-gray-200 rounded-lg overflow-hidden">
     <div class="table-container overflow-auto max-h-96">
       <table class="table-hover table-auto min-w-full">
-        <thead class="sticky top-0 bg-white z-10">
+        <thead class="sticky top-0 bg-gray-200 z-10 ">
           <tr>
             {#each tableOfUsers.head as header}
               <th class="px-4 py-2">{header}</th>
