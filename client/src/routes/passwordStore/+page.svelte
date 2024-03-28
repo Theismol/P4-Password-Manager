@@ -8,17 +8,13 @@
 
 
 // the falg for the pop up window
-  let isModalCP = false;
+  let selectedUser: { username: any; password: any; url: any; } | null = null;
   let isModalAddNew = false;
   let isModalUserCredentials = false;
-  
-  function openModalCP() {
-    isModalCP = true;
-  }
+
 
   function openModalUserCredentials() {
     isModalUserCredentials = true;
-
   }
 
   function openModalAddNew() {
@@ -26,12 +22,12 @@
   }
 
   // <-----------------------------------the table in the passwordstoring page --------------------------------------->
-    let tableSimple: TableSource;
+    let tableOfUsers: TableSource;
 
     if (data) {
-      tableSimple = {
-        head: ['Username', 'URL', 'Password'],
-        body: tableMapperValues(data.data, ['username', 'url', 'password']),
+      tableOfUsers = {
+        head: ['Username ','URL','Password'],
+        body: tableMapperValues(data.data, ['username','url','password']),
         meta: data.data// Use the whole row object as metadata
       };
     };
@@ -40,8 +36,8 @@
     return data.map(row => keys.map(key => row[key]));
   }
 
-  // add functionality to this!!!!
   function handleRowClick(row: any) {
+    selectedUser = row;
     console.log("Row clicked:", row);
     openModalUserCredentials();
   }
@@ -49,48 +45,62 @@
 //---------------------------------------------------------------------------------------------------------------------
 </script>
 
-<div class="container h-full mx-auto flex justify-center items-center">
-    <div class="grid grid-cols-3 gap-4">
-        <div class="col-span-3">
-            <h1>Passwordstoring page</h1>
-        </div>
+<!--------------------------------------------- looping of the table with users ----------------------------------------->
+<div class="container mx-auto flex flex-col items-center h-screen my-8">
+  <h1 class="h3 mb-2">Password Storing Page</h1>
+  <div class="border border-gray-200 rounded-lg overflow-hidden">
+    <div class="table-container overflow-auto max-h-96">
+      <table class="table-hover table-auto min-w-full">
+        <thead class="sticky top-0 bg-white z-10">
+          <tr>
+            {#each tableOfUsers.head as header}
+              <th class="px-4 py-2">{header}</th>
+            {/each}
+          </tr>
+        </thead>
+        <tbody>
+          {#if tableOfUsers && tableOfUsers.meta}
+            {#each tableOfUsers.body as row, rowIndex}
+              <tr class="bg-white hover:bg-wintry-lighter" on:click={() => handleRowClick(tableOfUsers.meta && tableOfUsers.meta[rowIndex])}>
+                {#each row as cell}
+                  <td class="border px-4 py-2">{cell}</td>
+                {/each}
+              </tr>
+            {/each}
+          {/if}
+        </tbody>
+      </table>
     </div>
-</div>
-
-<div role="list" class="container min-h-screen divide-y divide-purple-100 mx-auto flex justify-center items-center">
-  <table class="table-hover table-auto">
-    <thead>{tableSimple.head}</thead>
-    <tbody>
-     {#if tableSimple && tableSimple.meta}
-        {#each tableSimple.body as row, rowIndex}
-          <tr on:click={() => handleRowClick(tableSimple.meta && tableSimple.meta[rowIndex])}> 
-            <td>{tableSimple.body[rowIndex]}</td>
-        </tr>
-        {/each}
-      {/if}
-    </tbody>
-  </table>
-</div>
-
-<div class="button-container">
-    <button class="bg-blue-500 text-white px-4 py-2 rounded" on:click={openModalAddNew}>+ Add new</button>
-    <button class="bg-blue-500 text-white px-4 py-2 rounded">Share</button>
   </div>
+  <div class="button-container flex justify-center mt-4">
+    <button class="bg-blue-500 text-white px-4 py-2 rounded mr-4" on:click={openModalAddNew}>+ Add new</button>
+    <button class="bg-blue-500 text-white px-4 py-2 rounded mr-4">Share</button>
+  </div>
+</div>
+<!---------------------------------------------------------------------------------------------------------------->
 
   <!-- the constent of the modal pages goes here  -->
   <ModalChangePasswordComponent bind:isOpen={isModalAddNew} onClose={() => isModalAddNew = false} 
     modalTitle ="<p>Add new password</p>" modalContent="<p>the content of add new password page</p>"/>
   
-    <ModalChangePasswordComponent bind:isOpen={isModalUserCredentials} onClose={() => isModalUserCredentials = false} 
-      modalTitle ="<p>User credentials</p>" modalContent="<p>add the individual users info here </p>"/>
-<style>
-
-   .button-container {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  padding: 10px;
-  text-align: center;
-}
-</style>
+    <ModalChangePasswordComponent bind:isOpen={isModalUserCredentials} onClose={() => isModalUserCredentials = false}
+    modalTitle={`<div class="p-2 flex flex-col justify-center items-center h-full">
+                  <h1>User credentials</h1>  
+                 </div>`}
+      
+      modalContent={`<div class="flex flex-col mb-4">
+          <label for="username" class="mb-1 text-sm text-gray-600">Username:</label>
+          <input type="text" id="username" value="${selectedUser?.username}" readonly 
+                 class="cursor-not-allowed pointer-events-none bg-gray-100 border border-gray-300 px-3 py-2 rounded-lg">
+        </div>
+        <div class="flex flex-col mb-4">
+          <label for="password" class="mb-1 text-sm text-gray-600">Password:</label>
+          <input type="text" id="password" value="${selectedUser?.password}" readonly 
+                 class="cursor-not-allowed pointer-events-none bg-gray-100 border border-gray-300 px-3 py-2 rounded-lg">
+        </div>
+        <div class="flex flex-col mb-4">
+          <label for="url" class="mb-1 text-sm text-gray-600">URL:</label>
+          <input type="text" id="url" value="${selectedUser?.url}" readonly 
+                 class="cursor-not-allowed pointer-events-none bg-gray-100 border border-gray-300 px-3 py-2 rounded-lg">
+        </div>`
+    }/>
