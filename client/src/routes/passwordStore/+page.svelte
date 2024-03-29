@@ -1,14 +1,23 @@
 <script lang="ts">
+
+  import Icon from '@iconify/svelte'
   import ModalChangePasswordComponent from "$lib/modalChangePasswordComponent.svelte";
+  import ChangePassword from "$lib/ChangePassword.svelte";
   import { Table} from '@skeletonlabs/skeleton';
   import type { TableSource } from '@skeletonlabs/skeleton';
-	import type { ActionData } from "./$types";
+  import type { ActionData } from "./$types";
  // handle the import of data into the table
   export let data: ActionData;
 
+  let chanePass: ChangePassword;
+
+
 
 // the falg for the pop up window
-  let selectedUser: { username: any; password: any; url: any; } | null = null;
+
+  //let selectedUser: { username: any; password: any; url: any; } | null = null;
+  const selectedUser = { username: '', password: '', url: '' };
+
   let isModalAddNew = false;
   let isModalUserCredentials = false;
 
@@ -30,6 +39,7 @@
         body: tableMapperValues(data.data, ['username','url','password']),
         meta: data.data// Use the whole row object as metadata
       };
+      //console.log("Table of users:", tableOfUsers);
     };
 
   function tableMapperValues(data: any[], keys: string[]) {
@@ -37,15 +47,21 @@
   }
 
   function handleRowClick(row: any) {
-    selectedUser = row;
-    console.log("Row clicked:", row);
+    //selectedUser = row;
+    //map the row to the selected user
+    selectedUser.username = row.username;
+    selectedUser.password = row.password;
+    selectedUser.url = row.url;
+    chanePass.setTheUser(selectedUser);
+    //how to call a function from another svelte file
     openModalUserCredentials();
   }
 
 //---------------------------------------------------------------------------------------------------------------------
 </script>
-
+<ChangePassword bind:this={chanePass} />
 <!--------------------------------------------- looping of the table with users ----------------------------------------->
+
 <div class="container mx-auto flex flex-col items-center h-screen my-8">
   <h1 class="h3 mb-2">Password Storing Page</h1>
   <div class="border border-gray-200 rounded-lg overflow-hidden">
@@ -59,7 +75,7 @@
           </tr>
         </thead>
         <tbody>
-          {#if tableOfUsers && tableOfUsers.meta}
+          {#if tableOfUsers}
             {#each tableOfUsers.body as row, rowIndex}
               <tr class="bg-white hover:bg-wintry-lighter" on:click={() => handleRowClick(tableOfUsers.meta && tableOfUsers.meta[rowIndex])}>
                 {#each row as cell}
@@ -77,12 +93,14 @@
     <button class="bg-blue-500 text-white px-4 py-2 rounded mr-4">Share</button>
   </div>
 </div>
-<!---------------------------------------------------------------------------------------------------------------->
 
+<!---------------------------------------------------------------------------------------------------------------->
   <!-- the constent of the modal pages goes here  -->
   <ModalChangePasswordComponent bind:isOpen={isModalAddNew} onClose={() => isModalAddNew = false} 
     modalTitle ="<p>Add new password</p>" modalContent="<p>the content of add new password page</p>"/>
-  
+
+    <!-- the modal for the user credentials 
+
     <ModalChangePasswordComponent bind:isOpen={isModalUserCredentials} onClose={() => isModalUserCredentials = false}
     modalTitle={`<div class="p-2 flex flex-col justify-center items-center h-full">
                   <h1>User credentials</h1>  
@@ -92,15 +110,21 @@
           <label for="username" class="mb-1 text-sm text-gray-600">Username:</label>
           <input type="text" id="username" value="${selectedUser?.username}" readonly 
                  class="cursor-not-allowed pointer-events-none bg-gray-100 border border-gray-300 px-3 py-2 rounded-lg">
-        </div>
-        <div class="flex flex-col mb-4">
+
+        <div class="flex-col mb-4">
           <label for="password" class="mb-1 text-sm text-gray-600">Password:</label>
-          <input type="text" id="password" value="${selectedUser?.password}" readonly 
-                 class="cursor-not-allowed pointer-events-none bg-gray-100 border border-gray-300 px-3 py-2 rounded-lg">
-        </div>
+
+          <div class="flex">
+
+            <input type="text" id="password" value="${selectedUser?.password}" readonly class="grow pointer-events-none bg-gray-100 border border-gray-300 px-3 py-2 rounded-r-lg"/>
+
+      </div>
+    </div>
         <div class="flex flex-col mb-4">
           <label for="url" class="mb-1 text-sm text-gray-600">URL:</label>
           <input type="text" id="url" value="${selectedUser?.url}" readonly 
                  class="cursor-not-allowed pointer-events-none bg-gray-100 border border-gray-300 px-3 py-2 rounded-lg">
         </div>`
     }/>
+    -->
+
