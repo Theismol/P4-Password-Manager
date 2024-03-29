@@ -40,6 +40,8 @@ function saveChange() {
     if (passwordInput) {
         selectedUser.password = passwordInput.value;
         // fetch the data from the server
+
+        //set the bg color to white
         passwordInput.style.backgroundColor = '#f3f4f6';
         passwordInput.setAttribute('readonly', '');
         passwordInput.classList.add('cursor-not-allowed');
