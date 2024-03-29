@@ -19,7 +19,7 @@
 
   {#if isOpen}
   <div role="button" tabindex="0" class="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-75 z-50" on:click={closeModal} on:keydown={handleKeyDown}>
-    <div role="button" tabindex="0" class="modal mx-auto bg-white rounded-lg shadow-xl p-10 w-[400px] h-[400px]" on:click={(e) => e.stopPropagation()} on:keydown={handleKeyDown}>
+    <div role="button" tabindex="0" class="modal mx-auto bg-white rounded-lg shadow-xl p-10 w-[600px] h-[400px]" on:click={(e) => e.stopPropagation()} on:keydown={handleKeyDown}>
         {#if modalTitle}
         <h1>{@html modalTitle}</h1>
       {/if}
