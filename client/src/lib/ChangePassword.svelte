@@ -82,7 +82,7 @@ export function setTheUser(currentSeledeUser: { username: any; password: any; ur
 
 {#if openChangeWindow}
 <div role="button" tabindex="0" class="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-75 z-50">
-  <div class="modal mx-auto bg-white rounded-lg shadow-xl p-10 w-[800px] h-[600px]">
+  <div class="modal mx-auto bg-white rounded-lg shadow-xl p-10 w-[800px] h-[400px]">
     <div class="p-2 flex-col justify-center items-center h-full">
       <h1>User credentials</h1>
       <div class="flex flex-col mb-4">
