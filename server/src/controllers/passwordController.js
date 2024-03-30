@@ -3,7 +3,7 @@ const user = require('../models/userModel.js');
 
 const getAllPasswords = async (req, res) => {
     try {
-        const passwords = await password.find();
+        const passwords = await Password.find();
         res.status(200).json(passwords).send();
     } catch (error) {
         console.error('Error during fetching passwords:', error);
