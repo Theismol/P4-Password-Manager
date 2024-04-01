@@ -128,6 +128,7 @@
 ```JSON
 [
     {
+    "_id":"string",
     "organization_id":  "string",
     "user_id": "string",
     "title": "string",
@@ -137,4 +138,45 @@
     "notes": "string" "(optinal)"
     }
 ]
+```
+
+
+- **addPasswordToUser `post`**
+
+```JSON
+{
+    "csrftoken": "string",
+    "organization_id": "string",
+    "title": "string",
+    "username": "string",
+    "password": "string",
+    "url": "string" "(optional)",
+    "notes": "string" "(optional)"
+}
+```
+
+
+
+>**Outcome**
+```JSON
+{
+    "message":"string"
+}
+```
+
+- **deletePassword/:passwordId `delete`**
+
+```JSON
+{
+    "csrftoken": "string",
+}
+```
+
+
+
+>**Outcome**
+```JSON
+{
+    "message":"string"
+}
 ```

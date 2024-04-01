@@ -9,7 +9,7 @@ const connectDB = async () => {
     const connectionString = process.env.DB_CONNECTION_STRING;
 
     const options = {
-      dbName: process.env.DB_NAME, 
+      dbName: process.env.DB_NAME,
       user: process.env.DB_USERNAME,
       pass: process.env.DB_PASSWORD,
     };
@@ -19,7 +19,7 @@ const connectDB = async () => {
     console.log('Connected to MongoDB');
   } catch (error) {
     console.error('Error connecting to MongoDB:', error.message);
-    process.exit(1); 
+    process.exit(1);
   }
 };
 

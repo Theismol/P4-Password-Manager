@@ -18,16 +18,16 @@
   </script>
 
   {#if isOpen}
-  <div role="button" tabindex="0" class="modal-overlay fixed top-0 left-0 w-full h-full bg-black bg-opacity-75 z-50" on:click={closeModal} on:keydown={handleKeyDown}>
-    <div role="button" tabindex="0" class="modal mx-auto my-52 max-w-sm bg-white rounded-lg shadow-xl p-10" on:click={(e) => e.stopPropagation()} on:keydown={handleKeyDown}>
+  <div role="button" tabindex="0" class="fixed top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-75 z-50" on:click={closeModal} on:keydown={handleKeyDown}>
+    <div role="button" tabindex="0" class="modal mx-auto bg-white rounded-lg shadow-xl p-10 w-[600px] h-[400px]" on:click={(e) => e.stopPropagation()} on:keydown={handleKeyDown}>
         {#if modalTitle}
-        <h2>{@html modalTitle}</h2>
+        <h1>{@html modalTitle}</h1>
       {/if}
       {#if modalContent}
         <p>{@html modalContent}</p>
       {/if}
       <div class="flex justify-end">
-      <button class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-400" on:click={closeModal}>Close</button>
+      <button class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-400 p-4" on:click={closeModal}>Close</button>
     </div>
     </div>
   </div>

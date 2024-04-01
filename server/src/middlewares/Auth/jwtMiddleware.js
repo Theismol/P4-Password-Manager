@@ -1,4 +1,4 @@
-const {verifyToken} = require('../../utils/JWT/jwtUtils.js');
+const { verifyToken } = require('../../utils/JWT/jwtUtils.js');
 require('dotenv').config();
 
 const csrftoken = process.env.CSRF_TOKEN;
@@ -12,16 +12,16 @@ const authenticateToken = (req, res, next) => {
     console.log("csrftoken: ", receivedCsrftoken)
     if (token == null || receivedCsrftoken != csrftoken) {
         console.log("token is null")
-        return res.sendStatus(401).send(); 
+        return res.sendStatus(401).send();
     }
 
     try {
         const decoded = verifyToken(token);
-        req.user = decoded; // Attach the decoded token payload to the request object
-    
+        req.user = decoded;
+
         next(); // Call next middleware or route handler
     } catch (error) {
-        
+
         if (error.name === 'JsonWebTokenError') {
             return res.status(401).json({ message: 'Invalid token' }); // Unauthorized
         } else if (error.name === 'TokenExpiredError') {
@@ -33,4 +33,4 @@ const authenticateToken = (req, res, next) => {
 }
 
 
-module.exports = authenticateToken ;
+module.exports = authenticateToken;

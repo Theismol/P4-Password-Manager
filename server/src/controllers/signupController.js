@@ -3,6 +3,7 @@ const User = require('../models/userModel');
 
 const signup = async (req, res) => {
     const {email, username, password } = req.body;
+    console.log(req.body)
 
     try {
      
@@ -15,7 +16,8 @@ const signup = async (req, res) => {
             return res.status(404).json({ message: 'Email is already taken' });
         }
         else {
-            const hashedPassword = await bcrypt.hash(password, 10); 
+         
+            const hashedPassword = await bcrypt.hash(password, 10);
             User.create({ email: email, username: username, password: hashedPassword });
             res.status(200).json({ message: 'Signup successful!'});
         }
