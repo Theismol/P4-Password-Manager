@@ -49,7 +49,6 @@ const login = async (req, res) => {
 
         res.cookie("token", token, { sameSite: 'none', httpOnly: true, secure: true })
             .cookie("refreshtoken", refreshToken, { sameSite: 'none', httpOnly: true, secure: true })
-            .cookie("key", password, { sameSite: 'none' })
             .status(200)
             .json({ csrftoken: csrftoken }).send();
 
