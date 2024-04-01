@@ -1,6 +1,6 @@
 <script>
 	import { enhance } from '$app/forms';
-	import MyImage from './billed2 (1).png';
+	import MyImage from './logo.png';
 </script>
 
 <div class="flex h-screen">
@@ -29,7 +29,7 @@
     <!-- Right Section -->
     <div class="flex-1 bg-white w-70 justify-center flex items-center" style="background-color: #08192c;" >
         <!-- Content for the right section goes here -->
-		<img src={MyImage} alt="Some alt text"  style="width: 800px; height: 800px;" />
+		<img src={MyImage} alt="Some alt text"  style="width: 700px; height: 700px;" />
         <div class="p-8">
             <!-- Additional content goes here -->
 			
