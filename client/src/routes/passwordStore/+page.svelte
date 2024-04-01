@@ -62,8 +62,8 @@
 <ChangePassword bind:this={chanePass} />
 <!--------------------------------------------- looping of the table with users ----------------------------------------->
 
-<div class="container mx-auto flex flex-col items-center h-screen my-8">
-  <h1 class="h3 mb-2">Password Storing Page</h1>
+<div class="container mx-auto flex flex-col items-center h-screen my-8 ">
+  <h1 style="color: azure;" class="h3 mb-2">Password Storing Page</h1>
   <div class="border border-gray-200 rounded-lg overflow-hidden">
     <div class="table-container overflow-auto max-h-96">
       <table class="table-hover table-auto min-w-full">
@@ -89,8 +89,8 @@
     </div>
   </div>
   <div class="button-container flex justify-center mt-4">
-    <button class="bg-blue-500 text-white px-4 py-2 rounded mr-4" on:click={openModalAddNew}>+ Add new</button>
-    <button class="bg-blue-500 text-white px-4 py-2 rounded mr-4">Share</button>
+    <button class="bg-blue-500 text-white px-4 py-2 rounded mr-4 bg-gradient-to-br variant-gradient-tertiary-secondary" on:click={openModalAddNew}>+ Add new</button>
+    <button class="bg-blue-500 text-white px-4 py-2 rounded mr-4 bg-gradient-to-br variant-gradient-tertiary-secondary">Share</button>
   </div>
 </div>
 
