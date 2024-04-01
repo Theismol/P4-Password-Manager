@@ -16,7 +16,7 @@
 
 {#if responseReceived}
     {#if form?.success}
-        <aside class="alert variant-ghost-success fixed">
+        <aside  class="alert variant-ghost-success fixed">
             <div class="alert-message">
                 <h3 class="h3">{form?.message}</h3>
             </div>
@@ -31,35 +31,41 @@
     {/if}
 {/if}
 
-<div class="container h-screen text-center justify-center flex mx-auto w-1/2">
-    <form method="POST" class="m-auto grid grid-cols-3 gap-4 flex-1" use:enhance>
-        <div class="m-4 col-span-3">
-            <h1 class="h1">Sign up</h1>
-        </div>
-        <div class="col-span-3 w-full">
-            <label class="h4" for="username">Username</label>
-            <input class="rounded w-1/2" type="text" id="username" name="username" required>
-        </div>
-        <div class="col-span-3">
-            <label class="h4" for="email">Email</label>
-            <input class="rounded w-1/2" type="email" id="email" name="email" required>
-        </div>
-        <div class="col-span-3">
-            <label class="h4" for="password">Password</label>
-            <input class="rounded w-1/2" type="password" id="password" name="password" required>
-        </div>
-        <div class="col-span-3">
-            <label class="h4" for="confirmPassword">Confirm Password</label>
-            <input class="rounded w-1/2" type="password" id="confirmPassword" name="confirmPassword" required>
-        </div>
-        <div class="my-4 col-span-3">
-            <button class="btn variant-filled-primary w-1/6" type="submit">Sign Up</button>
-        </div>
-        <div class="col-span-3">
-                <p>Already have an account? <a href="/loginpage" class="anchor">Log  in</a> </p>
 
-        </div>
+<div class="flex h-screen" style="background-color:  #08192c;">
+    <div class="container h-screen text-center justify-center flex mx-auto w-1/2 " style="background-color: #08192c;" >
+        <form method="POST" class="m-auto grid grid-cols-3 gap-4 flex-1" use:enhance>
+            <div class="m-4 col-span-3" style="color: azure;">
+                <h1 class="h1">Sign up</h1>
+            </div>
+            <div class="col-span-3 w-full" style="color: azure;">
+                <label class="h4" for="username">Username</label>
+                <input class="input w-1/2" type="text" id="username" name="username" style="color: black;" required>
+            </div>
+            <div class="col-span-3" style="color: azure;">
+                <label class="h4" for="email">Email</label>
+                <input class="input w-1/2" type="email" id="email" name="email" style="color: black;" required>
+            </div>
+            <div class="col-span-3" style="color: azure;">
+                <label class="h4" for="password">Password</label>
+                <input class="input w-1/2" type="password" id="password" name="password" style="color: black;" required>
+            </div>
+            <div class="col-span-3" style="color: azure;">
+                <label class="h4" for="confirmPassword">Confirm Password</label>
+                <input class="input w-1/2" type="password" id="confirmPassword" name="confirmPassword" style="color: black;" required>
+            </div>
+            <div class="my-4 col-span-3" style="color: azure;">
+                <button class="btn variant-filled-primary w-1/6 btn bg-gradient-to-br variant-gradient-tertiary-secondary" type="submit">Sign Up</button>
+            </div>
+            <div class="col-span-3" style="color:azure">
+                    <p>Already have an account? <a href="/loginpage" class="anchor">Log  in</a> </p>
+    
+            </div>
+    
+        </form>
+    
+    </div>*/
 
-    </form>
+</div>
 
-</div>*/
+
