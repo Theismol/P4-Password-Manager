@@ -46,7 +46,7 @@ const addPasswordToUser = async (req, res) => {
     const { organization_id, title, username, password, url, notes } = req.body;
     const { userId } = req.user;
 
-    if(!organization_id || !title || !username || !password || !userId ){
+    if (!organization_id || !title || !username || !password || !userId) {
         res.status(400).json({ message: 'Missing required fields' }).send();
         return
     }
@@ -60,19 +60,19 @@ const addPasswordToUser = async (req, res) => {
         url: url,
         notes: notes
     });
-    
+
     try {
 
         const createdPassword = await newPassword.save();
         console.log(createdPassword);
         try {
             await user.findOneAndUpdate({ _id: req.user.userId }, { $push: { passwords: createdPassword._id } });
-        }catch (error) {
+        } catch (error) {
             try {
                 await Password.deleteOne({ _id: createdPassword._id });
                 console.error('Error during adding password:', error);
                 res.status(500).json({ message: 'Internal server error' }).send();
-            }catch (error) {
+            } catch (error) {
                 console.error('Error during deleting password:', error);
                 res.status(500).json({ message: 'Internal server error' }).send();
             }
@@ -88,20 +88,20 @@ const deletePassword = async (req, res) => {
     const { passwordId } = req.params;
     const { userId } = req.user;
 
-    if(!passwordId || !userId){
+    if (!passwordId || !userId) {
         res.status(400).json({ message: 'Missing required fields' }).send();
         return
     }
 
     try {
         const deletedPassword = await Password.findOneAndDelete({ _id: passwordId, user_id: userId });
-        if(!deletedPassword){
+        if (!deletedPassword) {
             res.status(404).json({ message: 'Password not found' }).send();
             return
         }
         try {
             await user.findOneAndUpdate({ _id: userId }, { $pull: { passwords: passwordId } });
-        }catch (error) {
+        } catch (error) {
             console.error('Error during deleting password:', error);
             res.status(500).json({ message: 'Internal server error' }).send();
         }
@@ -112,4 +112,27 @@ const deletePassword = async (req, res) => {
     }
 }
 
-module.exports = { getAllPasswords, getRandom, addPasswordToUser, deletePassword };
+
+const getPasswords = async (req, res) => {
+    const { userId } = req.user;
+
+
+    try {
+        const userData = await user.findOne({ _id: userId });
+
+        try {
+            const passwords = await Password.find({ _id: userData.passwords });
+            res.status(200).json(passwords).send();
+        } catch (error) {
+            console.error('Error during fetchiƒng passwords:', error);
+            res.status(500).json({ message: 'Internal server error' }).send();
+        }
+    }
+    catch (error) {
+        console.error('Error during fetching passwords:', error);
+        res.status(500).json({ message: 'Internal server error' }).send();
+    }
+}
+
+
+module.exports = { getAllPasswords, getRandom, addPasswordToUser, deletePassword, getPasswords };
