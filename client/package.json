@@ -47,6 +47,8 @@
     "@floating-ui/dom": "1.6.3",
     "@types/axios": "^0.14.0",
     "axios": "^1.6.7",
+    "flowbite-svelte": "^0.44.24",
+    "flowbite-svelte-icons": "^1.5.0",
     "highlight.js": "11.9.0"
   }
 }
