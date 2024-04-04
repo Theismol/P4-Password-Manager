@@ -6,7 +6,7 @@
 <AppBar  shadow="shadow-2xl" gridColumns="grid-cols-3" slotDefault="place-self-center" slotTrail="place-content-end">
 	<svelte:fragment slot="lead">
 		<div>
-			<button class="btn variant-filled-secondary mx-4" on:click={() => goto("/loginpage")}>Log in</button>
+			<button class="btn variant-filled-secondary mx-4" on:click={() => goto("/login")}>Log in</button>
 			<button class="btn variant-filled-secondary" on:click={() => goto("/signup")}>Sign up</button>
 		</div>
 	</svelte:fragment>
