@@ -59,13 +59,9 @@
             </div>
             <div class="col-span-3" style="color:azure">
                     <p>Already have an account? <a href="/loginpage" class="anchor">Log  in</a> </p>
-    
             </div>
-    
         </form>
-    
-    </div>*/
-
+    </div>
 </div>
 
 
