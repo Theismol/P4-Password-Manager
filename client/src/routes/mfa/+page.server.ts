@@ -16,9 +16,9 @@ const generateTOTP = () => {
       });
     return {code:token, secret:secret};
 }
-const generateQR = async (text: string) => {
+const generateQR = async (key: string) => {
     try {
-        return await QRCode.toDataURL(text);
+        return await QRCode.toDataURL(key);
     } catch (err) {
         console.error(err);
     }
