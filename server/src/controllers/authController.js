@@ -139,8 +139,9 @@ const login = async (req, res) => {
         if (!isPasswordValid) {
             return res.status(401).json({ message: 'Invalid password' }).send();
         }
+        const mfa = user.mfaSecret !== "";
         const token = generateToken({ userId: user._id, organistations: user.organizations },300);
-        res.cookie("token", token, { httpOnly: true, secure: true, sameSite: 'none' }).status(200).json({ csrftoken: csrftoken }).send();
+        res.cookie("token", token, { httpOnly: true, secure: true, sameSite: 'none' }).status(200).json({ csrftoken: csrftoken, mfa:mfa }).send();
         
 
 
