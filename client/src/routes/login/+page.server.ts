@@ -23,7 +23,7 @@ export const actions =  {
         console.log("code is BUVI BABA ", code);
         
         if (code == "200") {
-            throw redirect(303,'/passwordStore');
+            throw redirect(303,'/mfa');
         }
         
 

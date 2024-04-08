@@ -13,6 +13,7 @@ const authRoutes = require('./src/routes/authRoutes.js');
 const passwordRoutes = require('./src/routes/passwordRoutes.js');
 const deleteRoutes = require('./src/routes/deleteRoutes.js');
 const organizationRoutes = require('./src/routes/organizationRoutes.js');
+const mfaRoutes = require('./src/routes/mfaRoutes.js');
 
 
 
@@ -50,6 +51,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/password', passwordRoutes);
 app.use('/api/delete', deleteRoutes);
 app.use('/api/organization', organizationRoutes);
+app.use('/api/mfa',mfaRoutes);
 
 
 

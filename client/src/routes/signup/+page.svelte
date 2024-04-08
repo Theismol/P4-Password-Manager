@@ -55,7 +55,7 @@
                 <input class="input w-1/2" type="password" id="confirmPassword" name="confirmPassword" style="color: black;" required>
             </div>
             <div class="my-4 col-span-3" style="color: azure;">
-                <button class="btn variant-filled-primary w-1/6 btn bg-gradient-to-br variant-gradient-tertiary-secondary" type="submit">Sign Up</button>
+                <button class="btn variant-filled-primary w-1/6 bg-gradient-to-br variant-gradient-tertiary-secondary" type="submit">Sign Up</button>
             </div>
             <div class="col-span-3" style="color:azure">
                     <p>Already have an account? <a href="/loginpage" class="anchor">Log  in</a> </p>

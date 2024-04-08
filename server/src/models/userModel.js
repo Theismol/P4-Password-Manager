@@ -6,7 +6,8 @@ const userSchema = new Schema({
   password: { type: String, required: true },
   email: { type: String, required: true, unique: true },
   organizations: [{ type: Schema.Types.ObjectId, ref: 'Organization' }],
-  passwords: [{ type: Schema.Types.ObjectId, ref: 'Password' }] // Array of references to password documents
+  passwords: [{ type: Schema.Types.ObjectId, ref: 'Password' }], // Array of references to password documents
+  mfaSecret: { type: String },
 });
 
 const User = mongoose.model('User', userSchema);

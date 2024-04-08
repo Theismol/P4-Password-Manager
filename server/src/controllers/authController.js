@@ -2,55 +2,148 @@ const bcrypt = require('bcrypt');
 const { generateToken, generateRefreshToken, verifyRefreshToken } = require('../utils/JWT/jwtUtils');
 const User = require('../models/userModel');
 const jwtModel = require('../models/jwtModel');
+const speakeasy = require('speakeasy');
 require('dotenv').config();
 
 const csrftoken = process.env.CSRF_TOKEN;
+const generateTOTP = async (req, res) => {
+    const jwt = req.body;
+    const decoded_jwt = verifyToken(jwt);
+    const user = await User.findOne(decoded_jwt.userId);
+    if (!user) {
+        return res.status(404).json({ message: 'User not found' }).send();
+    }
+    const secret = speakeasy.generateSecret({ length: 20, name: 'AccessArmor'});
+    res.status(200).json({secret: secret }).send();
+}
+const verifyTOTP = async (req, res) => {
+    const {totpToken, jwt} = req.body;
+    let decoded_jwt;
+    try {
+        decoded_jwt = verifyToken(jwt);
+    } catch (error) {
 
+        if (error.name === 'JsonWebTokenError') {
+            return res.status(401).json({ message: 'Invalid token' }).send(); // Unauthorized
+        } else if (error.name === 'TokenExpiredError') {
+            return res.status(401).json({ message: 'Token expired' }).send(); // Unauthorized
+        } else {
+            return res.status(500).json({ message: 'Internal server error' }).send(); // Internal server error
+        }
+    }
+    const user = await User.findOne(decoded_jwt.userID);
+    console.log(user);
+    if (!user) {
+        return res.status(404).json({ message: 'User not found' }).send();
+    }
+    const verified = speakeasy.totp.verify({
+        secret: user.mfaSecret,
+        encoding: 'base32',
+        token: totpToken
+    });
+    if (!verified) {
+        res.status(401).json({ message: 'Token is invalid' }).send();
+    }
+    try {
+        await jwtModel.create({ name: user.username, RefreshToken: refreshToken });
+    } catch (error) {
+        if (error.code === 11000) {
+            try {
+                await jwtModel.findOneAndUpdate({ name: user.username }, { RefreshToken: refreshToken })
+            } catch (error) {
+                console.error('Error during token creation:', error);
+                res.status(500).json({ message: 'Internal server error' }).send();
+            }
+        } else {
+            console.error('Error during token creation:', error);
+            res.status(500).json({ message: 'Internal server error' }).send();
+        }
+    }
+    const token = generateToken({ userId: user._id, organistations: user.organizations },3600);
+    const refreshToken = generateRefreshToken({ userId: user._id, organistations: user.organizations })
+    console.log('Token:', csrftoken);
+    console.log('Token:' + token + '\nRefreshToken:' + refreshToken);
+    res.cookie("token", token, { sameSite: 'none', httpOnly: true, secure: true })
+        .cookie("refreshtoken", refreshToken, { sameSite: 'none', httpOnly: true, secure: true })
+        .status(200)
+        .json({ csrftoken: csrftoken }).send();
+}
+const verifyTOTPFirstTime = async (req, res) => {
+    const {totpToken, jwt,secret} = req.body;
+    let decoded_jwt;
+    try {
+        decoded_jwt = verifyToken(jwt);
+    } catch (error) {
+
+        if (error.name === 'JsonWebTokenError') {
+            return res.status(401).json({ message: 'Invalid token' }).send(); // Unauthorized
+        } else if (error.name === 'TokenExpiredError') {
+            return res.status(401).json({ message: 'Token expired' }).send(); // Unauthorized
+        } else {
+            return res.status(500).json({ message: 'Internal server error' }).send(); // Internal server error
+        }
+    }
+    const user = await User.findOne(decoded_jwt.userID);
+    console.log(user);
+    if (!user) {
+        return res.status(404).json({ message: 'User not found' }).send();
+    }
+    
+
+    const verified = speakeasy.totp.verify({
+        secret: secret.base32,
+        encoding: 'base32',
+        token: totpToken
+    });
+    if (!verified) {
+        res.status(401).json({ message: 'Token is invalid' }).send();
+    }
+    else {
+        User.findOneAndUpdate({ _id: user._id }, { mfaSecret: user.mfaSecret });
+    }
+    try {
+        await jwtModel.create({ name: user.username, RefreshToken: refreshToken });
+    } catch (error) {
+        if (error.code === 11000) {
+            try {
+                await jwtModel.findOneAndUpdate({ name: user.username }, { RefreshToken: refreshToken })
+            } catch (error) {
+                console.error('Error during token creation:', error);
+                res.status(500).json({ message: 'Internal server error' }).send();
+            }
+        } else {
+            console.error('Error during token creation:', error);
+            res.status(500).json({ message: 'Internal server error' }).send();
+        }
+    }
+    const token = generateToken({ userId: user._id, organistations: user.organizations },3600);
+    const refreshToken = generateRefreshToken({ userId: user._id, organistations: user.organizations })
+    console.log('Token:', csrftoken);
+    console.log('Token:' + token + '\nRefreshToken:' + refreshToken);
+    res.cookie("token", token, { sameSite: 'none', httpOnly: true, secure: true })
+        .cookie("refreshtoken", refreshToken, { sameSite: 'none', httpOnly: true, secure: true })
+        .status(200)
+        .json({ csrftoken: csrftoken }).send();
+
+}
 const login = async (req, res) => {
     const { username, password } = req.body;
-
     try {
-
         const user = await User.findOne({ username });
         console.log(user);
         if (!user) {
             return res.status(404).json({ message: 'User not found' }).send();
         }
-
-
+        
         const isPasswordValid = await bcrypt.compare(password, user.password);
         if (!isPasswordValid) {
             return res.status(401).json({ message: 'Invalid password' }).send();
         }
+        const token = generateToken({ userId: user._id, organistations: user.organizations },300);
+        res.cookie("token", token, { httpOnly: true, secure: true, sameSite: 'none' }).status(200).json({ csrftoken: csrftoken }).send();
+        
 
 
-        const token = generateToken({ userId: user._id, organistations: user.organizations });
-        const refreshToken = generateRefreshToken({ userId: user._id, organistations: user.organizations })
-
-        console.log('Token:' + token + '\nRefreshToken:' + refreshToken);
-
-        try {
-            await jwtModel.create({ name: username, RefreshToken: refreshToken });
-        } catch (error) {
-            if (error.code === 11000) {
-                try {
-                    await jwtModel.findOneAndUpdate({ name: username }, { RefreshToken: refreshToken })
-                } catch (error) {
-                    console.error('Error during token creation:', error);
-                    res.status(500).json({ message: 'Internal server error' }).send();
-                }
-            } else {
-                console.error('Error during token creation:', error);
-                res.status(500).json({ message: 'Internal server error' }).send();
-            }
-        }
-
-        console.log('Token:', csrftoken);
-
-        res.cookie("token", token, { sameSite: 'none', httpOnly: true, secure: true })
-            .cookie("refreshtoken", refreshToken, { sameSite: 'none', httpOnly: true, secure: true })
-            .status(200)
-            .json({ csrftoken: csrftoken }).send();
 
     } catch (error) {
         console.error('Error during login:', error);
@@ -96,4 +189,4 @@ const logout = async (req, res) => {
 }
 
 
-module.exports = { login, tokenRefresh, logout };
+module.exports = { login, tokenRefresh, logout,verifyTOTPFirstTime, verifyTOTP, generateTOTP};
