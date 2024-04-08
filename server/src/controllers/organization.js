@@ -23,16 +23,29 @@ const createOrganization = async (req, res) => {
         const createdOrganisation = await newOrganization.save();
 
         try {
-            await user.findOneAndUpdate({ _id: userId }, { $push: { organizations: createdOrganisation._id } });
-        }catch (error) {
+            const foundUser = await user.findById(userId);
+            if(foundUser.organizations != null){
+                res.status(400).json({ message: 'User already has an organization' }).send();
+                return;
+            }
+            try{
+                await user.findOneAndUpdate({ _id: userId },  { organizations: createdOrganisation._id });
+            }catch(error){
+                console.error('Error during creating organization:', error);
+                res.status(500).json({ message: 'Internal server error' }).send();
+            }
+        }        
+        catch (error) {
             try {
                 await organization.deleteOne({ _id: createdOrganisation._id });
-                console.error('Error during adding organization:', error);
+                console.error('Error during creating organization:', error);
                 res.status(500).json({ message: 'Internal server error' }).send();
-            }catch (error) {
+            }
+            catch (error) {
                 console.error('Error during deleting organization:', error);
                 res.status(500).json({ message: 'Internal server error' }).send();
             }
+            
         }
 
         res.status(200).json({ message: 'Organization created' }).send();
@@ -40,6 +53,10 @@ const createOrganization = async (req, res) => {
         console.error('Error during creating organization:', error);
         res.status(500).json({ message: 'Internal server error' }).send();
     }
+}
+
+const addUserToOrganization = async (req, res) => {
+    
 }
 
 module.exports = { createOrganization };
