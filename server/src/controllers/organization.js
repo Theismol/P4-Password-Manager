@@ -2,6 +2,7 @@ const jwtModel = require('../models/jwtModel');
 const organization = require('../models/organizationModel');
 const password = require('../models/passwordModel');
 const user = require('../models/userModel');
+const EmailService = require('../utils/Email/emailService');
 
 
 const createOrganization = async (req, res) => {
@@ -56,7 +57,11 @@ const createOrganization = async (req, res) => {
 }
 
 const addUserToOrganization = async (req, res) => {
-    
+    const mailService = new EmailService();
+    const { email, organizationId } = req.body;
+    mailService.sendEmail("nicholas.mazur.hansen@gmail.com", "You have been invited to join an organization", "please doksapod");
+    res.status(200).json({ message: 'Email sent' }).send();
+
 }
 
-module.exports = { createOrganization };
+module.exports = { createOrganization, addUserToOrganization };
