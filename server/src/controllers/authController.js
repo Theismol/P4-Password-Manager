@@ -16,6 +16,21 @@ const generateTOTP = async (req, res) => {
     const secret = speakeasy.generateSecret({ length: 20, name: 'AccessArmor'});
     res.status(200).json({secret: secret }).send();
 }
+const checkMFA = async (req, res) => {
+    const jwt = req.body;
+    const decoded_jwt = verifyToken(jwt);
+    const user = await User.findOne(decoded_jwt.userId);
+    if (!user) {
+        return res.status(404).json({ message: 'User not found' }).send();
+    }
+    if (user.mfaSecret === "") {
+        return res.status(200).json({ mfa: false }).send();
+    }
+    else {
+        return res.status(200).json({ mfa: true }).send();
+    }
+
+}
 const verifyTOTP = async (req, res) => {
     const {totpToken, jwt} = req.body;
     let decoded_jwt;
@@ -141,7 +156,7 @@ const login = async (req, res) => {
         }
         const mfa = user.mfaSecret !== "";
         const token = generateToken({ userId: user._id, organistations: user.organizations },300);
-        res.cookie("token", token, { httpOnly: true, secure: true, sameSite: 'none' }).status(200).json({ csrftoken: csrftoken, mfa:mfa }).send();
+        res.cookie("token", token, {sameSite: 'none', httpOnly: true, secure: true  }).status(200).json({ csrftoken: csrftoken, mfa:mfa }).send();
         
 
 
@@ -190,4 +205,4 @@ const logout = async (req, res) => {
 }
 
 
-module.exports = { login, tokenRefresh, logout,verifyTOTPFirstTime, verifyTOTP, generateTOTP};
+module.exports = { login, tokenRefresh, logout,verifyTOTPFirstTime, verifyTOTP, generateTOTP, checkMFA};

@@ -12,15 +12,15 @@ export const actions =  {
         const username = formData.get('username') as string;
         const password = formData.get('password') as string;
 
-        console.log("username is ", username)
-        console.log("password is ", password)
+        //console.log("username is ", username)
+        //console.log("password is ", password)
 
         const hashedpassword:any = await hashPassword(password);
         
-        console.log("hashedPassword is ", hashedpassword);
+        //console.log("hashedPassword is ", hashedpassword);
 
         const code = await fetchData(username, hashedpassword);
-        console.log("code is BUVI BABA ", code);
+        //console.log("code is BUVI BABA ", code);
         
         if (code == "200") {
             throw redirect(303,'/mfa');
@@ -67,6 +67,7 @@ const fetchData = async (username: string, password: string) => {
               document.cookie = cookie; // Set received cookies
             });
          }
+         console.log("cookies are" + document.cookie);
 
           
         console.log(response);

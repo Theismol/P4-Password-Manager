@@ -18,7 +18,7 @@ const signup = async (req, res) => {
         else {
          
             const hashedPassword = await bcrypt.hash(password, 10);
-            User.create({ email: email, username: username, password: hashedPassword, mfaSecret: ""});
+            User.create({ email: email, username: username, password: hashedPassword, mfaSecret: "test"});
             res.status(200).json({ message: 'Signup successful!'});
         }
  

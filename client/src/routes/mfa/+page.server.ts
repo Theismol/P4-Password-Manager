@@ -1,31 +1,67 @@
-import type { PageServerLoad } from './$types';
-import speakeasy from "speakeasy";
+import type { PageServerLoad, Actions } from './$types';
 import QRCode from 'qrcode'
 import axios from 'axios';
 
 export const load = (async () => {
-    let data: any;
-    await axios.get('http://localhost:4000/api/auth/generateTOTP')
+    let TOTPResponse: any;
+    let mfaResponse: any;
+    const cookie = document.cookie;
+    console.log("cookie is ", cookie);
+    await axios.get('http://localhost:4000/api/auth/checkMFA')
     .then((response) => {
-      data = response.data; // Assign data inside the then block
+      mfaResponse = response.data;
     })
     .catch((error) => {
       console.error('Error fetching data:', error);
     });
-    await axios.get('http://localhost:4000/api/auth/generateTOTP')
-    .then((response) => {
-      data = response.data; // Assign data inside the then block
-    })
-    .catch((error) => {
-      console.error('Error fetching data:', error);
-    });
-    const qrcode = await generateQR(data.totpCode.secret.otpauth_url);
-    return {totp:data.totpCode.code, secret:data.totpCode.secret.base32, qrcode:qrcode};
+    if (!mfaResponse.mfa) {
+        await axios.get('http://localhost:4000/api/auth/generateTOTP')
+        .then((response) => {
+            TOTPResponse = response.data;
+        })
+        .catch((error) => {
+        console.error('Error fetching data:', error);
+        });
+        const qrcode = await generateQR(TOTPResponse.totpCode.secret.otpauth_url);
+        return {mfa: false,totp:TOTPResponse.totpCode.code, secret:TOTPResponse.totpCode.secret.base32, qrcode:qrcode};
+    }
+    else {
+        return {mfa:true};
+    }
+    
 }) satisfies PageServerLoad;
+export const actions =  { 
+    verifyFirst : async ({request}) => {
+        const formData = await request.formData();
+        const TOTP = formData.get('TOTP') as string;
+        await axios.post('http://localhost:4000/api/auth/verifyTOTPFirstTime', {totp: TOTP})
+        
+        .then((response) => {
+            if (response.data.code == "200") {
+                throw redirect(303,'/mfa');
+            }
+        })
+        .catch((error) => {
+            console.error('Error fetching data:', error);
+        });
+        
+    },
+    verify: async ({request}) => {
+        const formData = await request.formData();
+        const TOTP = formData.get('TOTP') as string;
+        await axios.post('http://localhost:4000/api/auth/verifyTOTP', {totp: TOTP})
+        .then((response) => {
+            if (response.data.code == "200") {
+                throw redirect(303,'/mfa');
+            }
+        })
+        .catch((error) => {
+            console.error('Error fetching data:', error);
+        });
+    
+    }
 
-const generateTOTP = () => {
-
-}
+}satisfies Actions;
 const generateQR = async (key: string) => {
     try {
         return await QRCode.toDataURL(key);
