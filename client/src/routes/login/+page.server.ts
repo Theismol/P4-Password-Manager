@@ -7,11 +7,10 @@ const {
 } = await import('node:crypto');
 
 export const actions =  { 
-    default : async ({request}) => {
+    default : async ({request, cookies}) => {
         const formData = await request.formData();
         const username = formData.get('username') as string;
         const password = formData.get('password') as string;
-
         //console.log("username is ", username)
         //console.log("password is ", password)
 
@@ -56,18 +55,6 @@ const fetchData = async (username: string, password: string) => {
                 password: password
             }
         , {headers: {'Content-Type': 'application/json'}, withCredentials: true});
-
-        const receivedCookies = response.headers['set-cookie'];
-        console.log(response);
-        console.log("receivedCookies is ", receivedCookies)
-        
-      
-        if (receivedCookies) {
-            receivedCookies.forEach((cookie: string) => {
-                document.cookie = cookie; // Set received cookies
-            });
-         }
-         console.log("cookies are" + document.cookie);
 
           
         console.log(response);

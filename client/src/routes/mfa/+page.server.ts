@@ -1,12 +1,10 @@
 import type { PageServerLoad, Actions } from './$types';
 import QRCode from 'qrcode'
 import axios from 'axios';
-
+import { redirect } from '@sveltejs/kit';
 export const load = (async () => {
     let TOTPResponse: any;
     let mfaResponse: any;
-    const cookie = document.cookie;
-    console.log("cookie is ", cookie);
     await axios.get('http://localhost:4000/api/auth/checkMFA')
     .then((response) => {
       mfaResponse = response.data;
@@ -34,11 +32,11 @@ export const actions =  {
     verifyFirst : async ({request}) => {
         const formData = await request.formData();
         const TOTP = formData.get('TOTP') as string;
-        await axios.post('http://localhost:4000/api/auth/verifyTOTPFirstTime', {totp: TOTP})
-        
+        const secret = formData.get('secret') as string;
+        await axios.post('http://localhost:4000/api/auth/verifyTOTPFirstTime', {totp: TOTP, secret: secret})
         .then((response) => {
             if (response.data.code == "200") {
-                throw redirect(303,'/mfa');
+                throw redirect(303,'/passwordStore');
             }
         })
         .catch((error) => {
@@ -52,7 +50,7 @@ export const actions =  {
         await axios.post('http://localhost:4000/api/auth/verifyTOTP', {totp: TOTP})
         .then((response) => {
             if (response.data.code == "200") {
-                throw redirect(303,'/mfa');
+                throw redirect(303,'/passwordStore');
             }
         })
         .catch((error) => {

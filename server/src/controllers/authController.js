@@ -1,5 +1,5 @@
 const bcrypt = require('bcrypt');
-const { generateToken, generateRefreshToken, verifyRefreshToken } = require('../utils/JWT/jwtUtils');
+const { generateToken, generateRefreshToken, verifyRefreshToken, verifyToken } = require('../utils/JWT/jwtUtils');
 const User = require('../models/userModel');
 const jwtModel = require('../models/jwtModel');
 const speakeasy = require('speakeasy');
@@ -7,7 +7,7 @@ require('dotenv').config();
 
 const csrftoken = process.env.CSRF_TOKEN;
 const generateTOTP = async (req, res) => {
-    const jwt = req.body;
+    const jwt = req.cookies.token;
     const decoded_jwt = verifyToken(jwt);
     const user = await User.findOne(decoded_jwt.userId);
     if (!user) {
@@ -17,7 +17,9 @@ const generateTOTP = async (req, res) => {
     res.status(200).json({secret: secret }).send();
 }
 const checkMFA = async (req, res) => {
-    const jwt = req.body;
+    const jwt = req.cookies.token;
+    console.log(req.cookies);
+    console.log(jwt);
     const decoded_jwt = verifyToken(jwt);
     const user = await User.findOne(decoded_jwt.userId);
     if (!user) {
@@ -32,10 +34,11 @@ const checkMFA = async (req, res) => {
 
 }
 const verifyTOTP = async (req, res) => {
-    const {totpToken, jwt} = req.body;
-    let decoded_jwt;
+    const jwt = req.cookies.token;
+    const totpToken = req.body.totp;
+    let decodedJwt;
     try {
-        decoded_jwt = verifyToken(jwt);
+        decodedJwt = verifyToken(jwt);
     } catch (error) {
 
         if (error.name === 'JsonWebTokenError') {
@@ -46,7 +49,7 @@ const verifyTOTP = async (req, res) => {
             return res.status(500).json({ message: 'Internal server error' }).send(); // Internal server error
         }
     }
-    const user = await User.findOne(decoded_jwt.userID);
+    const user = await User.findOne(decodedJwt.userID);
     console.log(user);
     if (!user) {
         return res.status(404).json({ message: 'User not found' }).send();
@@ -84,7 +87,10 @@ const verifyTOTP = async (req, res) => {
         .json({ csrftoken: csrftoken }).send();
 }
 const verifyTOTPFirstTime = async (req, res) => {
-    const {totpToken, jwt,secret} = req.body;
+    const totpToken = req.body.totp;
+    const secret = req.body.secret;
+    const jwt = req.cookies.token;
+    console.log(req.cookies);
     let decoded_jwt;
     try {
         decoded_jwt = verifyToken(jwt);
@@ -154,9 +160,10 @@ const login = async (req, res) => {
         if (!isPasswordValid) {
             return res.status(401).json({ message: 'Invalid password' }).send();
         }
-        const mfa = user.mfaSecret !== "";
+        const mfa = user.mfaSecret !== "test";
         const token = generateToken({ userId: user._id, organistations: user.organizations },300);
-        res.cookie("token", token, {sameSite: 'none', httpOnly: true, secure: true  }).status(200).json({ csrftoken: csrftoken, mfa:mfa }).send();
+        res.cookie("token", token, {sameSite: 'none', httpOnly: true, secure: true  }).
+        status(200).json({ csrftoken: csrftoken, mfa:mfa }).send();
         
 
 
