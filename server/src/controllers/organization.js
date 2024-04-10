@@ -4,6 +4,7 @@ const password = require('../models/passwordModel');
 const user = require('../models/userModel');
 
 
+
 const createOrganization = async (req, res) => {
     const { name } = req.body;
     const { userId } = req.user;
@@ -56,7 +57,44 @@ const createOrganization = async (req, res) => {
 }
 
 const addUserToOrganization = async (req, res) => {
-    
+    const { organistations, userId } = req.user;
+    const { addUser} = req.body;
+
+    console.log(organistations);
+
+    try {
+        const foundorganization = await organization.findById(organistations);
+        if(!foundorganization){
+            res.status(400).json({ message: 'Organization not found' }).send();
+            return;
+        }
+        if(!foundorganization.administrators.includes(userId)){
+            res.status(400).json({ message: 'User is not an administrator' }).send();
+            return;
+        }
+        try{
+            await organization.findOneAndUpdate({ _id: organistations },  { $push: { users: addUser } });
+            res.status(200).json({ message: 'User added to organization' }).send();
+            try{
+                await user.findOneAndUpdate({ _id: addUser },  { organizations: organistations });
+            }catch(error){
+                try{
+                    await organization.findOneAndUpdate({ _id: organistations },  { $pull: { users: addUser } });
+            }catch(error){
+                console.error('Error during adding user to organization:', error);
+                res.status(500).json({ message: 'Internal server error' }).send();
+            }
+        }
+        }catch(error){          
+            console.error('Error during adding user to organization:', error);
+            res.status(500).json({ message: 'Internal server error' }).send();
+        }
+       
+        
+    } catch (error) {
+        console.error('Error during adding user to organization:', error);
+        res.status(500).json({ message: 'Internal server error' }).send();
+    }
 }
 
-module.exports = { createOrganization };
+module.exports = { createOrganization, addUserToOrganization };
