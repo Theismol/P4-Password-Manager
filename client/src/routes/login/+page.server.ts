@@ -64,7 +64,7 @@ const fetchData = async (username: string, password: string) => {
       
         if (receivedCookies) {
             receivedCookies.forEach((cookie: string) => {
-              document.cookie = cookie; // Set received cookies
+                document.cookie = cookie; // Set received cookies
             });
          }
          console.log("cookies are" + document.cookie);
