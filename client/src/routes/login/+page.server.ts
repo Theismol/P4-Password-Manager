@@ -57,8 +57,8 @@ const fetchData = async (username: string, password: string) => {
             }
         , {headers: {'Content-Type': 'application/json'}, withCredentials: true});
 
-        const receivedCookies = response.headers['Set-Cookie'];
-
+        const receivedCookies = response.headers['set-cookie'];
+        console.log(response);
         console.log("receivedCookies is ", receivedCookies)
         
       
