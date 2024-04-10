@@ -2,7 +2,7 @@ const jwtModel = require('../models/jwtModel');
 const organization = require('../models/organizationModel');
 const password = require('../models/passwordModel');
 const user = require('../models/userModel');
-const EmailService = require('../utils/Email/emailService');
+
 
 
 const createOrganization = async (req, res) => {
@@ -57,11 +57,44 @@ const createOrganization = async (req, res) => {
 }
 
 const addUserToOrganization = async (req, res) => {
-    const mailService = new EmailService();
-    const { email, organizationId } = req.body;
-    mailService.sendEmail("nicholas.mazur.hansen@gmail.com", "You have been invited to join an organization", "please doksapod");
-    res.status(200).json({ message: 'Email sent' }).send();
+    const { organistations, userId } = req.user;
+    const { addUser} = req.body;
 
+    console.log(organistations);
+
+    try {
+        const foundorganization = await organization.findById(organistations);
+        if(!foundorganization){
+            res.status(400).json({ message: 'Organization not found' }).send();
+            return;
+        }
+        if(!foundorganization.administrators.includes(userId)){
+            res.status(400).json({ message: 'User is not an administrator' }).send();
+            return;
+        }
+        try{
+            await organization.findOneAndUpdate({ _id: organistations },  { $push: { users: addUser } });
+            res.status(200).json({ message: 'User added to organization' }).send();
+            try{
+                await user.findOneAndUpdate({ _id: addUser },  { organizations: organistations });
+            }catch(error){
+                try{
+                    await organization.findOneAndUpdate({ _id: organistations },  { $pull: { users: addUser } });
+            }catch(error){
+                console.error('Error during adding user to organization:', error);
+                res.status(500).json({ message: 'Internal server error' }).send();
+            }
+        }
+        }catch(error){          
+            console.error('Error during adding user to organization:', error);
+            res.status(500).json({ message: 'Internal server error' }).send();
+        }
+       
+        
+    } catch (error) {
+        console.error('Error during adding user to organization:', error);
+        res.status(500).json({ message: 'Internal server error' }).send();
+    }
 }
 
 module.exports = { createOrganization, addUserToOrganization };

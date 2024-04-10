@@ -7,4 +7,5 @@ const router = express.Router();
 router.post('/createOrganization',authenticateToken ,createOrganization);
 router.post('/addUserToOrganization',authenticateToken ,addUserToOrganization);
 
+
 module.exports = router;
