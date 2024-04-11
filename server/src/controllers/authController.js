@@ -18,6 +18,7 @@ const generateTOTP = async (req, res) => {
 }
 const checkMFA = async (req, res) => {
     const jwt = req.cookies.token;
+    console.log(req);
     console.log(req.cookies);
     console.log(jwt);
     const decoded_jwt = verifyToken(jwt);

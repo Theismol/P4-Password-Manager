@@ -2,10 +2,11 @@ import type { PageServerLoad, Actions } from './$types';
 import QRCode from 'qrcode'
 import axios from 'axios';
 import { redirect } from '@sveltejs/kit';
-export const load = (async () => {
+export const load = (async ({cookies}) => {
     let TOTPResponse: any;
     let mfaResponse: any;
-    await axios.get('http://localhost:4000/api/auth/checkMFA')
+    console.log("cookies are "+ cookies.get("token"));
+    await axios.get('http://localhost:4000/api/auth/checkMFA', {withCredentials: true})
     .then((response) => {
       mfaResponse = response.data;
     })
@@ -13,7 +14,7 @@ export const load = (async () => {
       console.error('Error fetching data:', error);
     });
     if (!mfaResponse.mfa) {
-        await axios.get('http://localhost:4000/api/auth/generateTOTP')
+        await axios.get('http://localhost:4000/api/auth/generateTOTP' , {withCredentials: true})
         .then((response) => {
             TOTPResponse = response.data;
         })
@@ -33,7 +34,7 @@ export const actions =  {
         const formData = await request.formData();
         const TOTP = formData.get('TOTP') as string;
         const secret = formData.get('secret') as string;
-        await axios.post('http://localhost:4000/api/auth/verifyTOTPFirstTime', {totp: TOTP, secret: secret})
+        await axios.post('http://localhost:4000/api/auth/verifyTOTPFirstTime',{ totp: TOTP, secret: secret},{withCredentials: true})
         .then((response) => {
             if (response.data.code == "200") {
                 throw redirect(303,'/passwordStore');
@@ -47,7 +48,7 @@ export const actions =  {
     verify: async ({request}) => {
         const formData = await request.formData();
         const TOTP = formData.get('TOTP') as string;
-        await axios.post('http://localhost:4000/api/auth/verifyTOTP', {totp: TOTP})
+        await axios.post('http://localhost:4000/api/auth/verifyTOTP', {totp: TOTP},{withCredentials: true})
         .then((response) => {
             if (response.data.code == "200") {
                 throw redirect(303,'/passwordStore');

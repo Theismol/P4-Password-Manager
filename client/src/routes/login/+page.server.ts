@@ -18,10 +18,12 @@ export const actions =  {
         
         //console.log("hashedPassword is ", hashedpassword);
 
-        const code = await fetchData(username, hashedpassword);
+        const response = await fetchData(username, hashedpassword);
+        const receivedCookies = response.headers['set-cookie'];
+        console.log("receivedCookies are ", receivedCookies);
+        cookies.set("token", receivedCookies, {path: '/'});
         //console.log("code is BUVI BABA ", code);
-        
-        if (code == "200") {
+        if (response.status == "200") {
             throw redirect(303,'/mfa');
         }
         
@@ -58,7 +60,7 @@ const fetchData = async (username: string, password: string) => {
 
           
         console.log(response);
-        return JSON.stringify(response.status);
+        return response;
         } catch (error) {
         console.error('Error fetching data:', error);
         return error
