@@ -119,7 +119,7 @@ const getPasswords = async (req, res) => {
 
 
     try {
-        const userData = await user.findOne({ _id: userId });
+        const userData = await user.findById({ _id: userId });
 
         try {
             const passwords = await Password.find({ _id: userData.passwords });

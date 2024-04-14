@@ -51,6 +51,8 @@
     "axios": "^1.6.7",
     "highlight.js": "11.9.0",
     "qrcode": "^1.5.3",
-    "speakeasy": "^2.0.0"
+    "speakeasy": "^2.0.0",
+    "flowbite-svelte": "^0.44.24",
+    "flowbite-svelte-icons": "^1.5.0"
   }
 }
