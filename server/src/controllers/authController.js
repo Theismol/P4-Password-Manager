@@ -7,7 +7,7 @@ require('dotenv').config();
 
 const csrftoken = process.env.CSRF_TOKEN;
 const generateTOTP = async (req, res) => {
-    const jwt = req.cookies.token;
+    const jwt = decodeJWT(req.cookies.token);
     const decoded_jwt = verifyToken(jwt);
     const user = await User.findOne(decoded_jwt.userId);
     if (!user) {
@@ -17,16 +17,15 @@ const generateTOTP = async (req, res) => {
     res.status(200).json({secret: secret }).send();
 }
 const checkMFA = async (req, res) => {
-    const jwt = req.cookies.token;
-    console.log(req);
-    console.log(req.cookies);
+    const jwt = await decodeJWT(req.cookies.token);
     console.log(jwt);
     const decoded_jwt = verifyToken(jwt);
-    const user = await User.findOne(decoded_jwt.userId);
+    console.log(decoded_jwt);
+    const user = await User.findById(decoded_jwt.userId);
     if (!user) {
         return res.status(404).json({ message: 'User not found' }).send();
     }
-    if (user.mfaSecret === "") {
+    if (user.mfaSecret === "test") {
         return res.status(200).json({ mfa: false }).send();
     }
     else {
@@ -35,7 +34,7 @@ const checkMFA = async (req, res) => {
 
 }
 const verifyTOTP = async (req, res) => {
-    const jwt = req.cookies.token;
+    const jwt = decodeJWT(req.cookies.token);
     const totpToken = req.body.totp;
     let decodedJwt;
     try {
@@ -50,7 +49,7 @@ const verifyTOTP = async (req, res) => {
             return res.status(500).json({ message: 'Internal server error' }).send(); // Internal server error
         }
     }
-    const user = await User.findOne(decodedJwt.userID);
+    const user = await User.findById(decodedJwt.userID);
     console.log(user);
     if (!user) {
         return res.status(404).json({ message: 'User not found' }).send();
@@ -90,7 +89,7 @@ const verifyTOTP = async (req, res) => {
 const verifyTOTPFirstTime = async (req, res) => {
     const totpToken = req.body.totp;
     const secret = req.body.secret;
-    const jwt = req.cookies.token;
+    const jwt = decodeJWT(req.cookies.token);
     console.log(req.cookies);
     let decoded_jwt;
     try {
@@ -105,7 +104,7 @@ const verifyTOTPFirstTime = async (req, res) => {
             return res.status(500).json({ message: 'Internal server error' }).send(); // Internal server error
         }
     }
-    const user = await User.findOne(decoded_jwt.userID);
+    const user = await User.findById(decoded_jwt.userID);
     console.log(user);
     if (!user) {
         return res.status(404).json({ message: 'User not found' }).send();
@@ -210,6 +209,13 @@ const logout = async (req, res) => {
         console.error('Error during logout:', error);
         res.status(500).json({ message: 'Internal server error' }).send();
     }
+}
+const decodeJWT = async ( jwt) => {
+    const startIndex = jwt.indexOf('=') + 1;
+    const endIndex = jwt.indexOf(';');
+    const token = jwt.substring(startIndex, endIndex);
+
+    return token;
 }
 
 

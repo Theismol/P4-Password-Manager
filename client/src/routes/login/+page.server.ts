@@ -7,25 +7,40 @@ const {
 } = await import('node:crypto');
 
 export const actions =  { 
-    default : async ({request, cookies}) => {
+    default : async ({request, cookies, fetch}) => {
         const formData = await request.formData();
         const username = formData.get('username') as string;
         const password = formData.get('password') as string;
+        let status;
         //console.log("username is ", username)
         //console.log("password is ", password)
 
         const hashedpassword:any = await hashPassword(password);
         
         //console.log("hashedPassword is ", hashedpassword);
-
-        const response = await fetchData(username, hashedpassword);
-        const receivedCookies = response.headers['set-cookie'];
-        console.log("receivedCookies are ", receivedCookies);
-        cookies.set("token", receivedCookies, {path: '/'});
-        //console.log("code is BUVI BABA ", code);
-        if (response.status == "200") {
+        try {
+            const response = await fetch('http://localhost:4000/api/auth/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+              },
+            body : JSON.stringify({username: username, password: hashedpassword}),
+            });
+            const result = await response.json();
+            console.log("result is ");
+            console.log(result);
+            console.log(response.status);
+            status = response.status;
+            cookies.set('token', response.headers.get('set-cookie'), {path: '/'});
+            //console.log("code is BUVI BABA ", code);
+        }
+        catch(error) {
+            console.log(error);
+        }
+        if (status == 200) {
             throw redirect(303,'/mfa');
         }
+
         
 
     }
@@ -47,24 +62,4 @@ const hashPassword = async (password: string) => {
     
     
 }
-
-const fetchData = async (username: string, password: string) => {
-    try {
-        const response = await axios.post(
-            'http://localhost:4000/api/auth/login',
-            {
-                username: username,
-                password: password
-            }
-        , {headers: {'Content-Type': 'application/json'}, withCredentials: true});
-
-          
-        console.log(response);
-        return response;
-        } catch (error) {
-        console.error('Error fetching data:', error);
-        return error
-    }
-}
-
 
