@@ -13,6 +13,7 @@ function App() {
           <Route path="hi" element={<h1>asdasd</h1>} />
         </Route>
         <Route path="login" element={<Login/>}/>
+        <Route path="signup" element={<Signup/>}/>
         <Route path="*" element={<h1>not found</h1>} />
       </Routes>
 
