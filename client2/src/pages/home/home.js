@@ -1,4 +1,5 @@
 import React from "react";
+import logo from "../../assets/images/logo.png";
 
 
 function Home() {
@@ -6,7 +7,8 @@ function Home() {
     
     return (
         <div>
-            <h1>Homeie</h1>
+            <img src={logo} alt="logo" />
+
         </div>
     );
 }

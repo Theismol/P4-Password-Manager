@@ -11,8 +11,8 @@ function HomeNavBar() {
                     Home
                 </Typography>
                 <Button color="inherit" component={Link} to="/home">Home</Button>
-                <Button color="inherit" component={Link} to="/home/blog">Blog</Button>
-                <Button color="inherit" component={Link} to="/about">About</Button>
+                <Button color="inherit" component={Link} to="/signup">sign up</Button>
+                <Button color="inherit" component={Link} to="/login">login</Button>
             </Toolbar>
         </AppBar>
         </div>

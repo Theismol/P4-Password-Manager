@@ -6,7 +6,7 @@ const HomeLayout = ({ children }) => {
     return (
         <div>
             <HomeNavBar />
-            <h1>Home Layout</h1>
+
             <Outlet />
             {children}
         </div>
