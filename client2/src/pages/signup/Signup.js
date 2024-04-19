@@ -18,7 +18,7 @@ export default function SignUp() {
         const data = new FormData(event.currentTarget);
         const password = hashPassword(data.get("password"));
 
-/*         axios.post('http://localhost:4000/api/signup', {
+        axios.post('http://localhost:4000/api/signup', {
             email: data.get("email"),
             username: data.get("username"),
             password: hashPassword(data.get("password")),
@@ -28,7 +28,7 @@ export default function SignUp() {
         }).catch((error) => {
             setMessage = error.response.data.message;
             setError(true);
-        }); */
+        });
     };
 
     return (
