@@ -162,7 +162,7 @@ const login = async (req, res) => {
         }
         const mfa = user.mfaSecret !== "test";
         const token = generateToken({ userId: user._id, organistations: user.organizations },300);
-        res.cookie("token", token, {sameSite: 'none', httpOnly: true, secure: true  }).
+        res.cookie("token", token, { httpOnly: true, secure: true  }).
         status(200).json({ csrftoken: csrftoken, mfa:mfa }).send();
         
 
