@@ -10,9 +10,11 @@ import logo from "../../assets/images/logo.png";
 import hashPassword from "../../services/passwordHash";
 
 export default function SignUp() {
+    const [error, setError] = React.useState(null);
     const handleSubmit = (event) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
+        
         console.log({
             username: data.get("username"),
             email: data.get("email"),
