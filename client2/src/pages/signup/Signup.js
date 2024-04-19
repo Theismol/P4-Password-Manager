@@ -7,6 +7,7 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import logo from "../../assets/images/logo.png";
+import hashPassword from "../../services/passwordHash";
 
 export default function SignUp() {
     const handleSubmit = (event) => {
@@ -15,7 +16,7 @@ export default function SignUp() {
         console.log({
             username: data.get("username"),
             email: data.get("email"),
-            password: data.get("password"),
+            password: hashPassword(data.get("password")),
         });
     };
 
@@ -86,7 +87,7 @@ export default function SignUp() {
                                 fullWidth
                                 name="confirmPassword"
                                 label="Confirm Password"
-                                type="confirmPassword"
+                                type="password"
                                 id="confirmPassword"
                             />
                         </Grid>
