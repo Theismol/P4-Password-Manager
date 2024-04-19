@@ -8,18 +8,27 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import logo from "../../assets/images/logo.png";
 import hashPassword from "../../services/passwordHash";
+import axios from "axios";
 
 export default function SignUp() {
-    const [error, setError] = React.useState(null);
+    const [error, setError] = React.useState(false);
+    const [message, setMessage] = React.useState("");
     const handleSubmit = (event) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
-        
-        console.log({
-            username: data.get("username"),
+        const password = hashPassword(data.get("password"));
+
+/*         axios.post('http://localhost:4000/api/signup', {
             email: data.get("email"),
+            username: data.get("username"),
             password: hashPassword(data.get("password")),
-        });
+        }).then((response) => {
+            setMessage = response.data.message;
+            setError(false);
+        }).catch((error) => {
+            setMessage = error.response.data.message;
+            setError(true);
+        }); */
     };
 
     return (
