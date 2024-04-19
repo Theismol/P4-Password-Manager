@@ -13,7 +13,11 @@
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
+<<<<<<< HEAD
     "crypto-js": "^4.2.0",
+=======
+    "axios": "^1.6.8",
+>>>>>>> c02c44fe82476d59dfc4c2cb14c4d02fdec5fa99
     "install": "^0.13.0",
     "npm": "^10.5.2",
     "react": "^18.2.0",

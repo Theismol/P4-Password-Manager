@@ -25,8 +25,8 @@ export default function Login() {
             <Box
                 component="img"
                 sx={{
-                    height: 2/4,
-                    width: 2/4,
+                    height: 2 / 4,
+                    width: 2 / 4,
                 }}
                 alt="AccessArmor Logo"
                 src={logo}
@@ -37,6 +37,7 @@ export default function Login() {
                     display: "flex",
                     flexDirection: "column",
                     alignItems: "center",
+                    margin: "auto",
                 }}
             >
                 <Typography component="h1" variant="h4">
@@ -70,6 +71,7 @@ export default function Login() {
                         type="submit"
                         fullWidth
                         variant="contained"
+                        color="primary"
                         sx={{ mt: 3, mb: 2 }}
                     >
                         Sign In
