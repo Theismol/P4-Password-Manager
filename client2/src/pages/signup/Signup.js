@@ -9,33 +9,73 @@ import Container from "@mui/material/Container";
 import logo from "../../assets/images/logo.png";
 import hashPassword from "../../services/passwordHash";
 import axios from "axios";
+import { Snackbar } from "@mui/material";
+import {Alert} from "@mui/material";
+import {z} from "zod";
+
 
 export default function SignUp() {
     const [error, setError] = React.useState(false);
-    const [message, setMessage] = React.useState("");
-    const handleSubmit = (event) => {
+    const [open, setOpen] = React.useState(false);
+    const [alertMessage, setAlertMessage] = React.useState("");
+    //Zod object that validates the form data. We can add minimum length to password/usernames later and custom error messages for each field
+    const signupSchema = z.object({
+        email: z.string().email().min(5), 
+        username: z.string(),
+        password: z.string(),
+        confirmPassword: z.string(),
+    }).refine(data => data.password === data.confirmPassword, {
+        message: "Passwords do not match",
+    })
+    const handleSubmit = async (event) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
-        const password = hashPassword(data.get("password"));
-
-/*         axios.post('http://localhost:4000/api/signup', {
-            email: data.get("email"),
-            username: data.get("username"),
-            password: hashPassword(data.get("password")),
-        }).then((response) => {
-            setMessage = response.data.message;
-            setError(false);
-        }).catch((error) => {
-            setMessage = error.response.data.message;
+        let validatedForm
+        try {
+            validatedForm = signupSchema.parse({
+                email: data.get("email"),
+                username: data.get("username"),
+                password: data.get("password"),
+                confirmPassword: data.get("confirmPassword"),
+            });
+        }
+        catch (error) {
+            setAlertMessage(error.issues[0].message);
+            setOpen(true);
             setError(true);
-        }); */
+            return
+        }
+        const password = await hashPassword(validatedForm.password);
+        console.log(password);
+        axios.post('http://localhost:4000/api/signup', {
+            email: validatedForm.email,
+            username: validatedForm.username,
+            password: password,
+        }).then((response) => {
+            setAlertMessage(response.data.message);
+            setError(false);
+            setOpen(true);
+        }).catch((error) => {
+            setAlertMessage(error.response.data.message);
+            setError(true);
+            setOpen(true);
+        });
     };
+    const handleClose = () => {
+        setOpen(false);
+        if (!error) {
+            window.location.href = "/login";
+        }
+    }
 
     return (
         <Container component="main" sx={{
             display: "flex",
         
         }} maxWidth="xl">
+            {open ? <Snackbar open={open} autoHideDuration={1000} onClose={handleClose} anchorOrigin={{vertical: "top", horizontal: "right"}}>
+                <Alert severity={error ? "error" : "success"} variant="filled">{alertMessage}</Alert>
+            </Snackbar> : null}
             <Box
                 component="img"
                 sx={{
@@ -51,6 +91,7 @@ export default function SignUp() {
                     display: "flex",
                     flexDirection: "column",
                     alignItems: "center",
+                    margin: "auto",
                 }}
             >
                 <Typography component="h1" variant="h4">
