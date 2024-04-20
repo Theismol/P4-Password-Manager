@@ -6,6 +6,7 @@ import Signup from "./pages/signup/Signup";
 import Test from "./pages/test/Test";
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
+import MFAPage from "./pages/mfa/MFAPage";
 
 const darkTheme = createTheme({
     palette: {
@@ -35,6 +36,7 @@ function App() {
                 </Route>
                 <Route path="login" element={<Login />} />
                 <Route path="signup" element={<Signup />} />
+                <Route path="mfa" element={<MFAPage/>} />
                 <Route path="test" element={<Test />} />
                 <Route path="*" element={<h1>not found</h1>} />
             </Routes>

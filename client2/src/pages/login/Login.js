@@ -7,13 +7,8 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import logo from "../../assets/images/logo.png";
-import hashPassword from "../../services/passwordHash";
-import axios from "axios";
 
 export default function Login() {
-    const [state, setState] = React.useState({
-        errorText: "",
-      });
     const handleSubmit = (event) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
@@ -21,28 +16,7 @@ export default function Login() {
             username: data.get("username"),
             password: data.get("password"),
         });
-        const hashedPassword = hashPassword(data.get("password"));
-        console.log("Hashed password: ", hashedPassword);
-        
-        axios
-            .post("http://localhost:4000/api/auth/login", {
-                username: data.get("username"),
-                password: hashedPassword,
-            })
-            .then((response) => {
-                console.log("Response: ", response);
-            })
-            .catch((error) => {
-                console.error("Error: ", error);
-                setState({
-                    errorText: "An error occurred"
-                  })
-            });
-
-
     };
-
-
 
     return (
         <Container component="main" sx={{

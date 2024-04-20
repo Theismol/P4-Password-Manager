@@ -6,31 +6,27 @@ const speakeasy = require('speakeasy');
 require('dotenv').config();
 
 const csrftoken = process.env.CSRF_TOKEN;
-const generateTOTP = async (req, res) => {
-    const jwt = decodeJWT(req.cookies.token);
-    const decoded_jwt = verifyToken(jwt);
-    const user = await User.findOne(decoded_jwt.userId);
-    if (!user) {
-        return res.status(404).json({ message: 'User not found' }).send();
-    }
-    const secret = speakeasy.generateSecret({ length: 20, name: 'AccessArmor'});
-    res.status(200).json({secret: secret }).send();
-}
 const checkMFA = async (req, res) => {
-    const jwt = await decodeJWT(req.cookies.token);
+    const secret = speakeasy.generateSecret({ length: 20, name: 'AccessArmor'});
+    console.log("hello");
+    res.status(200).json({ mfa: false, secret: secret }).send();
+/*     const jwt = await decodeJWT(req.cookies.token);
     console.log(jwt);
     const decoded_jwt = verifyToken(jwt);
     console.log(decoded_jwt);
-    const user = await User.findById(decoded_jwt.userId);
-    if (!user) {
+    let user;
+    try {
+        user = await User.findById(decoded_jwt.userId);
+    }
+    catch (error) {
         return res.status(404).json({ message: 'User not found' }).send();
     }
+    //This should be changed so the string is empty instead probably, but then the field cannot be required :(
     if (user.mfaSecret === "test") {
-        return res.status(200).json({ mfa: false }).send();
     }
     else {
         return res.status(200).json({ mfa: true }).send();
-    }
+    } */
 
 }
 const verifyTOTP = async (req, res) => {
@@ -219,4 +215,4 @@ const decodeJWT = async ( jwt) => {
 }
 
 
-module.exports = { login, tokenRefresh, logout,verifyTOTPFirstTime, verifyTOTP, generateTOTP, checkMFA};
+module.exports = { login, tokenRefresh, logout,verifyTOTPFirstTime, verifyTOTP, checkMFA};
