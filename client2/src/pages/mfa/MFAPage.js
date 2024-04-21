@@ -12,6 +12,7 @@ export default function MFAPage() {
     const [MFAEnabled, setMFAEnabled] = React.useState(false);
     const [open, setOpen] = React.useState(false);
     const [alertMessage, setAlertMessage] = React.useState("");
+    const [isLoading, setIsLoading] = React.useState(true);
     useEffect(() => {
         (async function () {
             try {
@@ -28,12 +29,14 @@ export default function MFAPage() {
                                     response.data.secret.otpauth_url
                                 );
                                 setQrCode(qrCodeURL);
+                                setIsLoading(false);
                             } catch (err) {
                                 console.error(err);
                             }
                             setMFAEnabled(false);
                         } else {
                             setMFAEnabled(true);
+                            setIsLoading(false);
                         }
                     })
                     .catch(async (error) => {
@@ -48,9 +51,43 @@ export default function MFAPage() {
     }, []);
     const handleClose = () => {
         setOpen(false);
-        //window.location.href = "/login";
+        if (alertMessage !== "Token is invalid") {
+            return
+/*             window.location.href = "/login"; */
+        }
     };
-    const handleSubmit = async (event) => {
+    const handleCreateTOTP = async (event) => {
+        const data = new FormData(event.currentTarget);
+        axios
+            .post("http://localhost:4000/api/auth/verifyTOTPFirstTime", {
+                totp: data.get("TOTP"),
+                withCredentials: true,
+            })
+            .then((response) => {
+                window.location.href = "/home";
+
+            })
+            .catch((error) => {
+                setAlertMessage(error.response.data.message);
+                setOpen(true);
+            });
+
+        return;
+    };
+    const handleVerifyTOTP = async (event) => {
+        const data = new FormData(event.currentTarget);
+        axios
+            .post("http://localhost:4000/api/auth/verifyTOTP", {
+                totp: data.get("TOTP"),
+                withCredentials: true,
+            })
+            .then((response) => {
+                window.location.href = "/home";
+            })
+            .catch((error) => {
+                setAlertMessage(error.response.data.message);
+                setOpen(true);
+            });
         return;
     }
     const generateQRCode = (url) => {
@@ -65,70 +102,125 @@ export default function MFAPage() {
                 });
         });
     };
-    return (
-        <Container
-            component="main"
-            sx={{
-                display: "flex",
-                justifyContent: "center", // Horizontally center the content
-                alignItems: "center", // Vertically center the content
-                minHeight: "100vh", // Ensure the container covers the full viewport height
-            }}
-            maxWidth="xl"
-        >
-            {open ? (
-                <Snackbar
-                    open={open}
-                    autoHideDuration={1000}
-                    onClose={handleClose}
-                    anchorOrigin={{ vertical: "top", horizontal: "right" }}
-                >
-                    <Alert severity="error" variant="filled">
-                        {alertMessage}
-                    </Alert>
-                </Snackbar>
-            ) : null}
-            <Box
+    if (isLoading) {
+        return <div>Loading...</div>;
+    }
+    if (!MFAEnabled) {
+        return (
+            <Container
+                component="main"
                 sx={{
                     display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    margin: "auto",
-                    gap: 1,
+                    justifyContent: "center", // Horizontally center the content
+                    alignItems: "center", // Vertically center the content
+                    minHeight: "100vh", // Ensure the container covers the full viewport height
                 }}
+                maxWidth="xl"
             >
-                <Typography component="h1" variant="h4">
-                    Scan the QR code below with your authenticator app or enter
-                    the secret
-                </Typography>
-                <Typography component="h1" variant="h5">
-                    {secret}
-                </Typography>
-                <Box component="img" alt="TOTP QR Code" src={qrCode} />
-                <Box
-                    component="form"
-                    noValidate
-                    onSubmit={handleSubmit}
-                    sx={{ mt: 3 }}
-                >
-                    <TextField
-                        name="TOTP"
-                        required
-                        fullWidth
-                        id="TOTP"
-                        label="Enter your code here"
-                        autoFocus
-                    ></TextField>
-                    <Button
-                        type="submit"
-                        fullWidth
-                        variant="contained"
-                        sx={{ mt: 3, mb: 2 }}
+                {open ? (
+                    <Snackbar
+                        open={open}
+                        autoHideDuration={1000}
+                        onClose={handleClose}
+                        anchorOrigin={{ vertical: "top", horizontal: "right" }}
                     >
-                        Verify
-                    </Button>
+                        <Alert severity="error" variant="filled">
+                            {alertMessage}
+                        </Alert>
+                    </Snackbar>
+                ) : null}
+                <Box
+                    sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        margin: "auto",
+                        gap: 1,
+                    }}
+                >
+                    <Typography component="h1" variant="h4">
+                        Scan the QR code below with your authenticator app or
+                        enter the secret
+                    </Typography>
+                    <Typography component="h1" variant="h5">
+                        {secret}
+                    </Typography>
+                    <Box component="img" alt="TOTP QR Code" src={qrCode} />
+                    <Box
+                        component="form"
+                        noValidate
+                        onSubmit={handleCreateTOTP}
+                        sx={{ mt: 3 }}
+                    >
+                        <TextField
+                            name="TOTP"
+                            required
+                            fullWidth
+                            id="TOTP"
+                            label="Enter your code here"
+                            autoFocus
+                        ></TextField>
+                        <Button
+                            type="submit"
+                            fullWidth
+                            variant="contained"
+                            sx={{ mt: 3, mb: 2 }}
+                        >
+                            Verify
+                        </Button>
+                    </Box>
                 </Box>
-            </Box>
-        </Container>
-    );
+            </Container>
+        );
+    } else {
+        return (
+            <Container
+                component="main"
+                sx={{
+                    display: "flex",
+                    justifyContent: "center", // Horizontally center the content
+                    alignItems: "center", // Vertically center the content
+                    minHeight: "100vh", // Ensure the container covers the full viewport height
+                }}
+                maxWidth="xl"
+            >
+                <Box
+                    sx={{
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        margin: "auto",
+                        gap: 1,
+                    }}
+                >
+                    <Typography component="h1" variant="h4">
+                        Enter the code from your authenticator app
+                    </Typography>
+                    <Box
+                        component="form"
+                        noValidate
+                        onSubmit={handleVerifyTOTP}
+                        sx={{ mt: 3 }}
+                    >
+                        <TextField
+                            name="TOTP"
+                            required
+                            fullWidth
+                            id="TOTP"
+                            label="Enter your code here"
+                            autoFocus
+                        ></TextField>
+                        <Button
+                            type="submit"
+                            fullWidth
+                            variant="contained"
+                            sx={{ mt: 3, mb: 2 }}
+                        >
+                            Verify
+                        </Button>
+                    </Box>
+                </Box>
+            </Container>
+        );
+    }
 }
