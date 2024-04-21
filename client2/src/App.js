@@ -4,6 +4,7 @@ import HomeLayout from "./components/Layout/homeLayout";
 import Login from "./pages/login/Login";
 import Signup from "./pages/signup/Signup";
 import Test from "./pages/test/Test";
+import Org from "./pages/org/Org";
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 
@@ -16,7 +17,7 @@ const darkTheme = createTheme({
         },
         background: {
             default: '#08192c', // Default background color for dark mode
-            paper: '#424242', // Paper background color
+            paper: '#6166ed', // Paper background color
             input: '#fff', // Input background color
         },
     },
@@ -36,6 +37,7 @@ function App() {
                 <Route path="login" element={<Login />} />
                 <Route path="signup" element={<Signup />} />
                 <Route path="test" element={<Test />} />
+                <Route path="org" element={<Org />} />
                 <Route path="*" element={<h1>not found</h1>} />
             </Routes>
         </ThemeProvider>
