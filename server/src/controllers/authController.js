@@ -12,17 +12,15 @@ require("dotenv").config();
 
 const csrftoken = process.env.CSRF_TOKEN;
 const checkMFA = async (req, res) => {
-    res.status(200).json({ mfa: true });
-/*     const jwt = await decodeJWT(req.cookies.token);
-    console.log(jwt);
+    const jwt = await req.cookies.token;
     const decoded_jwt = verifyToken(jwt);
-    console.log(decoded_jwt);
     let user;
     try {
         user = await User.findById(decoded_jwt.userId);
     } catch (error) {
         return res.status(404).json({ message: "User not found" }).send();
     }
+    console.log(user);
     //This should be changed so the string is empty instead probably, but then the field cannot be required :(
     if (user.mfaSecret === "test") {
         const secret = speakeasy.generateSecret({
@@ -31,11 +29,11 @@ const checkMFA = async (req, res) => {
         });
         res.status(200).json({ mfa: false, secret: secret }).send();
     } else {
-        return res.status(200).json({ mfa: true }).send();
-    } */
+        return res.status(200).json({ mfa: true });
+    }
 };
 const verifyTOTP = async (req, res) => {
-    const jwt = decodeJWT(req.cookies.token);
+    const jwt = req.cookies.token;
     const totpToken = req.body.totp;
     let decodedJwt;
     try {
@@ -52,7 +50,7 @@ const verifyTOTP = async (req, res) => {
                 .send(); // Internal server error
         }
     }
-    const user = await User.findById(decodedJwt.userID);
+    const user = await User.findById(decodedJwt.userId);
     if (!user) {
         return res.status(404).json({ message: "User not found" }).send();
     }
@@ -62,8 +60,16 @@ const verifyTOTP = async (req, res) => {
         token: totpToken,
     });
     if (!verified) {
-        res.status(401).json({ message: "Token is invalid" }).send();
+        return res.status(401).json({ message: "Token is invalid" }).send();
     }
+    const token = generateToken(
+        { userId: user._id, organistations: user.organizations },
+        3600
+    );
+    const refreshToken = generateRefreshToken({
+        userId: user._id,
+        organistations: user.organizations,
+    });
     try {
         await jwtModel.create({
             name: user.username,
@@ -78,26 +84,17 @@ const verifyTOTP = async (req, res) => {
                 );
             } catch (error) {
                 console.error("Error during token creation:", error);
-                res.status(500)
+                return res.status(500)
                     .json({ message: "Internal server error" })
                     .send();
             }
         } else {
             console.error("Error during token creation:", error);
-            res.status(500).json({ message: "Internal server error" }).send();
+            return res.status(500).json({ message: "Internal server error" }).send();
         }
     }
-    const token = generateToken(
-        { userId: user._id, organistations: user.organizations },
-        3600
-    );
-    const refreshToken = generateRefreshToken({
-        userId: user._id,
-        organistations: user.organizations,
-    });
-    console.log("Token:", csrftoken);
-    console.log("Token:" + token + "\nRefreshToken:" + refreshToken);
-    res.clearCookie("token").cookie("token", token, {
+
+    res.cookie("token", token, {
         sameSite: "none",
         httpOnly: true,
         secure: true,
@@ -108,16 +105,14 @@ const verifyTOTP = async (req, res) => {
             secure: true,
         })
         .status(200)
-        .json({ csrftoken: csrftoken })
-        .send();
+        .json({ csrftoken: csrftoken });
 };
 
 
 const verifyTOTPFirstTime = async (req, res) => {
     const totpToken = req.body.totp;
     const secret = req.body.secret;
-    const jwt = decodeJWT(req.cookies.token);
-    console.log(req.cookies);
+    const jwt = req.cookies.token;
     let decoded_jwt;
     try {
         decoded_jwt = verifyToken(jwt);
@@ -133,21 +128,36 @@ const verifyTOTPFirstTime = async (req, res) => {
                 .send(); // Internal server error
         }
     }
-    const user = await User.findById(decoded_jwt.userID);
-    console.log(user);
+    const user = await User.findById(decoded_jwt.userId);
     if (!user) {
         return res.status(404).json({ message: "User not found" }).send();
     }
-
+    const token = generateToken(
+        { userId: user._id, organistations: user.organizations },
+        3600
+    );
+    const refreshToken = generateRefreshToken({
+        userId: user._id,
+        organistations: user.organizations,
+    });
     const verified = speakeasy.totp.verify({
-        secret: secret.base32,
+        secret: secret,
         encoding: "base32",
         token: totpToken,
     });
     if (!verified) {
-        res.status(401).json({ message: "Token is invalid" }).send();
+        return res.status(401).json({ message: "Token is invalid" }).send();
     } else {
-        User.findOneAndUpdate({ _id: user._id }, { mfaSecret: user.mfaSecret });
+        console.log("updating secret" + secret);
+        try {
+            user.mfaSecret = secret;
+            user.save();
+
+        }
+        catch (err) {
+            console.log(err);
+
+        }
     }
     try {
         await jwtModel.create({
@@ -163,26 +173,16 @@ const verifyTOTPFirstTime = async (req, res) => {
                 );
             } catch (error) {
                 console.error("Error during token creation:", error);
-                res.status(500)
+                return res.status(500)
                     .json({ message: "Internal server error" })
                     .send();
             }
         } else {
             console.error("Error during token creation:", error);
-            res.status(500).json({ message: "Internal server error" }).send();
+            return res.status(500).json({ message: "Internal server error" }).send();
         }
     }
-    const token = generateToken(
-        { userId: user._id, organistations: user.organizations },
-        3600
-    );
-    const refreshToken = generateRefreshToken({
-        userId: user._id,
-        organistations: user.organizations,
-    });
-    console.log("Token:", csrftoken);
-    console.log("Token:" + token + "\nRefreshToken:" + refreshToken);
-    res.clearCookie("token").cookie("token", token, {
+    res.cookie("token", token, {
         sameSite: "none",
         httpOnly: true,
         secure: true,
@@ -194,7 +194,6 @@ const verifyTOTPFirstTime = async (req, res) => {
         })
         .status(200)
         .json({ csrftoken: csrftoken })
-        .send();
 };
 
 
@@ -209,14 +208,13 @@ const login = async (req, res) => {
         const mfa = user.mfaSecret !== "test";
         const token = generateToken(
             { userId: user._id, organistations: user.organizations },
-            300
+            3600
         );
-        res.cookie("token", token, { httpOnly: true, secure: true })
+        return res.cookie("token", token, {sameSite: "none", httpOnly: true, secure: true })
             .status(200)
-            .json({ csrftoken: csrftoken, mfa: mfa })
-            .send();
+            .json({ csrftoken: csrftoken, mfa: mfa });
     } catch (error) {
-        res.status(500).json({ message: "Error during login" }).send();
+        return res.status(500).json({ message: "Error during login" }).send();
     }
 };
 
@@ -264,13 +262,6 @@ const logout = async (req, res) => {
         console.error("Error during logout:", error);
         res.status(500).json({ message: "Internal server error" }).send();
     }
-};
-const decodeJWT = async (jwt) => {
-    const startIndex = jwt.indexOf("=") + 1;
-    const endIndex = jwt.indexOf(";");
-    const token = jwt.substring(startIndex, endIndex);
-
-    return token;
 };
 
 module.exports = {

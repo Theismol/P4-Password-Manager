@@ -40,7 +40,6 @@ export default function MFAPage() {
                         }
                     })
                     .catch(async (error) => {
-                        console.log(error);
                         setAlertMessage(error.response.data.message);
                         setOpen(true);
                     });
@@ -52,20 +51,25 @@ export default function MFAPage() {
     const handleClose = () => {
         setOpen(false);
         if (alertMessage !== "Token is invalid") {
-            return
-/*             window.location.href = "/login"; */
+            window.location.href = "/login";
         }
     };
     const handleCreateTOTP = async (event) => {
+        event.preventDefault();
         const data = new FormData(event.currentTarget);
         axios
-            .post("http://localhost:4000/api/auth/verifyTOTPFirstTime", {
-                totp: data.get("TOTP"),
-                withCredentials: true,
-            })
+            .post(
+                "http://localhost:4000/api/auth/verifyTOTPFirstTime",
+                {
+                    totp: data.get("TOTP"),
+                    secret: secret,
+                },
+                {
+                    withCredentials: true,
+                }
+            )
             .then((response) => {
                 window.location.href = "/home";
-
             })
             .catch((error) => {
                 setAlertMessage(error.response.data.message);
@@ -75,21 +79,28 @@ export default function MFAPage() {
         return;
     };
     const handleVerifyTOTP = async (event) => {
+        event.preventDefault();
         const data = new FormData(event.currentTarget);
         axios
-            .post("http://localhost:4000/api/auth/verifyTOTP", {
-                totp: data.get("TOTP"),
-                withCredentials: true,
-            })
+            .post(
+                "http://localhost:4000/api/auth/verifyTOTP",
+                {
+                    totp: data.get("TOTP"),
+                },
+                {
+                    withCredentials: true,
+                }
+            )
             .then((response) => {
                 window.location.href = "/home";
             })
             .catch((error) => {
+                console.log(error);
                 setAlertMessage(error.response.data.message);
                 setOpen(true);
             });
         return;
-    }
+    };
     const generateQRCode = (url) => {
         return new Promise((resolve, reject) => {
             QRCode.toDataURL(url)
@@ -184,6 +195,18 @@ export default function MFAPage() {
                 }}
                 maxWidth="xl"
             >
+                {open ? (
+                    <Snackbar
+                        open={open}
+                        autoHideDuration={1000}
+                        onClose={handleClose}
+                        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+                    >
+                        <Alert severity="error" variant="filled">
+                            {alertMessage}
+                        </Alert>
+                    </Snackbar>
+                ) : null}
                 <Box
                     sx={{
                         display: "flex",
