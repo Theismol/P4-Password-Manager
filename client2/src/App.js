@@ -7,6 +7,7 @@ import Test from "./pages/test/Test";
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import MFAPage from "./pages/mfa/MFAPage";
+import PasswordTable from "./pages/PasswordBank/PasswordTable";
 
 const darkTheme = createTheme({
     palette: {
@@ -38,6 +39,7 @@ function App() {
                 <Route path="signup" element={<Signup />} />
                 <Route path="mfa" element={<MFAPage/>} />
                 <Route path="test" element={<Test />} />
+                <Route path="passwordBank" element={<PasswordTable/>} />
                 <Route path="*" element={<h1>not found</h1>} />
             </Routes>
         </ThemeProvider>
