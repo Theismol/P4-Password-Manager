@@ -1,5 +1,6 @@
 const Password = require('../models/passwordModel.js');
 const user = require('../models/userModel.js');
+const incomingPassword = require('../models/incomingPasswordsModel.js');
 
 const getAllPasswords = async (req, res) => {
     try {
@@ -116,18 +117,26 @@ const deletePassword = async (req, res) => {
 
 const getPasswords = async (req, res) => {
     const { userId } = req.user;
-
+    let passwords;
+    let incomingPasswords;
 
     try {
         const userData = await user.findById({ _id: userId });
 
         try {
-            const passwords = await Password.find({ _id: userData.passwords });
+            passwords = await Password.find({ _id: userData.passwords });
             res.status(200).json(passwords).send();
         } catch (error) {
             console.error('Error during fetchiƒng passwords:', error);
             res.status(500).json({ message: 'Internal server error' }).send();
         }
+        try {
+            incomingPasswords = await incomingPassword.find({to: userData})
+        }
+        catch (error) {
+            incomingPasswords = null;
+        }
+        res.status(200).json({passwords: passwords, incomingPasswords: incomingPasswords});
     }
     catch (error) {
         console.error('Error during fetching passwords:', error);
@@ -135,5 +144,50 @@ const getPasswords = async (req, res) => {
     }
 }
 
+const sendPassword = async (req, res) => {
+    const toUser = req.body.user;
+    const password = req.body.password;
+    const jwt = req.cookies.token;
+    let decodedJwt;
+    let fromUser;
+    let toUserObject;
+    try {
+        decodedJwt = verifyToken(jwt);
+    } catch (error) {
+        if (error.name === "JsonWebTokenError") {
+            return res.status(401).json({ message: "Invalid token" }).send(); // Unauthorized
+        } else if (error.name === "TokenExpiredError") {
+            return res.status(401).json({ message: "Token expired" }).send(); // Unauthorized
+        } else {
+            return res
+                .status(500).json({ message: "Internal server error" }).send(); // Internal server error
+        }
+    }
+    try {
+        fromUser = await user.findById(decodedJwt.userId);
+        toUserObject = await user.findOne({username: toUser});
+        if (fromUser.organizations !== toUserObject.organizations) {
+            return res.status(500).json({ message: "User not in same organization" }).send();
+        }
+        try {
+            const newIncomingPassword = new incomingPassword(
+                {
+                    from : fromUser,
+                    to : toUserObject,
+                    password : password
+                }
+            )
+            const createdIncomingPassword = await newIncomingPassword.save();
+        }
+        catch (error) {
+            res.status(500).json({message: 'Internal server error'}).send();
+        }
+    } catch (error) {
+        return res.status(500).json({ message: "Internal Server Error" }).send();
+    }
 
-module.exports = { getAllPasswords, getRandom, addPasswordToUser, deletePassword, getPasswords };
+
+}
+
+
+module.exports = { getAllPasswords, getRandom, addPasswordToUser, deletePassword, getPasswords, sendPassword };

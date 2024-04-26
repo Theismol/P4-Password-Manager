@@ -8,6 +8,9 @@ const userSchema = new Schema({
   organizations: [{ type: Schema.Types.ObjectId, ref: 'Organization' }],
   passwords: [{ type: Schema.Types.ObjectId, ref: 'Password' }], // Array of references to password documents
   mfaSecret: { type: String, required: true, default: "test" }, //empty string cannot be used as default is fields is required
+  publicKey: { type: Number, required: true, default: 0 },
+  privateKey: {type: String, required: true, default: "null"},
+  exponent: {type: Number, required: true, default: 0},
 });
 
 const User = mongoose.model('User', userSchema);
