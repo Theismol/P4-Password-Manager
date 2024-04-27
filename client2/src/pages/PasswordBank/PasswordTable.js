@@ -17,13 +17,14 @@ export default function PasswordTable() {
   }, []);
   const fetchData = async () => {
     try {
-      // Assuming you have the CSRF token stored in a variable called csrfToken
-      
+     
+      const csrfToken = "your_csrf_token_here";
   
-      const response = await axios.get('http://localhost:4000/api/password/getPasswords', {csrftoken:"csrf",
+      const response = await axios.get('http://localhost:4000/api/password/getPasswords', {
         withCredentials: true,
         headers: {
-          'Content-Type': 'application/json'// Include CSRF token in the headers
+          'Content-Type': 'application/json', 
+          'X-CSRF-Token': csrfToken 
         }
       });
   
@@ -32,6 +33,7 @@ export default function PasswordTable() {
       console.error('Error fetching data:', error);
     }
   };
+  
   
 
   const columns = [
