@@ -13,38 +13,7 @@ function Org() {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [selectedRow, setSelectedRow] = useState(null);
   const [openModal, setOpenModal] = useState(false);
-
-
-  useEffect(() => {
-    fetchData();
-    
-  }, []);
-
-  const fetchData = async () => {
-    try {
-      axios
-      .get("http://localhost:4000/api/organization/getUserInOrganization", {
-          withCredentials: true,
-      })
-      .then(async (response) => {
-        setData(response.data);
-        pushData();
-      });
-      
-    } catch (error) {
-      console.error('errpr fetching data', error);
-    }
-
-  }
-  
-
-  const columns = [
-    { field: "id", headerName: "ID", width: 70 },
-    { field: "Organization", headerName: "Organization ", width: 150 },
-    { field: "Name", headerName: "Name", width: 150 },
-  ];
-
-  let rows = [
+  const [rows, setRows] = useState([
     { id: 1, Name: "Jon Snow", email: "Stark" },
     { id: 2, Name: "Cersei Lannister", email: "Lannister" },
     { id: 3, Name: "Jaime Lannister", email: "Lannister" },
@@ -54,20 +23,37 @@ function Org() {
     { id: 7, Name: "Jorah Mormont", email: "Mormont" },
     { id: 8, Name: "Robert Baratheon", email: "Baratheon" },
     { id: 9, Name: "Margaery Tyrell", email: "Harvey" },
+  ]);
+  const columns = [
+    { field: "id", headerName: "ID", width: 70 },
+    { field: "email", headerName: "Email ", width: 150 },
+    { field: "Name", headerName: "Name", width: 150 },
   ];
 
-  const pushData = () => {
-    
-    const users = data.users;
-    console.log(data[0][0]);
 
-    for (let index = 0; index < data.length; index++) {
-      rows.push({ id: data[index]._id, Name: data[index].username, email: data[index].email });
-      console.log(users[index].username);
-      console.log(data);
+  useEffect(() => {
+    try {
+      axios.get("http://localhost:4000/api/organization/getUserInOrganization", {
+          withCredentials: true,
+      }).then((response) => {
+        const modifiedArray = response.data.users.map(users => {
+          return {...users, id: users._id, Name: users.username, email: users.email  }
+        })
+        setRows(modifiedArray)
+
+
+      }).catch((error) => {
+        console.error('errpr fetching data', error);
+
+      });
+      }
+      catch(error) {
+        console.log(error);
+      }
+      
     }
-
-  }
+    
+  , []);
 
 
   function handleSubmit() {
@@ -76,6 +62,7 @@ function Org() {
 
   return (
     <div>
+      {console.log(rows)}
       <PermanentDrawerLeft />
       {
         <div style={{ display: 'flex', justifyContent: 'center', margin: 'auto' }}>
