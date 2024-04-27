@@ -7,7 +7,6 @@ const authenticateToken = (req, res, next) => {
     const token = req.cookies.token;
     const receivedCsrftoken = req.body.csrftoken
     console.log(token);
-    console.log(req)
     
     // const authHeader = req.headers['authorization'];
     // const token = authHeader && authHeader.split(' ')[1];
