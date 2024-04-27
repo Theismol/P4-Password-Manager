@@ -21,7 +21,7 @@ function Org() {
 
   const fetchData = async () => {
     try {
-      const respone = await axios.get('http://localhost:4000/api/organization/getUserInOrganization');
+      const respone = await axios.get('http://localhost:4000/api/organization/getUserInOrganization',{withCredentials: true});
      
       setData(respone.data);
 
