@@ -17,21 +17,26 @@ function Org() {
 
   useEffect(() => {
     fetchData();
+    
   }, []);
 
   const fetchData = async () => {
     try {
-      const respone = await axios.get('http://localhost:4000/api/organization/getUserInOrganization',{withCredentials: true});
-     
-      setData(respone.data);
-
+      axios
+      .get("http://localhost:4000/api/organization/getUserInOrganization", {
+          withCredentials: true,
+      })
+      .then(async (response) => {
+        setData(response.data);
+        pushData();
+      });
+      
     } catch (error) {
       console.error('errpr fetching data', error);
     }
 
-
   }
-    console.log(data);
+  
 
   const columns = [
     { field: "id", headerName: "ID", width: 70 },
@@ -39,7 +44,7 @@ function Org() {
     { field: "Name", headerName: "Name", width: 150 },
   ];
 
-  const rows = [
+  let rows = [
     { id: 1, Name: "Jon Snow", email: "Stark" },
     { id: 2, Name: "Cersei Lannister", email: "Lannister" },
     { id: 3, Name: "Jaime Lannister", email: "Lannister" },
@@ -51,70 +56,75 @@ function Org() {
     { id: 9, Name: "Margaery Tyrell", email: "Harvey" },
   ];
 
-  const users = data.users;
-
-  /*
-  const realRows = users.map(user => ({
-    id: user._id,
-    Name: user.username,
-    email: user.email,
-  }));*/
-
-  function handleSubmit(){
+  const pushData = () => {
     
+    const users = data.users;
+    console.log(data[0][0]);
+
+    for (let index = 0; index < data.length; index++) {
+      rows.push({ id: data[index]._id, Name: data[index].username, email: data[index].email });
+      console.log(users[index].username);
+      console.log(data);
+    }
+
+  }
+
+
+  function handleSubmit() {
+
   }
 
   return (
     <div>
       <PermanentDrawerLeft />
       {
-        <div style={{display: 'flex', justifyContent: 'center', margin: 'auto'}}>
+        <div style={{ display: 'flex', justifyContent: 'center', margin: 'auto' }}>
           <div style={{ height: 400, width: "40%" }}>
             <DataGrid
               rows={rows}
               columns={columns}
               initialState={{
-                
+
               }}
-              
+
               checkboxSelection
             />
           </div>
 
           <Box
-                    component="form"
-                    onSubmit={handleSubmit}
-                    noValidate
-                    sx={{ mt: 1 }}
-                >
-                    <Button
-                        type="submit"
-                        fullWidth
-                        variant="contained"
-                        color="primary"
-                        sx={{ mt: 3, mb: 2 }}
-                    >
-                        Create org
-                    </Button>
+            component="form"
+            onSubmit={handleSubmit}
+            noValidate
+            sx={{ mt: 1 }}
+          >
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              color="primary"
+              sx={{ mt: 3, mb: 2 }}
+            >
+              Create org
+            </Button>
 
-            </Box>
-            <Box
-                    component="form"
-                    onSubmit={handleSubmit}
-                    noValidate
-                    sx={{ mt: 1 }}
-                >
-                    <Button
-                        type="submit"
-                        fullWidth
-                        variant="contained"
-                        color="primary"
-                        sx={{ mt: 3, mb: 2 }}
-                    >
-                        Add/Remove
-                    </Button>
+          </Box>
+          <Box
+            component="form"
+            onSubmit={handleSubmit}
+            noValidate
+            sx={{ mt: 1 }}
+          >
+            <Button
+              type="submit"
+              fullWidth
+              variant="contained"
+              color="primary"
+              sx={{ mt: 3, mb: 2 }}
+            >
+              Add/Remove
+            </Button>
 
-            </Box>
+          </Box>
 
 
         </div>
