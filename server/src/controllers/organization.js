@@ -98,11 +98,26 @@ const addUserToOrganization = async (req, res) => {
 }
 
 const getUserInOrganization = async (req, res) => {
-    const {organistations, userId } = req.user;
+    const jwt = req.cookies.token;
+    let decodedJwt;
+    try {
+        decodedJwt = verifyToken(jwt);
+    } catch (error) {
+        if (error.name === "JsonWebTokenError") {
+            return res.status(401).json({ message: "Invalid token" }).send(); // Unauthorized
+        } else if (error.name === "TokenExpiredError") {
+            return res.status(401).json({ message: "Token expired" }).send(); // Unauthorized
+        } else {
+            return res
+                .status(500)
+                .json({ message: "Internal server error" })
+                .send(); // Internal server error
+        }
+    }
 
 
     try{
-        const foundorganization = await organization.findById(organistations);
+        const foundorganization = await organization.findById(decodedJwt.organistations);
         if(!foundorganization){
             res.status(400).json({ message: 'Organization not found' }).send();
             return;
@@ -111,7 +126,7 @@ const getUserInOrganization = async (req, res) => {
         try{
             console.log(foundorganization.users);
             const users = await user.find({
-                _id: { $in: foundorganization.users, $ne: userId } // Exclude the current user
+                _id: { $in: foundorganization.users, $ne: decodedJwt.userId } // Exclude the current user
             }).select('username _id email');
             console.log(users);
             
