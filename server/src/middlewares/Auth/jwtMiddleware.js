@@ -11,10 +11,15 @@ const authenticateToken = (req, res, next) => {
     // const authHeader = req.headers['authorization'];
     // const token = authHeader && authHeader.split(' ')[1];
     console.log("csrftoken: ", receivedCsrftoken)
-    if (token == null || receivedCsrftoken != csrftoken) {
+    if (token == null || receivedCsrftoken != csrftoken && req.method != "GET") {
+        console.log("token is null")
+        return res.sendStatus(401).send();
+    }else if(token == null){
         console.log("token is null")
         return res.sendStatus(401).send();
     }
+
+
 
     try {
         const decoded = verifyToken(token);
