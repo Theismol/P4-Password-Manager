@@ -27,6 +27,8 @@
     "react-scripts": "5.0.1",
     "speakeasy": "^2.0.0",
     "styled-components": "^6.1.8",
+    "tweetnacl": "^1.0.3",
+    "tweetnacl-util": "^0.15.1",
     "web-vitals": "^2.1.4",
     "zod": "^3.22.5"
   },
@@ -55,6 +57,8 @@
     ]
   },
   "devDependencies": {
+    "process": "^0.11.10",
+    "react-error-overlay": "^6.0.9",
     "tailwindcss": "^3.4.3"
   }
 }

@@ -2,7 +2,7 @@ const bcrypt = require("bcrypt");
 const User = require("../models/userModel");
 
 const signup = async (req, res) => {
-    const { email, username, password, privateKey, publicKey, exponent } = req.body;
+    const { email, username, password, privateKey, publicKey } = req.body;
     console.log(req.body);
 
     try {
@@ -24,7 +24,6 @@ const signup = async (req, res) => {
                 organizations: null,
                 publicKey: publicKey,
                 privateKey: privateKey,
-                exponent: exponent,
             });
             res.status(200).json({ message: "Signup successful!" });
         }
