@@ -53,11 +53,12 @@ function Org() {
 
   const users = data.users;
 
+  /*
   const realRows = users.map(user => ({
     id: user._id,
     Name: user.username,
     email: user.email,
-  }));
+  }));*/
 
   function handleSubmit(){
     
