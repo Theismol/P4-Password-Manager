@@ -1,12 +1,38 @@
 import PermanentDrawerLeft from "../../components/navbars/sideBar";
-import * as react from "react";
+import React, { useState, useEffect } from "react";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import { DataGrid } from "@mui/x-data-grid";
+import axios from 'axios';
 
 //name, organization id
 
 function Org() {
+  const [data, setData] = useState([]);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
+  const [selectedRow, setSelectedRow] = useState(null);
+  const [openModal, setOpenModal] = useState(false);
+
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const fetchData = async () => {
+    try {
+      const respone = await axios.get('http://localhost:4000/api/organization/getUserInOrganization' );
+
+      setData(respone.data);
+
+    } catch (error) {
+      console.error('errpr fetching data');
+    }
+
+
+  }
+    console.log(data);
+
   const columns = [
     { field: "id", headerName: "ID", width: 70 },
     { field: "Organization", headerName: "Organization ", width: 150 },
@@ -14,15 +40,15 @@ function Org() {
   ];
 
   const rows = [
-    { id: 1, Name: "Jon Snow", Organization: "Stark" },
-    { id: 2, Name: "Cersei Lannister", Organization: "Lannister" },
-    { id: 3, Name: "Jaime Lannister", Organization: "Lannister" },
-    { id: 4, Name: "Arya Stark", Organization: "Stark" },
-    { id: 5, Name: "Daenerys Targaryen", Organization: "Targaryen" },
-    { id: 6, Name: "Melisandre", Organization: "Lord of fire" },
-    { id: 7, Name: "Jorah Mormont", Organization: "Mormont" },
-    { id: 8, Name: "Robert Baratheon", Organization: "Baratheon" },
-    { id: 9, Name: "Margaery Tyrell", Organization: "Harvey" },
+    { id: 1, Name: "Jon Snow", email: "Stark" },
+    { id: 2, Name: "Cersei Lannister", email: "Lannister" },
+    { id: 3, Name: "Jaime Lannister", email: "Lannister" },
+    { id: 4, Name: "Arya Stark", email: "Stark" },
+    { id: 5, Name: "Daenerys Targaryen", email: "Targaryen" },
+    { id: 6, Name: "Melisandre", email: "Lord of fire" },
+    { id: 7, Name: "Jorah Mormont", email: "Mormont" },
+    { id: 8, Name: "Robert Baratheon", email: "Baratheon" },
+    { id: 9, Name: "Margaery Tyrell", email: "Harvey" },
   ];
 
   function handleSubmit(){
