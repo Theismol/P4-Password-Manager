@@ -26,7 +26,7 @@ function Org() {
       setData(respone.data);
 
     } catch (error) {
-      console.error('errpr fetching data');
+      console.error('errpr fetching data', error);
     }
 
 
