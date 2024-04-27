@@ -21,8 +21,8 @@ function Org() {
 
   const fetchData = async () => {
     try {
-      const respone = await axios.get('http://localhost:4000/api/organization/getUserInOrganization' );
-
+      const respone = await axios.get('http://localhost:4000/api/organization/getUserInOrganization');
+     
       setData(respone.data);
 
     } catch (error) {
@@ -50,6 +50,14 @@ function Org() {
     { id: 8, Name: "Robert Baratheon", email: "Baratheon" },
     { id: 9, Name: "Margaery Tyrell", email: "Harvey" },
   ];
+
+  const users = data.users;
+
+  const realRows = users.map(user => ({
+    id: user._id,
+    Name: user.username,
+    email: user.email,
+  }));
 
   function handleSubmit(){
     
