@@ -24,11 +24,9 @@ export default function PasswordTable() {
         withCredentials: true,
         headers: {
           'Content-Type': 'application/json', 
-          'X-CSRF-Token': csrfToken 
         }
       });
-  
-      setData(response.data);
+      setData(response.data.passwords);
     } catch (error) {
       console.error('Error fetching data:', error);
     }
