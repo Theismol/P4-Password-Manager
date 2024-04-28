@@ -232,6 +232,17 @@ const logout = async (req, res) => {
         res.status(500).json({ message: "Internal server error" }).send();
     }
 };
+const getCSRF = async (req, res) => {
+    const { userId } = req.user;
+    let user;
+    try {
+        user = User.findById({userId})
+    }
+    catch(error) {
+        res.status(404).json({ message: "User not found" }).send();
+    }
+    res.status(200).json({csrftoken: csrftoken}).send();
+}
 
 module.exports = {
     login,

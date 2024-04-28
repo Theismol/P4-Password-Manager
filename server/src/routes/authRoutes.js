@@ -11,6 +11,7 @@ router.post('/logout', logout);
 router.post('/verifyTOTP', verifyTOTP);
 router.post('/verifyTOTPFirstTime', verifyTOTPFirstTime);
 router.get('/checkMFA',checkMFA)
+router.get('getCSRF', )
 
 
 
