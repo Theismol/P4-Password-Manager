@@ -15,7 +15,7 @@ const checkMFA = async (req, res) => {
     let user;
     const { userId } = req.user;
     try {
-        user = await User.findById(decodedJwt.userId);
+        user = await User.findById(userId);
     } catch (error) {
         return res.status(404).json({ message: "User not found" }).send();
     }
