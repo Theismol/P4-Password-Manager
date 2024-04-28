@@ -10,27 +10,32 @@ import logo from "../../assets/images/logo.png";
 import hashPassword from "../../services/passwordHash";
 import axios from "axios";
 import { Snackbar } from "@mui/material";
-import {Alert} from "@mui/material";
-import {z} from "zod";
-
+import { Alert } from "@mui/material";
+import { z } from "zod";
+import { createKeys } from "../../services/RSAEncryption";
+var AES = require("crypto-js/aes");
 
 export default function SignUp() {
     const [error, setError] = React.useState(false);
     const [open, setOpen] = React.useState(false);
     const [alertMessage, setAlertMessage] = React.useState("");
     //Zod object that validates the form data. We can add minimum length to password/usernames later and custom error messages for each field
-    const signupSchema = z.object({
-        email: z.string().email().min(5), 
-        username: z.string(),
-        password: z.string(),
-        confirmPassword: z.string(),
-    }).refine(data => data.password === data.confirmPassword, {
-        message: "Passwords do not match",
-    })
+    const signupSchema = z
+        .object({
+            email: z.string().email().min(5),
+            username: z.string(),
+            password: z.string(),
+            confirmPassword: z.string(),
+        })
+        .refine((data) => data.password === data.confirmPassword, {
+            message: "Passwords do not match",
+        });
     const handleSubmit = async (event) => {
         event.preventDefault();
+        const keys = createKeys();
+        event.preventDefault();
         const data = new FormData(event.currentTarget);
-        let validatedForm
+        let validatedForm;
         try {
             validatedForm = signupSchema.parse({
                 email: data.get("email"),
@@ -38,49 +43,70 @@ export default function SignUp() {
                 password: data.get("password"),
                 confirmPassword: data.get("confirmPassword"),
             });
-        }
-        catch (error) {
+        } catch (error) {
             setAlertMessage(error.issues[0].message);
             setOpen(true);
             setError(true);
-            return
+            return;
         }
         const password = await hashPassword(validatedForm.password);
-        console.log(password);
-        axios.post('http://localhost:4000/api/signup', {
-            email: validatedForm.email,
-            username: validatedForm.username,
-            password: password,
-        }).then((response) => {
-            setAlertMessage(response.data.message);
-            setError(false);
-            setOpen(true);
-        }).catch((error) => {
-            setAlertMessage(error.response.data.message);
-            setError(true);
-            setOpen(true);
-        });
+        const encryptedPrivateKey = AES.encrypt(
+            keys.private,
+            password
+        ).toString();
+        axios.post("http://localhost:4000/api/signup", {
+                email: validatedForm.email,
+                username: validatedForm.username,
+                password: password,
+                publicKey: keys.public,
+                privateKey: encryptedPrivateKey,
+            })
+            .then((response) => {
+                setAlertMessage(response.data.message);
+                setError(false);
+                setOpen(true);
+            })
+            .catch((error) => {
+                setAlertMessage(error.response.data.message);
+                setError(true);
+                setOpen(true);
+            });
     };
     const handleClose = () => {
         setOpen(false);
         if (!error) {
             window.location.href = "/login";
         }
-    }
+    };
 
     return (
-        <Container component="main" sx={{
-            display: "flex",
-        
-        }} maxWidth="xl">
-            {open ? <Snackbar open={open} autoHideDuration={1000} onClose={handleClose} anchorOrigin={{vertical: "top", horizontal: "right"}}>
-                <Alert severity={error ? "error" : "success"} variant="filled">{alertMessage}</Alert>
-            </Snackbar> : null}
+        <Container
+            component="main"
+            sx={{
+                display: "flex",
+            }}
+            maxWidth="xl"
+        >
+            {open ? (
+                <Snackbar
+                    open={open}
+                    autoHideDuration={1000}
+                    onClose={handleClose}
+                    anchorOrigin={{ vertical: "top", horizontal: "right" }}
+                >
+                    <Alert
+                        severity={error ? "error" : "success"}
+                        variant="filled"
+                    >
+                        {alertMessage}
+                    </Alert>
+                </Snackbar>
+            ) : null}
             <Box
                 component="img"
                 sx={{
-                    height: 2/4,
-                    width: 2/4,
+                    height: 2 / 4,
+                    width: 2 / 4,
                 }}
                 alt="AccessArmor Logo"
                 src={logo}

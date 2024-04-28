@@ -13,10 +13,24 @@ require("dotenv").config();
 const csrftoken = process.env.CSRF_TOKEN;
 const checkMFA = async (req, res) => {
     const jwt = await req.cookies.token;
-    const decoded_jwt = verifyToken(jwt);
+    let decodedJwt;
     let user;
     try {
-        user = await User.findById(decoded_jwt.userId);
+        decodedJwt = verifyToken(jwt);
+    } catch (error) {
+        if (error.name === "JsonWebTokenError") {
+            return res.status(401).json({ message: "Invalid token" }).send(); // Unauthorized
+        } else if (error.name === "TokenExpiredError") {
+            return res.status(401).json({ message: "Token expired" }).send(); // Unauthorized
+        } else {
+            return res
+                .status(500)
+                .json({ message: "Internal server error" })
+                .send(); // Internal server error
+        }
+    }
+    try {
+        user = await User.findById(decodedJwt.userId);
     } catch (error) {
         return res.status(404).json({ message: "User not found" }).send();
     }
@@ -113,9 +127,9 @@ const verifyTOTPFirstTime = async (req, res) => {
     const totpToken = req.body.totp;
     const secret = req.body.secret;
     const jwt = req.cookies.token;
-    let decoded_jwt;
+    let decodedJwt;
     try {
-        decoded_jwt = verifyToken(jwt);
+        decodedJwt = verifyToken(jwt);
     } catch (error) {
         if (error.name === "JsonWebTokenError") {
             return res.status(401).json({ message: "Invalid token" }).send(); // Unauthorized
@@ -128,7 +142,7 @@ const verifyTOTPFirstTime = async (req, res) => {
                 .send(); // Internal server error
         }
     }
-    const user = await User.findById(decoded_jwt.userId);
+    const user = await User.findById(decodedJwt.userId);
     if (!user) {
         return res.status(404).json({ message: "User not found" }).send();
     }
