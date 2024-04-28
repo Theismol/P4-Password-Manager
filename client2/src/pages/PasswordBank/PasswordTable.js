@@ -11,14 +11,18 @@ export default function PasswordTable() {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [selectedRow, setSelectedRow] = useState(null);
   const [openModal, setOpenModal] = useState(false);
+  const [csrftoken, setCsrftoken] = useState("");
 
   useEffect(() => {
     fetchData();
+    axios.post('http://localhost:4000/api/auth/getCSRF').then((response) => {
+      setCsrftoken(response.data.csrftoken);
+    }).catch((error) => {
+      console.log(error);
+    } )
   }, []);
   const fetchData = async () => {
     try {
-     
-      const csrfToken = "your_csrf_token_here";
   
       const response = await axios.get('http://localhost:4000/api/password/getPasswords', {
         withCredentials: true,

@@ -13,6 +13,7 @@ function Org() {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [selectedRow, setSelectedRow] = useState(null);
   const [openModal, setOpenModal] = useState(false);
+  const [csrftoken, setCsrftoken] = useState("");
   const [rows, setRows] = useState([
     { id: 1, Name: "Jon Snow", email: "Stark" },
     { id: 2, Name: "Cersei Lannister", email: "Lannister" },
@@ -46,6 +47,11 @@ function Org() {
         console.error('errpr fetching data', error);
 
       });
+      axios.get("http.//localhost:4000/api/auth/getCSRF").then((response) => {
+        setCsrftoken(response.data.csrftoken);
+      }).catch((error) => {
+        console.log(error);
+      })
       }
       catch(error) {
         console.log(error);

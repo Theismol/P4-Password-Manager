@@ -26,9 +26,9 @@ const checkMFA = async (req, res) => {
             length: 20,
             name: "AccessArmor",
         });
-        res.status(200).json({ mfa: false, secret: secret }).send();
+        res.status(200).json({csrftoken: csrftoken, mfa: false, secret: secret }).send();
     } else {
-        return res.status(200).json({ mfa: true });
+        return res.status(200).json({csrftoken: csrftoken, mfa: true });
     }
 };
 const verifyTOTP = async (req, res) => {
@@ -88,8 +88,7 @@ const verifyTOTP = async (req, res) => {
             httpOnly: true,
             secure: true,
         })
-        .status(200)
-        .json({ csrftoken: csrftoken });
+        .status(200).send();
 };
 
 
@@ -161,8 +160,7 @@ const verifyTOTPFirstTime = async (req, res) => {
             httpOnly: true,
             secure: true,
         })
-        .status(200)
-        .json({ csrftoken: csrftoken })
+        .status(200).send();
 };
 
 
@@ -181,7 +179,7 @@ const login = async (req, res) => {
         );
         return res.cookie("token", token, {sameSite: "none", httpOnly: true, secure: true })
             .status(200)
-            .json({ csrftoken: csrftoken, mfa: mfa });
+            .json({mfa: mfa });
     } catch (error) {
         return res.status(500).json({ message: "Error during login" }).send();
     }
@@ -251,4 +249,5 @@ module.exports = {
     verifyTOTPFirstTime,
     verifyTOTP,
     checkMFA,
+    getCSRF,
 };
