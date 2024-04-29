@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Table, TableCell, TableRow, TableHead, TableBody, Paper, TableContainer, TablePagination } from '@mui/material';
 import axios from 'axios';
@@ -12,6 +11,7 @@ export default function PasswordTable() {
   const [selectedRow, setSelectedRow] = useState(null);
   const [openModal, setOpenModal] = useState(false);
   const [csrftoken, setCsrftoken] = useState("");
+  const [generatedPassword, setGeneratedPassword] = useState('');
 
   useEffect(() => {
     fetchData();
@@ -21,22 +21,15 @@ export default function PasswordTable() {
       console.log(error);
     } )
   }, []);
+
   const fetchData = async () => {
     try {
-  
-      const response = await axios.get('http://localhost:4000/api/password/getPasswords', {
-        withCredentials: true,
-        headers: {
-          'Content-Type': 'application/json', 
-        }
-      });
-      setData(response.data.passwords);
+      const response = await axios.get('http://localhost:4000/api/password/getPasswords', { withCredentials: true });
+      setData(response.data);
     } catch (error) {
       console.error('Error fetching data:', error);
     }
   };
-  
-  
 
   const columns = [
     { id: 'username', label: 'Username', minWidth: 170 },
@@ -62,31 +55,47 @@ export default function PasswordTable() {
     setPage(0);
   };
 
-  const handlePasswordChange = async () => {
+  const generateNewPassword = () => {
     const charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
     let newPassword = '';
     for (let i = 0; i < 20; i++) {
       const randomIndex = Math.floor(Math.random() * charset.length);
       newPassword += charset[randomIndex];
     }
-    const encryptedPassword = CryptoJS.AES.encrypt(newPassword, 'your_secret_key').toString();
+    setGeneratedPassword(newPassword);
+    return newPassword;
+  };
 
-    // Update the selectedRow with the new password
-    const updatedRow = { ...selectedRow, password: encryptedPassword };
-
+  const encryptPassword = (password) => {
+    const encryptedPassword = CryptoJS.AES.encrypt(password, 'your_secret_key').toString();
+    return encryptedPassword;
+  };
+  
+  const savePasswordToBackend = async (updatedRow) => {
     try {
-      // Send the new password to the backend API endpoint - NEED TO KNOW WHICH API ENDPOINT
-      // await axios.put(`http://localhost:4000/api/users/${updatedRow.id}`, { password: newPassword });
+      // Send the new password to the backend API endpoint
+      // await axios.patch(`http://localhost:4000/api/users/${updatedRow.id}`, { password: newPassword });
 
-      // Update the data state with the updatedRow
-      const updatedData = data.map(row => row.username === updatedRow.username ? updatedRow : row);
+      updatedRow._id = selectedRow._id;
+
+      const updatedData = data.map(row => row._id === updatedRow._id ? updatedRow : row);
       setData(updatedData);
     } catch (error) {
       console.error('Error updating password:', error);
     }
-
-    handleCloseModal();
   };
+
+  const handlePasswordChange = () => {
+    const newPassword = generateNewPassword();
+    setSelectedRow({ ...selectedRow, password: newPassword });
+  };
+
+  const saveChanges = (updatedPassword) => {
+    const encryptedPassword = encryptPassword(updatedPassword);
+    const updatedRow = { ...selectedRow, password: encryptedPassword };
+    savePasswordToBackend(updatedRow);
+  };
+
 
   return (
     <div>
@@ -118,7 +127,9 @@ export default function PasswordTable() {
                     onClick={() => handleOpenModal(row)}
                   >
                     {columns.map((column) => (
-                      <TableCell key={column.id}>{row[column.id]}</TableCell>
+                      <TableCell key={column.id}>
+                        {column.id === 'password' ? '*********' : row[column.id]}
+                      </TableCell>
                     ))}
                   </TableRow>
                 ))}
@@ -140,9 +151,10 @@ export default function PasswordTable() {
         open={openModal}
         handleCloseModal={handleCloseModal}
         selectedRow={selectedRow}
-        handlePasswordChange={handlePasswordChange} 
+        handlePasswordChange={handlePasswordChange}
+        generatedPassword={generatedPassword}
+        saveChanges={saveChanges}
       />
     </div>
   );
 }
- 
