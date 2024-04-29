@@ -143,6 +143,12 @@ function Org() {
                   event.preventDefault();
                   const formData = new FormData(event.currentTarget);
                   const formJson = Object.fromEntries(formData.entries());
+                  axios.post("http://localhost:4000/api/organization/addUserToOrganization", {
+                    email: formJson.email,
+                    
+                  }, {
+                    withCredentials: true,
+                  });
                   const email = formJson.email;
                   const organization = formJson.organization;
                   console.log(email);
