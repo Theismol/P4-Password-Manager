@@ -100,6 +100,7 @@ const addUserToOrganization = async (req, res) => {
 const getUserInOrganization = async (req, res) => {
     const { organistations, userId } = req.user;
     console.log(organistations, userId);
+    let isAdmin = false;
 
     try {
         const foundOrganization = await organization.findById(organistations);
@@ -111,7 +112,11 @@ const getUserInOrganization = async (req, res) => {
             _id: { $in: foundOrganization.users, $ne: userId } // Exclude the current user
         }).select('username _id email');
 
-        return res.status(200).json({ users: users,administrators: foundOrganization.administrators  });
+        if (foundOrganization.administrators.includes(userId)) {
+            isAdmin = true;
+        }
+
+        return res.status(200).json({ users: users,isAdmin: isAdmin});
     } catch (error) {
         console.error('Error during getting users in organization:', error);
         return res.status(502).json({ message: 'Internal server error' });
