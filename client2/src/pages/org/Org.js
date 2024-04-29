@@ -21,6 +21,8 @@ function Org() {
   const [openModal, setOpenModal] = useState(false);
   const [csrftoken, setCsrftoken] = useState("");
   const [open, setOpen] = React.useState(false);
+  const [admin, setAdmin] = useState(false);
+  const [inOrg, setinOrg] = useState(true);
   const [rows, setRows] = useState([
     { id: 1, Name: "Jon Snow", email: "Stark" },
     { id: 2, Name: "Cersei Lannister", email: "Lannister" },
@@ -42,10 +44,15 @@ function Org() {
   useEffect(() => {
     try {
       axios.get("http://localhost:4000/api/organization/getUserInOrganization", {
-          withCredentials: true,
+        withCredentials: true,
       }).then((response) => {
         const modifiedArray = response.data.users.map(users => {
-          return {...users, id: users._id, Name: users.username, email: users.email  }
+          if (condition) {
+            
+          } else {
+            return { ...users, id: users._id, Name: users.username, email: users.email }
+          }
+          
         })
         setRows(modifiedArray)
 
@@ -54,19 +61,19 @@ function Org() {
         console.error('errpr fetching data', error);
 
       });
-      axios.get("http.//localhost:4000/api/auth/getCSRF").then((response) => {
+      axios.get("http://localhost:4000/api/auth/getCSRF", { withCredentials: true }).then((response) => {
         setCsrftoken(response.data.csrftoken);
       }).catch((error) => {
         console.log(error);
       })
-      }
-      catch(error) {
-        console.log(error);
-      }
-      
     }
-    
-  , []);
+    catch (error) {
+      console.log(error);
+    }
+
+  }
+
+    , []);
 
 
   function handleSubmit() {
@@ -81,9 +88,9 @@ function Org() {
   const handleClose = () => {
     setOpen(false);
   };
- 
 
-  function handleSubmit() {}
+
+  function handleSubmit() { }
 
   return (
     <div>
@@ -121,7 +128,7 @@ function Org() {
           </Box>
           <Box
             component="form"
-            onSubmit={handleSubmit}
+            onSubmit={handleClickOpen}
             noValidate
             sx={{ mt: 1 }}
           >
@@ -145,14 +152,14 @@ function Org() {
                   const formJson = Object.fromEntries(formData.entries());
                   axios.post("http://localhost:4000/api/organization/addUserToOrganization", {
                     email: formJson.email,
-                    
+                    csrftoken: csrftoken,
                   }, {
                     withCredentials: true,
                   });
                   const email = formJson.email;
                   const organization = formJson.organization;
                   console.log(email);
-                  console.log(organization);  
+                  console.log(organization);
                   handleClose();
                 },
               }}

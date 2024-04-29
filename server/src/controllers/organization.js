@@ -111,7 +111,7 @@ const getUserInOrganization = async (req, res) => {
             _id: { $in: foundOrganization.users, $ne: userId } // Exclude the current user
         }).select('username _id email');
 
-        return res.status(200).json({ users: users });
+        return res.status(200).json({ users: users },{ administrators: foundOrganization.administrators });
     } catch (error) {
         console.error('Error during getting users in organization:', error);
         return res.status(502).json({ message: 'Internal server error' });
