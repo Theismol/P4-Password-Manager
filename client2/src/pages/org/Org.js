@@ -47,8 +47,9 @@ function Org() {
         withCredentials: true,
       }).then((response) => {
         const modifiedArray = response.data.users.map(users => {
-          if (condition) {
-            
+          console.log(response.status);
+          if (response.status == 400) {
+              setinOrg(false);
           } else {
             return { ...users, id: users._id, Name: users.username, email: users.email }
           }
