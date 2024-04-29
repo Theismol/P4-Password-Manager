@@ -163,6 +163,15 @@ const verifyTOTPFirstTime = async (req, res) => {
         .status(200).send();
 };
 
+const exntionCheckLogin = async (req, res) => {
+    try {
+        res.status(200).json({ message: "Login successful" });
+    }
+    catch (err) {
+        res.status(401).json({ message: "Login failed" });
+    }
+};
+
 
 const login = async (req, res) => {
     const { username, password } = req.body;
@@ -184,7 +193,6 @@ const login = async (req, res) => {
         return res.status(500).json({ message: "Error during login" }).send();
     }
 };
-
 
 const tokenRefresh = async (req, res) => {
     const refreshToken = req.cookies.refreshtoken;
@@ -230,16 +238,18 @@ const logout = async (req, res) => {
         res.status(500).json({ message: "Internal server error" }).send();
     }
 };
+
 const getCSRF = async (req, res) => {
+    try {
     const { userId } = req.user;
     let user;
-    try {
         user = User.findById({userId})
     }
     catch(error) {
-        res.status(404).json({ message: "User not found" }).send();
+        res.status(404).json({ message: "User not found" });
+        return;
     }
-    res.status(200).json({csrftoken: csrftoken}).send();
+    res.status(200).json({csrftoken: csrftoken});
 }
 
 module.exports = {
@@ -250,4 +260,5 @@ module.exports = {
     verifyTOTP,
     checkMFA,
     getCSRF,
+    exntionCheckLogin,
 };

@@ -1,0 +1,29 @@
+{
+    "manifest_version": 3,
+    "name": "React Extension Template",
+    "description": "react extension template",
+    "version": "0.0.1",
+    "icons": {
+        "32": "favicon.ico",
+        "48": "favicon.ico"
+    },
+    "action": {
+        "default_popup": "index.html",
+        "default_icon": "favicon.ico",
+        "default_title": "React Extension Template"
+    },
+    "host_permissions": [
+        "http://localhost:3000/"
+    ],
+"background": {
+  "service_worker": "background.js",
+  "type": "module"
+},
+    "content_scripts": [
+        {
+            "matches": ["<all_urls>"],
+            "js": ["content.js"]
+        }
+    ]
+}
+

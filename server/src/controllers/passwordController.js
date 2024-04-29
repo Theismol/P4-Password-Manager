@@ -45,7 +45,7 @@ const getRandom = async (req, res) => {
 
 
 const addPasswordToUser = async (req, res) => {
-    const { organization_id, title, username, password, url, notes } = req.body;
+    const { title, username, password, url, notes } = req.body;
     const { userId } = req.user;
 
     if (!organization_id || !title || !username || !password || !userId) {
@@ -54,7 +54,7 @@ const addPasswordToUser = async (req, res) => {
     }
 
     const newPassword = new Password({
-        organization_id: organization_id,
+        organization_id: null, 
         user_id: userId,
         title: title,
         username: username,
