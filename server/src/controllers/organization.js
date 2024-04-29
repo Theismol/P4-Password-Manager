@@ -98,34 +98,25 @@ const addUserToOrganization = async (req, res) => {
 }
 
 const getUserInOrganization = async (req, res) => {
-    const {organistations, userId } = req.user;
+    const { organistations, userId } = req.user;
+    console.log(organistations, userId);
 
-
-    try{
-        const foundorganization = await organization.findById(organistations);
-        if(!foundorganization){
-            res.status(400).json({ message: 'Organization not found' }).send();
-            return;
-        }
-        
-        try{
-            console.log(foundorganization.users);
-            const users = await user.find({
-                _id: { $in: foundorganization.users, $ne: userId } // Exclude the current user
-            }).select('username _id email');
-            console.log(users);
-            
-            res.status(200).json({ users: users }).send();
-        }catch(error){
-            console.error('Error during getting users in organization:', error);
-            res.status(500).json({ message: 'Internal server error' }).send();
+    try {
+        const foundOrganization = await organization.findById(organistations);
+        if (!foundOrganization) {
+            return res.status(400).json({ message: 'Organization not found' });
         }
 
-    }catch(error){
+        const users = await user.find({
+            _id: { $in: foundOrganization.users, $ne: userId } // Exclude the current user
+        }).select('username _id email');
+
+        return res.status(200).json({ users: users });
+    } catch (error) {
         console.error('Error during getting users in organization:', error);
-        res.status(500).json({ message: 'Internal server error' }).send();
+        return res.status(502).json({ message: 'Internal server error' });
     }
+};
 
-}
 
 module.exports = { createOrganization, addUserToOrganization, getUserInOrganization };

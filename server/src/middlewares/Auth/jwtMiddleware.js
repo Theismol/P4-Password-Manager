@@ -19,11 +19,11 @@ const authenticateToken = (req, res, next) => {
         return res.sendStatus(401).send();
     }
 
-
-
+    
     try {
         const decoded = verifyToken(token);
         req.user = decoded;
+        
 
         next(); // Call next middleware or route handler
     } catch (error) {

@@ -4,6 +4,7 @@ import HomeLayout from "./components/Layout/homeLayout";
 import Login from "./pages/login/Login";
 import Signup from "./pages/signup/Signup";
 import Test from "./pages/test/Test";
+import Org from "./pages/org/Org";
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 import MFAPage from "./pages/mfa/MFAPage";
@@ -18,7 +19,7 @@ const darkTheme = createTheme({
         },
         background: {
             default: '#08192c', // Default background color for dark mode
-            paper: '#424242', // Paper background color
+            paper: '#6166ed', // Paper background color
             input: '#fff', // Input background color
         },
     },
@@ -39,7 +40,11 @@ function App() {
                 <Route path="signup" element={<Signup />} />
                 <Route path="mfa" element={<MFAPage/>} />
                 <Route path="test" element={<Test />} />
+<<<<<<< HEAD
                 <Route path="passwordBank" element={<PasswordTable/>} />
+=======
+                <Route path="org" element={<Org />} />
+>>>>>>> orgData
                 <Route path="*" element={<h1>not found</h1>} />
             </Routes>
         </ThemeProvider>
