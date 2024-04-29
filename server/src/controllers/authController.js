@@ -237,9 +237,9 @@ const getCSRF = async (req, res) => {
         user = User.findById({userId})
     }
     catch(error) {
-        res.status(404).json({ message: "User not found" }).send();
+        return res.status(404).json({ message: "User not found" }).send();
     }
-    res.status(200).json({csrftoken: csrftoken}).send();
+    res.status(200).json({csrftoken: csrftoken});
 }
 
 module.exports = {
