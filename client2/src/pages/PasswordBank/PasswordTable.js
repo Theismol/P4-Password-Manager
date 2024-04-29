@@ -25,7 +25,7 @@ export default function PasswordTable() {
   const fetchData = async () => {
     try {
       const response = await axios.get('http://localhost:4000/api/password/getPasswords', { withCredentials: true });
-      setData(response.data);
+      setData(response.data.passwords);
     } catch (error) {
       console.error('Error fetching data:', error);
     }
