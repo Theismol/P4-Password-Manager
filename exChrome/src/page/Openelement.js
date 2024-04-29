@@ -1,50 +1,14 @@
-//Create a gray box with a title, username, password, url, and a button to add the password
-
 import React from 'react';
 import { useState } from 'react';
 import { TextField, Typography,Box,  Button} from '@mui/material';
 import hashPassword from '../util/passwordHash';
 import axios from 'axios';
 
-
-let csrfToken = "";
-
-function getCSRF() {
-    axios.get("http://localhost:4000/api/auth/getCSRF", {
-        withCredentials: true,
-    }).then((response) => {
-        console.log(response);
-        csrfToken = response.data.csrftoken;
-        console.log(csrfToken);
-    }).catch((error) => {
-        console.log(error);
-    });
-}
+import { updatePass } from './Dashboard';
 
 
-function AddPassword({onClose, onSave}) {
-    const [url, setUrl] = useState("");
-    const [username, setUsername] = useState("");
-    const [password, setPassword] = useState("");
 
-    function addPassword() {
-        getCSRF();
-        axios.post("http://localhost:4000/api/password/addPasswordToUser", {
-            url: url,
-            title: url,
-            username: username,
-            password: password,
-            csrftoken: "CSRF_TOKEN"
-        }, {
-            withCredentials: true,
-        }).then((response) => {
-            console.log(response);
-            onClose();
-        }).catch((error) => {
-            console.log(error);
-        });
-    }
-
+function Openelement({onClose, onSave}) {
     return ( 
         <Box sx={{
             margin: '10px', 
@@ -67,24 +31,37 @@ function AddPassword({onClose, onSave}) {
             justifyContent: 'center',
             borderRadius: '10px',
             alignItems: 'center',
-                textAlign: 'center',
-            bgcolor: '#8080af',
+            textAlign: 'center',
+            bgcolor: '#808080',
         }}>
 
         <Typography variant="h4" component="h1" sx={{
                 color: 'white',
-                padding: '30px',
+                padding: '20px',
                 fontWeight: 'bold',
                 textAlign: 'center',
-                mt: 3}}> Add Password
+                mt: 3}}> Change Site
         </Typography>
-        <form
-        onSubmit={(e) => {
-            e.preventDefault();
-            addPassword();
-        }}
-        >
+        <Box sx={{
+                display: 'flex',
+                alignItems: 'center',
+                width: '100%',
+                justifyContent: 'center',
+        }}>
+        <img src={`https://t1.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=${updatePass.url}&size=24`} alt="favicon"/>
+        <Typography component="p" sx={{ color: 'white',
+                fontSize: '20px',
+                itemAlign: 'center',
+                textAlign: 'center',
+                marginLeft: '10px',
+                alignItems: 'center',
+                justifyContent: 'center'
+            }}>  {updatePass.title} - {updatePass.username}
+        </Typography>
+        </Box>
 
+        <form
+        >
             <TextField
                 margin="normal"
                 required
@@ -93,8 +70,7 @@ function AddPassword({onClose, onSave}) {
                 name="url"
                 autoComplete="url"
                 autoFocus
-                value={url}
-                onChange={(e) => setUrl(e.target.value)}
+                value={updatePass.url} 
                 sx={{ backgroundColor: 'white', borderRadius: '5px', width: '90%' }}
             />
             <TextField
@@ -105,8 +81,7 @@ function AddPassword({onClose, onSave}) {
                 label="Username"
                 name="username"
                 autoComplete="username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                value={updatePass.username}
                 sx={{ backgroundColor: 'white', borderRadius: '5px', width: '90%' }}
             />
             <TextField
@@ -117,8 +92,7 @@ function AddPassword({onClose, onSave}) {
                 label="Password"
                 name="password"
                 autoComplete="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                value={updatePass.password}
                 sx={{ backgroundColor: 'white', borderRadius: '5px', width: '90%' }}
             />
             <Box sx={{
@@ -159,5 +133,9 @@ function AddPassword({onClose, onSave}) {
     );
 }
 
-export default AddPassword;
-        
+export default Openelement;
+
+
+
+
+

@@ -1,66 +1,57 @@
 //create a new Dashboard component
 //
-import { TextField, Typography,Box,  Button} from '@mui/material';
-import React  from 'react';
-import { useState } from 'react';
+import { TextField,  Typography,Box,  Button} from '@mui/material';
+import React, {useState}  from 'react';
 
 import hashPassword from '../util/passwordHash';
+
 import axios from 'axios';
 import AddPassword from './AddPassword';
+import Openelement from './Openelement';
 
 
+export let updatePass =  {name: null, url: null, username: null, password: null};
 
-
-
-
-
-function getPasswords() {
-    //add a list of passwords and urls and usernames
-    const getPass = axios.get("http://localhost:4000/api/password/getPasswords", {
-        withCredentials: true,
-    }).then((response) => {
-        console.log(response);
-        return response;
-    }).catch((error) => {
-        console.log(error);
-    });
-    return getPass;
-  //  return [
-  //      {name: "twitter", url: "https://twitter.com", username: "user1", password: "password1"},
-  //      {name: "facebook", url: "https://facebook.com", username: "user2", password: "password2"},
-  //      {name: "instagram", url: "https://instagram.com", username: "user3", password: "password3"},
-  //      {name: "gmail", url: "https://google.com", username: "user4", password: "password4"},
-  //      {name: "yahoo", url: "https://yahoo.com", username: "user5", password: "password5"},
-  //      {name: "outlook", url: "https://outlook.com", username: "user6", password: "password6"},
-  //      {name: "amazon", url: "https://amazon.com", username: "user7", password: "password7"},
-  //      {name: "netflix", url: "https://netflix.com", username: "user8", password: "password8"},
-  //      {name: "spotify", url: "https://spotify.com", username: "user9", password: "password9"}
-  //  ];
-}
-
-export default function Dashboard() {
-    const [url, setUrl] = useState('');
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
-
-    function updateUrl(event) {
-        setUrl(event.target.value);
+    function getPass() {
+        //add a list of passwords and urls and usernames
+        const getPass = axios.get("http://localhost:4000/api/password/getPasswords", {
+            withCredentials: true,
+        }).then((response) => {
+            return response.data.passwords;
+        }).catch((error) => {
+            return "errorsdasd"
+        });
+        return getPass;
     }
 
+export default function Dashboard() {
+
+    const [allPasswords, setAllPasswords] = useState(getPass());
+    const [currentPasswords, setCurrentPasswords] = useState([]);
+
+    allPasswords.then((passwords) => {
+        setCurrentPasswords(passwords);
+    });
+
+
     const [addPasswordBoll, setAddPasswordBoll] = useState(false);
+    const [openElementBoll, setOpenElementBoll] = useState(false);
 
     function setAddPassword() {
         setAddPasswordBoll(!addPasswordBoll);
     }
+    function setOpenElement() {
+        setOpenElementBoll(!openElementBoll);
+    }
+
     return (
         <Box sx={{
             width: '350px',
             margin: '10px',
             minHeight: '450px',
-            justifyContent: 'center',
+            justifyContent: 'center', 
             alignItems: 'center',
             textAlign: 'center',
-                
             bgcolor: '#08192c'}}>
             <Typography variant="h4" component="h1" sx={{
                 color: 'white',
@@ -80,18 +71,35 @@ export default function Dashboard() {
                     transition: '0.5s',
                    } 
                 }}> List of your passwords: </Typography>
+        {currentPasswords.map((password) => {
+            return (
+                <Box key={password._id} onClick={() => {
+                    updatePass = password;
+                    setOpenElement();
+                }}
+                    sx={{
+                        padding: '10px',
+                        paddingLeft: '40px',
+                        display: 'flex',
+                        flexDirection: 'row',
+                        border: '1px solid white',
+                        '&:hover': {'background-color': 'gray'}
+                }}>
+                <img src={`https://t1.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=${password.url}&size=24`} alt="favicon"/>
+                <Typography component="p" sx={{ color: 'white',
+                        fontWeight: 'bold',  
+                        marginLeft: '9%'
+                }}>
+                  {password.title} - {password.username} 
+                </Typography>
+                </Box>
+                
+            );
+        })}
         <br/>
 
-        {addPasswordBoll ? (
-            <AddPassword 
-                onClose={() => setAddPassword(false)} 
-                url={url} 
-                username={username} 
-                password={password} 
-                setUrl={updateUrl}
-            /> 
-        ) : null}
-
+        {addPasswordBoll ? <AddPassword onClose={setAddPassword} /> : null}
+        {openElementBoll ? <Openelement onClose={setOpenElement} /> : null}
         
         <Button variant="contained"
         onClick={setAddPassword}

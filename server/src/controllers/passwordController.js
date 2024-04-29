@@ -46,10 +46,12 @@ const getRandom = async (req, res) => {
 
 const addPasswordToUser = async (req, res) => {
     const { title, username, password, url, notes } = req.body;
-    const { userId } = req.user;
+    const { userId, organization_id  } = req.user;
+    
+    console.log(req.user, userId, organization_id);
 
-    if (!organization_id || !title || !username || !password || !userId) {
-        res.status(400).json({ message: 'Missing required fields' }).send();
+    if (!title || !username || !password || !userId) {
+        res.status(400).json({ message: 'Missing required fields' })
         return
     }
 
