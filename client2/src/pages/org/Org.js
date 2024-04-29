@@ -134,22 +134,11 @@ function Org() {
                 },
               }}
             >
-              <DialogTitle>Subscribe</DialogTitle>
+              <DialogTitle>Add user</DialogTitle>
               <DialogContent>
                 <DialogContentText>
-                  To Add a user to the organization, please enter the name of the organization and email.
+                  To Add a user to the organization, please enter the email.
                 </DialogContentText>
-                <TextField
-                autoFocus
-                required
-                margin="dense"
-                id="org"
-                name="organization"
-                label="Organization"
-                type="input"
-                fullWidth
-                variant="standard"
-                />
                 <TextField
                   autoFocus
                   required
