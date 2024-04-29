@@ -22,7 +22,7 @@ function Org() {
   const [csrftoken, setCsrftoken] = useState("");
   const [open, setOpen] = React.useState(false);
   const [admin, setAdmin] = useState(false);
-  const [inOrg, setinOrg] = useState(true);
+  const [inOrg, setinOrg] = useState(false);
   const [rows, setRows] = useState([
     { id: 1, Name: "Jon Snow", email: "Stark" },
     { id: 2, Name: "Cersei Lannister", email: "Lannister" },
@@ -44,12 +44,13 @@ function Org() {
   useEffect(() => {
     try {
       axios.get("http://localhost:4000/api/organization/getUserInOrganization", {
-        withCredentials: true,
+        withCredentials: true
       }).then((response) => {
         const modifiedArray = response.data.users.map(users => {
+          console.log("sadpiosdjnfsd");
           console.log(response.status);
-          if (response.status == 400) {
-              setinOrg(false);
+          if (response.status != 400) {
+              setinOrg(true);
           } else {
             return { ...users, id: users._id, Name: users.username, email: users.email }
           }
@@ -59,7 +60,8 @@ function Org() {
 
 
       }).catch((error) => {
-        console.error('errpr fetching data', error);
+
+
 
       });
       axios.get("http://localhost:4000/api/auth/getCSRF", { withCredentials: true }).then((response) => {
