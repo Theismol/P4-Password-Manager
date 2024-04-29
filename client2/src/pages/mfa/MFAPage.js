@@ -13,6 +13,7 @@ export default function MFAPage() {
     const [open, setOpen] = React.useState(false);
     const [alertMessage, setAlertMessage] = React.useState("");
     const [isLoading, setIsLoading] = React.useState(true);
+    const [csrftoken, setCsrftoken] = React.useState("");
     useEffect(() => {
         (async function () {
             try {
@@ -21,7 +22,7 @@ export default function MFAPage() {
                         withCredentials: true,
                     })
                     .then(async (response) => {
-                        console.log(response.data);
+                        setCsrftoken(response.data.csrftoken);
                         if (response.data.mfa === false) {
                             setSecret(response.data.secret.base32);
                             try {
@@ -63,6 +64,7 @@ export default function MFAPage() {
                 {
                     totp: data.get("TOTP"),
                     secret: secret,
+                    csrftoken: csrftoken,
                 },
                 {
                     withCredentials: true,
@@ -86,6 +88,7 @@ export default function MFAPage() {
                 "http://localhost:4000/api/auth/verifyTOTP",
                 {
                     totp: data.get("TOTP"),
+                    csrftoken: csrftoken,
                 },
                 {
                     withCredentials: true,

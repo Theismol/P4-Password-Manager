@@ -17,7 +17,39 @@
 >**Outcome**
 ```JSON
 {
-    "token": "string"
+    "csrftoken": "string"
+    "mfa": "boolean"
+}
+```
+   - **/verifyTOTP `post`**
+
+```JSON
+{
+    "totp": "string"
+}
+
+```
+
+>**Outcome**
+```JSON
+{
+    "csrftoken": "string"
+}
+```
+   - **/verifyTOTPFirstTime `post`**
+
+```JSON
+{
+    "secret": "string",
+    "totp" : "string"
+}
+
+```
+
+>**Outcome**
+```JSON
+{
+    "csrftoken": "string"
 }
 ```
 

@@ -12,11 +12,10 @@ require("dotenv").config();
 
 const csrftoken = process.env.CSRF_TOKEN;
 const checkMFA = async (req, res) => {
-    const jwt = await req.cookies.token;
-    const decoded_jwt = verifyToken(jwt);
     let user;
+    const { userId } = req.user;
     try {
-        user = await User.findById(decoded_jwt.userId);
+        user = await User.findById(userId);
     } catch (error) {
         return res.status(404).json({ message: "User not found" }).send();
     }
@@ -27,30 +26,15 @@ const checkMFA = async (req, res) => {
             length: 20,
             name: "AccessArmor",
         });
-        res.status(200).json({ mfa: false, secret: secret }).send();
+        res.status(200).json({csrftoken: csrftoken, mfa: false, secret: secret }).send();
     } else {
-        return res.status(200).json({ mfa: true });
+        return res.status(200).json({csrftoken: csrftoken, mfa: true });
     }
 };
 const verifyTOTP = async (req, res) => {
-    const jwt = req.cookies.token;
     const totpToken = req.body.totp;
-    let decodedJwt;
-    try {
-        decodedJwt = verifyToken(jwt);
-    } catch (error) {
-        if (error.name === "JsonWebTokenError") {
-            return res.status(401).json({ message: "Invalid token" }).send(); // Unauthorized
-        } else if (error.name === "TokenExpiredError") {
-            return res.status(401).json({ message: "Token expired" }).send(); // Unauthorized
-        } else {
-            return res
-                .status(500)
-                .json({ message: "Internal server error" })
-                .send(); // Internal server error
-        }
-    }
-    const user = await User.findById(decodedJwt.userId);
+    const { userId } = req.user;
+    const user = await User.findById(userId);
     if (!user) {
         return res.status(404).json({ message: "User not found" }).send();
     }
@@ -104,42 +88,18 @@ const verifyTOTP = async (req, res) => {
             httpOnly: true,
             secure: true,
         })
-        .status(200)
-        .json({ csrftoken: csrftoken });
+        .status(200).send();
 };
 
 
 const verifyTOTPFirstTime = async (req, res) => {
     const totpToken = req.body.totp;
     const secret = req.body.secret;
-    const jwt = req.cookies.token;
-    let decoded_jwt;
-    try {
-        decoded_jwt = verifyToken(jwt);
-    } catch (error) {
-        if (error.name === "JsonWebTokenError") {
-            return res.status(401).json({ message: "Invalid token" }).send(); // Unauthorized
-        } else if (error.name === "TokenExpiredError") {
-            return res.status(401).json({ message: "Token expired" }).send(); // Unauthorized
-        } else {
-            return res
-                .status(500)
-                .json({ message: "Internal server error" })
-                .send(); // Internal server error
-        }
-    }
-    const user = await User.findById(decoded_jwt.userId);
+    const { userId } = req.user;
+    const user = await User.findById(userId);
     if (!user) {
         return res.status(404).json({ message: "User not found" }).send();
     }
-    const token = generateToken(
-        { userId: user._id, organistations: user.organizations },
-        3600
-    );
-    const refreshToken = generateRefreshToken({
-        userId: user._id,
-        organistations: user.organizations,
-    });
     const verified = speakeasy.totp.verify({
         secret: secret,
         encoding: "base32",
@@ -152,13 +112,21 @@ const verifyTOTPFirstTime = async (req, res) => {
         try {
             user.mfaSecret = secret;
             user.save();
-
+            
         }
         catch (err) {
             console.log(err);
-
+            
         }
     }
+    const token = generateToken(
+        { userId: user._id, organistations: user.organizations },
+        3600
+    );
+    const refreshToken = generateRefreshToken({
+        userId: user._id,
+        organistations: user.organizations,
+    });
     try {
         await jwtModel.create({
             name: user.username,
@@ -192,8 +160,7 @@ const verifyTOTPFirstTime = async (req, res) => {
             httpOnly: true,
             secure: true,
         })
-        .status(200)
-        .json({ csrftoken: csrftoken })
+        .status(200).send();
 };
 
 
@@ -212,7 +179,7 @@ const login = async (req, res) => {
         );
         return res.cookie("token", token, {sameSite: "none", httpOnly: true, secure: true })
             .status(200)
-            .json({ csrftoken: csrftoken, mfa: mfa });
+            .json({mfa: mfa });
     } catch (error) {
         return res.status(500).json({ message: "Error during login" }).send();
     }
@@ -263,6 +230,17 @@ const logout = async (req, res) => {
         res.status(500).json({ message: "Internal server error" }).send();
     }
 };
+const getCSRF = async (req, res) => {
+    const { userId } = req.user;
+    let user;
+    try {
+        user = User.findById({userId})
+    }
+    catch(error) {
+        res.status(404).json({ message: "User not found" }).send();
+    }
+    res.status(200).json({csrftoken: csrftoken}).send();
+}
 
 module.exports = {
     login,
@@ -271,4 +249,5 @@ module.exports = {
     verifyTOTPFirstTime,
     verifyTOTP,
     checkMFA,
+    getCSRF,
 };
