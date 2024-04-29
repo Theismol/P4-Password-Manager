@@ -58,7 +58,7 @@ const createOrganization = async (req, res) => {
 
 const addUserToOrganization = async (req, res) => {
     const { organistations, userId } = req.user;
-    const { addUser} = req.body;
+    const { email} = req.body;
 
     console.log(organistations);
 
@@ -73,28 +73,28 @@ const addUserToOrganization = async (req, res) => {
             return;
         }
         try{
-            await organization.findOneAndUpdate({ _id: organistations },  { $push: { users: addUser } });
-            res.status(200).json({ message: 'User added to organization' }).send();
+            const foundUser = await user.findOneAndUpdate({ email: email }, { organizations: foundorganization._id });
+            if(!foundUser){
+                res.status(400).json({ message: 'User not found' }).send();
+                return;
+            }
             try{
-                await user.findOneAndUpdate({ _id: addUser },  { organizations: organistations });
-            }catch(error){
-                try{
-                    await organization.findOneAndUpdate({ _id: organistations },  { $pull: { users: addUser } });
+                await organization.findOneAndUpdate({ _id: foundorganization._id }, { $push: { users: foundUser._id } });
+                return res.status(200).json({ message: 'User added to organization' }).send();
             }catch(error){
                 console.error('Error during adding user to organization:', error);
-                res.status(500).json({ message: 'Internal server error' }).send();
+                return res.status(500).json({ message: 'Internal server error' }).send();
             }
-        }
-        }catch(error){          
+
+            }catch(error){
             console.error('Error during adding user to organization:', error);
             res.status(500).json({ message: 'Internal server error' }).send();
+            }
+        }catch(error){          
+            console.error('Error during adding user to organization:', error);
+            return res.status(500).json({ message: 'Internal server error' }).send();
         }
-       
-        
-    } catch (error) {
-        console.error('Error during adding user to organization:', error);
-        res.status(500).json({ message: 'Internal server error' }).send();
-    }
+    
 }
 
 const getUserInOrganization = async (req, res) => {
