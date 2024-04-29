@@ -1,20 +1,31 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Modal, Box, Typography, Button, TextField } from '@mui/material';
 
-export default function PasswordModal({ open, handleCloseModal, selectedRow, handlePasswordChange }) {
-  const [username] = useState(selectedRow ? selectedRow.username : '');
-  const [password] = useState(selectedRow ? selectedRow.password : '');
-  const [url, setUrl] = useState(selectedRow ? selectedRow.url : '');
+export default function PasswordModal({ open, handleCloseModal, selectedRow, handlePasswordChange, generatedPassword, saveChanges }) {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [url, setUrl] = useState('');
+  const [isNewPasswordSaved, setIsNewPasswordSaved] = useState(false);
+
+  useEffect(() => {
+    if (selectedRow) {
+      setUsername(selectedRow.username);
+      setPassword(selectedRow.password);
+      setUrl(selectedRow.url);
+      setIsNewPasswordSaved(false); // Reset isNewPasswordSaved when modal opens
+    }
+  }, [selectedRow, generatedPassword]); // Update when selectedRow or generatedPassword changes
 
   const handleUrlChange = (event) => {
     setUrl(event.target.value);
   };
 
-  const confirmPasswordChange = () => {
-    const confirmed = window.confirm("Are you sure you want to change the password?");
-    if (confirmed) {
-      handlePasswordChange(); // Trigger password change only if confirmed
+  const handleSaveChanges = () => {
+    if (!isNewPasswordSaved && generatedPassword) {
+      saveChanges(generatedPassword); // Save the generated password
+      setIsNewPasswordSaved(true);
     }
+    handleCloseModal();
   };
 
   return (
@@ -44,17 +55,18 @@ export default function PasswordModal({ open, handleCloseModal, selectedRow, han
           fullWidth
           margin="normal"
           InputProps={{
-            readOnly: true, 
+            readOnly: true,
           }}
         />
         <TextField
           label="Password"
           variant="outlined"
-          value={password}
+          value={isNewPasswordSaved ? generatedPassword : password}
           fullWidth
           margin="normal"
           InputProps={{
-            readOnly: true, 
+            readOnly: true,
+            // type: isNewPasswordSaved ? 'text' : 'password', // Display as text if new password is saved
           }}
         />
         <TextField
@@ -65,8 +77,9 @@ export default function PasswordModal({ open, handleCloseModal, selectedRow, han
           fullWidth
           margin="normal"
         />
-        <Button onClick={confirmPasswordChange}>Change Password</Button> {/* Button to trigger password change with confirmation */}
-        <Button onClick={handleCloseModal}>Close</Button>
+        <Button onClick={handlePasswordChange}>Change Password</Button>
+        <Button onClick={handleCloseModal} style={{ float: 'right' }}>Close</Button>
+        <Button onClick={handleSaveChanges} style={{ float: 'right', marginRight: '10px' }}>Save Changes</Button>
       </Box>
     </Modal>
   );

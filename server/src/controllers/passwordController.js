@@ -121,17 +121,15 @@ const getPasswords = async (req, res) => {
     try {
         const userData = await user.findById({ _id: userId });
 
-        try {
-            const passwords = await Password.find({ _id: userData.passwords });
-            res.status(200).json(passwords).send();
-        } catch (error) {
-            console.error('Error during fetchiƒng passwords:', error);
-            res.status(500).json({ message: 'Internal server error' }).send();
-        }
+        
+        const passwords = await Password.find({ _id: userData.passwords });
+        res.status(200).json(passwords);
+        return;
+    
     }
     catch (error) {
         console.error('Error during fetching passwords:', error);
-        res.status(500).json({ message: 'Internal server error' }).send();
+        return res.status(500).json({ message: 'Internal server error' }).send();
     }
 }
 

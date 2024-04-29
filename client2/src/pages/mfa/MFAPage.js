@@ -69,7 +69,7 @@ export default function MFAPage() {
                 }
             )
             .then((response) => {
-                window.location.href = "/home";
+                window.location.href = "/PasswordBank";
             })
             .catch((error) => {
                 setAlertMessage(error.response.data.message);
@@ -92,7 +92,7 @@ export default function MFAPage() {
                 }
             )
             .then((response) => {
-                window.location.href = "/home";
+                window.location.href = "/PasswordBank";
             })
             .catch((error) => {
                 console.log(error);
