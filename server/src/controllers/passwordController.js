@@ -40,21 +40,17 @@ const getRandom = async (req, res) => {
         res.status(500).json({ message: 'Internal server error' });
     }
 };
-
-
-
-
 const addPasswordToUser = async (req, res) => {
-    const { organization_id, title, username, password, url, notes } = req.body;
+    const {title, username, password, url, notes } = req.body;
     const { userId } = req.user;
 
-    if (!organization_id || !title || !username || !password || !userId) {
+    if (!title || !username || !password || !userId) {
         res.status(400).json({ message: 'Missing required fields' }).send();
         return
     }
 
     const newPassword = new Password({
-        organization_id: organization_id,
+        organization_id: null,
         user_id: userId,
         title: title,
         username: username,
@@ -83,6 +79,18 @@ const addPasswordToUser = async (req, res) => {
     } catch (error) {
         console.error('Error during adding password:', error);
         res.status(500).json({ message: 'Internal server error' }).send();
+    }
+}
+
+const updatePassword = async (req, res) => {
+    const {passwordId,title, username, password, url, notes } = req.body;
+    try {
+        await Password.findByIdAndUpdate(passwordId, {title:title, username:username, password:password, url:url, notes: notes})
+        console.log("updated");
+        res.status(200).send();
+    }
+    catch(error) {
+        res.status(404).json({message: "password not found"}).send();
     }
 }
 
@@ -189,4 +197,4 @@ const sendPassword = async (req, res) => {
 }
 
 
-module.exports = { getAllPasswords, getRandom, addPasswordToUser, deletePassword, getPasswords, sendPassword };
+module.exports = { getAllPasswords, getRandom, addPasswordToUser, deletePassword, getPasswords, sendPassword, updatePassword };

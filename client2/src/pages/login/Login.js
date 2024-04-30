@@ -10,12 +10,14 @@ import logo from "../../assets/images/logo.png";
 import axios from "axios";
 import hashPassword from "../../services/passwordHash";
 
+
 export default function Login() {
     const handleSubmit = (event) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
         const hashedPassword = hashPassword(data.get("password"));
         hashedPassword.then((result) => {
+            localStorage.setItem("key", result);
             axios.post("http://localhost:4000/api/auth/login", {
                 username: data.get("username"),
                 password: result,

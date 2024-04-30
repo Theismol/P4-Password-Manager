@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { Table, TableCell, TableRow, TableHead, TableBody, Paper, TableContainer, TablePagination } from '@mui/material';
+import React, { useState, useEffect, useContext } from 'react';
+import { Table, TableCell, TableRow, TableHead, TableBody, Paper, TableContainer, TablePagination, Container, Box, Button } from '@mui/material';
 import axios from 'axios';
 import PasswordModal from '../../components/PasswordPop/PasswordModal';
-import CryptoJS from 'crypto-js';
+import PermanentDrawerLeft from "../../components/navbars/sideBar";
 
 export default function PasswordTable() {
   const [data, setData] = useState([]);
@@ -10,17 +10,16 @@ export default function PasswordTable() {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [selectedRow, setSelectedRow] = useState(null);
   const [openModal, setOpenModal] = useState(false);
-  const [csrftoken, setCsrftoken] = useState("");
-  const [generatedPassword, setGeneratedPassword] = useState('');
+  const columns = [
+    { id: 'username', label: 'Username', minWidth: 170 },
+    { id: 'password', label: 'Password', minWidth: 170 },
+    { id: 'url', label: 'URL', minWidth: 170 }
+  ];
 
   useEffect(() => {
+    console.log("fetching");
     fetchData();
-    axios.post('http://localhost:4000/api/auth/getCSRF').then((response) => {
-      setCsrftoken(response.data.csrftoken);
-    }).catch((error) => {
-      console.log(error);
-    } )
-  }, []);
+  }, [openModal]);
 
   const fetchData = async () => {
     try {
@@ -31,18 +30,19 @@ export default function PasswordTable() {
     }
   };
 
-  const columns = [
-    { id: 'username', label: 'Username', minWidth: 170 },
-    { id: 'password', label: 'Password', minWidth: 170 },
-    { id: 'url', label: 'URL', minWidth: 170 }
-  ];
 
   const handleOpenModal = (row) => {
     setSelectedRow(row);
     setOpenModal(true);
   };
+  const createOpenModal = () => {
+    setSelectedRow(null);
+    setOpenModal(true);
+    
+  }
 
   const handleCloseModal = () => {
+    setSelectedRow(null);
     setOpenModal(false);
   };
 
@@ -54,52 +54,24 @@ export default function PasswordTable() {
     setRowsPerPage(+event.target.value);
     setPage(0);
   };
-
-  const generateNewPassword = () => {
-    const charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-    let newPassword = '';
-    for (let i = 0; i < 20; i++) {
-      const randomIndex = Math.floor(Math.random() * charset.length);
-      newPassword += charset[randomIndex];
-    }
-    setGeneratedPassword(newPassword);
-    return newPassword;
-  };
-
-  const encryptPassword = (password) => {
-    const encryptedPassword = CryptoJS.AES.encrypt(password, 'your_secret_key').toString();
-    return encryptedPassword;
-  };
-  
-  const savePasswordToBackend = async (updatedRow) => {
-    try {
-      // Send the new password to the backend API endpoint
-      // await axios.patch(`http://localhost:4000/api/users/${updatedRow.id}`, { password: newPassword });
-
-      updatedRow._id = selectedRow._id;
-
-      const updatedData = data.map(row => row._id === updatedRow._id ? updatedRow : row);
-      setData(updatedData);
-    } catch (error) {
-      console.error('Error updating password:', error);
-    }
-  };
-
-  const handlePasswordChange = () => {
-    const newPassword = generateNewPassword();
-    setSelectedRow({ ...selectedRow, password: newPassword });
-  };
-
-  const saveChanges = (updatedPassword) => {
-    const encryptedPassword = encryptPassword(updatedPassword);
-    const updatedRow = { ...selectedRow, password: encryptedPassword };
-    savePasswordToBackend(updatedRow);
-  };
-
-
   return (
     <div>
-      <Paper sx={{ width: '100%', overflow: 'hidden' }}>
+      <PermanentDrawerLeft/>
+      <Container
+          component="main"
+          sx={{
+              display: "flex",
+              justifyContent: "center", // Horizontally center the content
+          }}
+          maxWidth="xl"
+      >
+      <Button
+        onClick = {createOpenModal}
+        variant="contained"
+        sx={{ margin: "auto" }}>
+          Create new password
+      </Button>
+      <Paper sx={{ width: '70%', overflow: 'hidden', alignItems: "center", justifyContent: "center",   }}>
         <TableContainer sx={{ maxHeight: 440 }}>
           <Table stickyHeader aria-label="sticky table">
             <TableHead>
@@ -146,15 +118,15 @@ export default function PasswordTable() {
           onRowsPerPageChange={handleChangeRowsPerPage}
         />
       </Paper>
+      </Container>
       {/* Modal component */}
-      <PasswordModal
+
+      {openModal ?      (<PasswordModal
         open={openModal}
         handleCloseModal={handleCloseModal}
         selectedRow={selectedRow}
-        handlePasswordChange={handlePasswordChange}
-        generatedPassword={generatedPassword}
-        saveChanges={saveChanges}
-      />
+      />) : (null) }
+
     </div>
   );
 }

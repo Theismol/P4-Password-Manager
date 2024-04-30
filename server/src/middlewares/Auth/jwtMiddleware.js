@@ -6,20 +6,19 @@ const csrftoken = process.env.CSRF_TOKEN;
 const authenticateToken = (req, res, next) => {
     const token = req.cookies.token;
     const receivedCsrftoken = req.body.csrftoken
-    console.log(token);
+    //console.log(token);
     
     // const authHeader = req.headers['authorization'];
     // const token = authHeader && authHeader.split(' ')[1];
-    console.log("csrftoken: ", receivedCsrftoken)
-    console.log("metode " + req.method)
+    //console.log("csrftoken: ", receivedCsrftoken)
+    //console.log("metode " + req.method)
     if ((token == null || receivedCsrftoken != csrftoken )&& req.method != "GET") {
         console.log("token is null")
         return res.sendStatus(401).send();
     }else if(token == null){
-        console.log("token is null")
+        console.log("token is null2")
         return res.sendStatus(401).send();
     }
-    console.log("dsfsdfdg")
 
     
     try {
