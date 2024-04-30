@@ -12,7 +12,7 @@ router.post('/logout', logout);
 router.post('/verifyTOTP', authenticateToken, verifyTOTP);
 router.post('/verifyTOTPFirstTime',authenticateToken, verifyTOTPFirstTime);
 router.get('/checkMFA',authenticateToken,checkMFA);
-router.get('getCSRF', getCSRF );
+router.get('/getCSRF',authenticateToken, getCSRF );
 
 
 
