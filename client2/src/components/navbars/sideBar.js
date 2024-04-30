@@ -46,7 +46,7 @@ export default function PermanentDrawerLeft() {
         <List>
           {["Home", "Passwords", "Org", "Github"].map((text, index) => (
             <ListItem key={text} disablePadding>
-               <Link to={index === 0 ? "/home" : index === 2 ? "/org" : "https://github.com/Theismol/P4-Password-Manager/"}>
+               <Link to={index === 0 ? "/home" : index === 1 ? "/PasswordBank" : index === 2 ? "/org" : "https://github.com/Theismol/P4-Password-Manager/"}>
                 <ListItemButton>
                   <ListItemIcon>
                     {index === 0 ? <HomeIcon /> : index === 1 ? <LockIcon /> : index === 2 ? <PeopleIcon /> : <GitHubIcon />}
