@@ -26,6 +26,7 @@ const createOrganization = async (req, res) => {
         try {
             const foundUser = await user.findById(userId);
             if(foundUser.organizations != null){
+                console.log("ftdrtr6dty")
                 res.status(400).json({ message: 'User already has an organization' }).send();
                 return;
             }

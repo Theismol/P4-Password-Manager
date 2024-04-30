@@ -192,6 +192,7 @@ const tokenRefresh = async (req, res) => {
     try {
         const jwt = await jwtModel.findOne({ RefreshToken: refreshToken });
         const out = verifyRefreshToken(refreshToken);
+        const user = await User.findById(out.userId);
 
         if (jwt === null) {
             return res
@@ -199,17 +200,19 @@ const tokenRefresh = async (req, res) => {
                 .json({ message: "Invalid refresh token" })
                 .send();
         }
+        console.log(user);
         const token = generateToken({
-            userId: out.userId,
-            organistations: out.organistations,
-        });
+            userId: user._id,
+            organistations: user.organizations[0],
+        }, 3600);
+        console.log(token);
         res.cookie("token", token, {
+            sameSite: "none",
             httpOnly: true,
             secure: true,
-            sameSite: "none",
-        });
+        }).status(200).json({ message: "Token refreshed" }).send();
         console.log(out, token);
-        res.status(200).json({ message: "Token refreshed", token }).send();
+
     } catch (error) {
         console.error("Error during token refresh:", error);
         res.status(500).json({ message: "Internal server error" }).send();
