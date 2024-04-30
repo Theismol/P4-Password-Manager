@@ -12,28 +12,30 @@ function Openelement({onClose, onSave}) {
     return ( 
         <Box sx={{
             margin: '10px', 
-                //full screen height
-                height: '450px',
-                width: '350px',
-                top: 0,
-                left: 0,
+                //full screen height and width
+                height: '100vh',
+                width: '100%',
+                bgcolor: 'rgba(0,0,0,0.5)',
+                top: -10,
+                left: -10,
                 zIndex: 10,
-                paddingLeft: '15px',
                 position: 'absolute',
-                justifyContent: 'center', 
-                alignItems: 'center', 
-                textAlign: 'center', 
             }}>
+
         <Box sx={{
-            width: '300px',
+            position: 'relative',
+            width: '350px',
             margin: '10px',
             minHeight: '450px',
             justifyContent: 'center',
-            borderRadius: '10px',
             alignItems: 'center',
+            borderRadius: '10px',
             textAlign: 'center',
-            bgcolor: '#808080',
+            bgcolor: '#748EAB',
         }}>
+
+
+
 
         <Typography variant="h4" component="h1" sx={{
                 color: 'white',
@@ -45,6 +47,7 @@ function Openelement({onClose, onSave}) {
         <Box sx={{
                 display: 'flex',
                 alignItems: 'center',
+
                 width: '100%',
                 justifyContent: 'center',
         }}>
@@ -56,12 +59,11 @@ function Openelement({onClose, onSave}) {
                 marginLeft: '10px',
                 alignItems: 'center',
                 justifyContent: 'center'
-            }}>  {updatePass.title} - {updatePass.username}
+            }}> - {updatePass.title}
         </Typography>
         </Box>
 
-        <form
-        >
+        <form>
             <TextField
                 margin="normal"
                 required
@@ -69,10 +71,11 @@ function Openelement({onClose, onSave}) {
                 label="URL"
                 name="url"
                 autoComplete="url"
-                autoFocus
                 value={updatePass.url} 
-                sx={{ backgroundColor: 'white', borderRadius: '5px', width: '90%' }}
+                sx={{ backgroundColor: 'white',
+                        borderRadius: '5px', width: '90%' }}
             />
+
             <TextField
                 margin="normal"
                 required
@@ -99,7 +102,7 @@ function Openelement({onClose, onSave}) {
                 display: 'flex', justifyContent: 'center' }}>
                 <Button
                     variant="contained"
-                    type="submit"
+                    onClick={onClose}
                     sx={{
                         bgcolor: '#5ca85c',
                         color: 'black',
