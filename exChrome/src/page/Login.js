@@ -1,9 +1,8 @@
 /* global chrome */
 import { TextField, Typography,Box,  Button} from '@mui/material';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import hashPassword from '../util/passwordHash';
 import axios from 'axios';
-
 
 
 function loginGet()
@@ -11,30 +10,27 @@ function loginGet()
     //chrome.runtime.sendMessage({message: "open_new_tab"}, function(response) {
     //        console.log(response);
     //    });
-    ////axios.get("http://localhost:4000/api/password/chceckToken", {
-    //    withCredentials: true,
-    //}).then((response) => {
-    //    console.log(response);
-    //}).catch((error) => {
-    //    console.log(error);
-    //});
 
 }
 
 export default function Login({onLogin}) {
-    function callAPI() {
-        axios.get("http://localhost:4000/api/auth/exntionCheckLogin", {
-            withCredentials: true,
-        }).then((response) => {
-            if (response.status === 200) {
-                onLogin();
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await axios.get("http://localhost:4000/api/auth/exntionCheckLogin", {
+                    withCredentials: true,
+                });
+                if (response.status === 200) {
+                    onLogin();
+                }
+                console.log(response);
+            } catch (error) {
+                console.log(error);
             }
-            console.log(response);
-        }).catch((error) => {
-            console.log(error);
-        });
-    }
-    callAPI();
+        };
+        fetchData();
+    }, []); // Empty dependency array to ensure useEffect runs only once
+
 
     return (
     <div>
@@ -68,11 +64,7 @@ export default function Login({onLogin}) {
                       width: '80%',
                       marginLeft:"9%"}}>
               Sign In
-            </Button>
-        <Button onClick={callAPI} sx={{color: 'white', 
-                marginLeft: '9%', 
-                bgcolor: '#f0ad4e',
-                marginTop: '10px'}}>Check Token</Button>
+        </Button>
       </Box>
     </div>
         

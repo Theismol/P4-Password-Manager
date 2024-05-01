@@ -1,7 +1,7 @@
 /* global chrome */
 //create a new Dashboard component
-import { TextField,  Typography,Box,  Button} from '@mui/material';
-import React, {useState}  from 'react';
+import { TextField,  Typography,Box, List, ListItem, ListItemText, ListItemIcon,  Button} from '@mui/material';
+import React, {useState, useEffect} from 'react';
 
 import hashPassword from '../util/passwordHash';
 
@@ -9,111 +9,110 @@ import axios from 'axios';
 import AddPassword from './AddPassword';
 import Openelement from './Openelement';
 
+var AES = require("crypto-js/aes");
 
-let boolShow = true;
 
 export let updatePass =  {name: null, url: null, username: null, password: null};
 
-    function getPass() {
-        //add a list of passwords and urls and usernames
-        const getPass = axios.get("http://localhost:4000/api/password/getPasswords", {
-            withCredentials: true,
-        }).then((response) => {
-            return response.data.passwords;
-        }).catch((error) => {
-            return "errorsdasd"
-        });
-        return getPass;
-    }
-
 export default function Dashboard() {
-
-    const [allPasswords, setAllPasswords] = useState(getPass());
     const [currentPasswords, setCurrentPasswords] = useState([]);
-
-    allPasswords.then((passwords) => {
-        if (passwords !== "errorsdasd" && boolShow) {
-            setCurrentPasswords(passwords);
-        }
-        //when its done loading set the current passwords
-    });
-
-    if (currentPasswords.length !== 0 && boolShow) {
-        console.log(currentPasswords);
-        boolShow = false;
-
-        chrome.runtime.sendMessage({currentPasswords}, function(response) {
-            console.log(response.message);
-        });
-    }
-
-
     const [addPasswordBoll, setAddPasswordBoll] = useState(false);
     const [openElementBoll, setOpenElementBoll] = useState(false);
+    const [save, setSave] = useState(false);
 
-    function setAddPassword() {
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await axios.get("http://localhost:4000/api/password/getPasswords", {
+                    withCredentials: true,
+                });
+                setCurrentPasswords(response.data.passwords);
+            } catch (error) {
+                console.error("Error fetching passwords:", error);
+            }
+        };
+
+        fetchData();
+
+
+    }, [save]);
+
+    const setAddPassword = () => {
         setAddPasswordBoll(!addPasswordBoll);
-    }
-    function setOpenElement() {
+    };
+
+    const setOpenElement = () => {
         setOpenElementBoll(!openElementBoll);
-    }
+    };
+
+    const setSaveBoll = () => {
+        setSave(!save);
+    };
+
+
 
     return (
         <Box sx={{
             width: '350px',
-            margin: '10px',
             minHeight: '450px',
             justifyContent: 'center', 
             alignItems: 'center',
             textAlign: 'center',
             bgcolor: '#08192c'}}>
+
             <Typography variant="h4" component="h1" sx={{
                 color: 'white',
                 padding: '30px',
                 fontWeight: 'bold',
                 textAlign: 'center',
-                mt: 3}}> Dashboard
+                }}> Dashboard
             </Typography>
-        <Typography component="p" sx={{ color: 'white',
-                itemAlign: 'center',
-                textAlign: 'center',
-                alignItems: 'center',
-                justifyContent: 'center',
-                ///create a hover from left to right animation
-                '&:hover': {
-                    color: 'red',
-                    transition: '0.5s',
-                   } 
-                }}> List of your passwords: </Typography>
-        {currentPasswords.map((password) => {
-            return (
-                <Box key={password._id} onClick={() => {
+<Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', maxWidth: '600px', margin: '0 auto' }}>
+    <Typography component="p" sx={{ color: 'white', textAlign: 'center', marginTop: '20px' }}>
+        List of your passwords:
+    </Typography>
+    <List sx={{ width: '100%', padding: 0 }}>
+        {currentPasswords.map((password, index) => (
+            <ListItem
+                key={password._id}
+                button
+                onClick={() => {
                     updatePass = password;
                     setOpenElement();
                 }}
-                    sx={{
-                        padding: '10px',
-                        paddingLeft: '40px',
-                        display: 'flex',
-                        flexDirection: 'row',
-                        border: '1px solid white',
-                        '&:hover': {'background-color': 'gray'}
-                }}>
-                <img src={`https://t1.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=${password.url}&size=24`} alt="favicon"/>
-                <Typography component="p" sx={{ color: 'white',
-                        fontWeight: 'bold',  
-                        marginLeft: '9%'
-                }}>
-                  {password.title} - {password.username} 
-                </Typography>
-                </Box>
-                
-            );
-        })}
+                sx={{
+                    width: '90%', // Adjusted width to 80%
+                    border: '1px solid white',
+                    borderRadius: '3px',
+                    '&:hover': { backgroundColor: 'gray' },
+                    padding: '1px',
+                    margin: '0 auto', // Center the list item horizontally
+                        ...(index !== currentPasswords.length - 1 && { marginBottom: '3px' }), // Add margin bottom to all except the last item
+                }}
+            >
+                <ListItemIcon sx={{ paddingLeft: '20px' }}>
+                    <img src={`https://t1.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=${password.url}&size=24`} alt="favicon" />
+                </ListItemIcon>
+                <ListItemText
+                    primary={
+                        <Typography variant="h7" sx={{ color: 'white' }}>
+                            {password.title}
+                        </Typography>
+                    }
+                    secondary={
+                        <Typography sx={{ color: 'white' }}>
+                            {password.username}
+                        </Typography>
+                    }
+                />
+            </ListItem>
+        ))}
+    </List>
+</Box>; 
         <br/>
 
-        {addPasswordBoll ? <AddPassword onClose={setAddPassword} /> : null}
-        {openElementBoll ? <Openelement onClose={setOpenElement} /> : null}
+        {addPasswordBoll ? <AddPassword onClose={setAddPassword} onSave={setSaveBoll}/> : null}
+        {openElementBoll ? <Openelement onClose={setOpenElement}  /> : null}
         
         <Button variant="contained"
         onClick={setAddPassword}
