@@ -1,21 +1,16 @@
 //see if the page is any of the following:
-function getPasswords() {
-    //add a list of passwords and urls and usernames
-    return [
-        {name: "twitter", url: "https://twitter.com", username: "user1", password: "password1"},
-        {name: "facebook", url: "https://facebook.com", username: "user2", password: "password2"},
-        {name: "instagram", url: "https://instagram.com", username: "user3", password: "password3"},
-        {name: "gmail", url: "https://gmail.com", username: "user4", password: "password4"},
-        {name: "yahoo", url: "https://yahoo.com", username: "user5", password: "password5"},
-        {name: "outlook", url: "https://outlook.com", username: "user6", password: "password6"},
-        {name: "amazon", url: "https://amazon.com", username: "user7", password: "password7"},
-        {name: "netflix", url: "https://netflix.com", username: "user8", password: "password8"},
-        {name: "spotify", url: "https://spotify.com", username: "user9", password: "password9"},
-        {name: "tiktok", url: "https://tiktok.com", username: "user10", password: "password10"},
-        {name: "login.microsoftonline.com", url: "https://login.microsoftonline.com", username: "user11", password: "password10"},
-        {name: "probabilitycourse.com", url: "https://probabilitycourse.com", username: "user12", password: "password10"},
-    ];
-}
+    //get infomaion from popup.js
+chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
+    console.log('Message received in content.js:', message);
+});
+
+//on page load event
+
+let domain = document.domain;
+console.log('The page is loaded:', domain);
+chrome.runtime.sendMessage({message: "page_loaded", domain: domain});
+
+
 
 let passwordStorePass = checkIfPageIsPasswordPage();
 var currentInput = null;
@@ -85,4 +80,5 @@ document.addEventListener('click', function(e) {
     }
 }
 );
+
 

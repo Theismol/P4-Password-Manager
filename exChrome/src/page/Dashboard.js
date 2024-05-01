@@ -1,5 +1,5 @@
+/* global chrome */
 //create a new Dashboard component
-//
 import { TextField,  Typography,Box,  Button} from '@mui/material';
 import React, {useState}  from 'react';
 
@@ -9,6 +9,8 @@ import axios from 'axios';
 import AddPassword from './AddPassword';
 import Openelement from './Openelement';
 
+
+let boolShow = true;
 
 export let updatePass =  {name: null, url: null, username: null, password: null};
 
@@ -30,8 +32,20 @@ export default function Dashboard() {
     const [currentPasswords, setCurrentPasswords] = useState([]);
 
     allPasswords.then((passwords) => {
-        setCurrentPasswords(passwords);
+        if (passwords !== "errorsdasd" && boolShow) {
+            setCurrentPasswords(passwords);
+        }
+        //when its done loading set the current passwords
     });
+
+    if (currentPasswords.length !== 0 && boolShow) {
+        console.log(currentPasswords);
+        boolShow = false;
+
+        chrome.runtime.sendMessage({currentPasswords}, function(response) {
+            console.log(response.message);
+        });
+    }
 
 
     const [addPasswordBoll, setAddPasswordBoll] = useState(false);

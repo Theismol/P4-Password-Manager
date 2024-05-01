@@ -34,9 +34,6 @@ function Openelement({onClose, onSave}) {
             bgcolor: '#748EAB',
         }}>
 
-
-
-
         <Typography variant="h4" component="h1" sx={{
                 color: 'white',
                 padding: '20px',
@@ -47,7 +44,6 @@ function Openelement({onClose, onSave}) {
         <Box sx={{
                 display: 'flex',
                 alignItems: 'center',
-
                 width: '100%',
                 justifyContent: 'center',
         }}>
@@ -67,13 +63,17 @@ function Openelement({onClose, onSave}) {
             <TextField
                 margin="normal"
                 required
+                
                 id="url"
                 label="URL"
                 name="url"
+                size="small"
                 autoComplete="url"
                 value={updatePass.url} 
                 sx={{ backgroundColor: 'white',
+                        marginTop: '20px',
                         borderRadius: '5px', width: '90%' }}
+
             />
 
             <TextField
@@ -83,20 +83,28 @@ function Openelement({onClose, onSave}) {
                 id="username"
                 label="Username"
                 name="username"
+                size="small"
                 autoComplete="username"
                 value={updatePass.username}
-                sx={{ backgroundColor: 'white', borderRadius: '5px', width: '90%' }}
+                sx={{ backgroundColor: 'white', 
+                        marginTop: '20px',
+                        borderRadius: '5px', 
+                        width: '90%' }}
             />
             <TextField
                 margin="normal"
                 required
+                size="small"
                 fullWidth
                 id="password"
                 label="Password"
                 name="password"
                 autoComplete="password"
                 value={updatePass.password}
-                sx={{ backgroundColor: 'white', borderRadius: '5px', width: '90%' }}
+                sx={{ backgroundColor: 'white', 
+                        borderRadius: '5px', 
+                        marginTop: '20px',
+                        width: '90%' }}
             />
             <Box sx={{
                 display: 'flex', justifyContent: 'center' }}>
