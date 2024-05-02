@@ -154,28 +154,13 @@ const getPasswords = async (req, res) => {
 const sendPassword = async (req, res) => {
     const toUser = req.body.user;
     const password = req.body.password;
-    const jwt = req.cookies.token;
-    let decodedJwt;
+    const { userId, organistations } = req.user;
     let fromUser;
     let toUserObject;
     try {
-        decodedJwt = verifyToken(jwt);
-    } catch (error) {
-        if (error.name === "JsonWebTokenError") {
-            return res.status(401).json({ message: "Invalid token" }).send(); // Unauthorized
-        } else if (error.name === "TokenExpiredError") {
-            return res.status(401).json({ message: "Token expired" }).send(); // Unauthorized
-        } else {
-            return res
-                .status(500).json({ message: "Internal server error" }).send(); // Internal server error
-        }
-    }
-    try {
-        fromUser = await user.findById(decodedJwt.userId);
-        toUserObject = await user.findOne({username: toUser});
-        if (fromUser.organizations !== toUserObject.organizations) {
-            return res.status(500).json({ message: "User not in same organization" }).send();
-        }
+        fromUser = await user.findById(userId);
+        toUserObject = await user.findOne({username: toUser, organizations : {$in : organistations}});
+        console.log(password);
         try {
             const newIncomingPassword = new incomingPassword(
                 {
@@ -185,11 +170,15 @@ const sendPassword = async (req, res) => {
                 }
             )
             const createdIncomingPassword = await newIncomingPassword.save();
+            console.log("fuckfuckfuck");
+            console.log(createdIncomingPassword);
         }
         catch (error) {
+            console.log(error);
             res.status(500).json({message: 'Internal server error'}).send();
         }
     } catch (error) {
+        console.log(error);
         return res.status(500).json({ message: "Internal Server Error" }).send();
     }
 

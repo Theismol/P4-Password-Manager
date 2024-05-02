@@ -12,6 +12,8 @@ export function createKeys() {
 }
 
 export function RSAEncrypt(publicKey, privateKey, message) {
+    console.log(decodeBase64(publicKey));
+    console.log(decodeBase64(privateKey));
     const sharedKey = box.before(decodeBase64(publicKey), decodeBase64(privateKey));
     const nonce = randomBytes(box.nonceLength);
     const messageUint8 = decodeUTF8(JSON.stringify(message));

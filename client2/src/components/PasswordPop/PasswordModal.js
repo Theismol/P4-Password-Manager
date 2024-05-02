@@ -1,18 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import { Modal, Box, Typography, Button, TextField } from '@mui/material';
+import { Modal, Box, Typography, Button, TextField, Select, InputLabel, OutlinedInput, MenuItem, Checkbox, ListItemText } from '@mui/material';
 import CryptoJS from 'crypto-js';
 import axios from 'axios';
+import { FormControl } from '@mui/base';
+import { RSAEncrypt } from '../../services/RSAEncryption';
 
-export default function PasswordModal({ open, handleCloseModal, selectedRow }) {
+
+export default function PasswordModal({ open, handleCloseModal, selectedRow, canShare }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [title, setTitle] = useState('');
   const [url, setUrl] = useState('');
   const [notes, setNotes] = useState('');
   const [csrftoken, setCsrftoken] = useState("");
+  const [shareUsername, setShareusername] = useState("");
+  const [sameOrgUsers, setSameOrgUsers] = useState([]);
 
   useEffect(() => {
-    console.log("calling calling");
     axios.get('http://localhost:4000/api/auth/getCSRF' , {withCredentials: true}).then((response) => {
       console.log(response.data.csrftoken);
       setCsrftoken(response.data.csrftoken);
@@ -21,7 +25,6 @@ export default function PasswordModal({ open, handleCloseModal, selectedRow }) {
       console.log(error);
     } )
     if (selectedRow) {
-      console.log(decryptPassword(selectedRow.password));
       setUsername(selectedRow.username);
       setPassword(decryptPassword(selectedRow.password));
       setTitle(selectedRow.title);
@@ -35,8 +38,23 @@ export default function PasswordModal({ open, handleCloseModal, selectedRow }) {
       setUrl("");
       setNotes("");
     }
+
+    axios.get("http://localhost:4000/api/organization/getUserInOrganization", {
+      withCredentials: true
+    }).then((response) => {
+      setSameOrgUsers(response.data.users);
+    }).catch((error) => {
+      console.log(error);
+    });
   }, [open, selectedRow]); // Update when selectedRow or generatedPassword changes
 
+
+  const handleShareChange = (event) => {
+    const {
+      target: { value },
+    } = event;
+    setShareusername(value);
+  };
   const generatePassword = () => {
     const characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+{}|:"<>?';
     const passwordLength = 26;
@@ -101,6 +119,21 @@ export default function PasswordModal({ open, handleCloseModal, selectedRow }) {
       console.error('Error updating password:', error);
     }
   };
+  const handleSharePasswords= () => {
+    axios.get('http://localhost:4000/api/keyExchange/getKeys', {withCredentials: true, params: {user: shareUsername}}).then((response) => {
+      const publicKey = response.data.publicKey;
+      const privateKey = response.data.privateKey;
+      const encryptedPassword = RSAEncrypt(publicKey, decryptPassword(privateKey), JSON.stringify({username: username, password: password, url: url, title: title}))
+      //Skal tjekke om her virker, kryptere key til local storage og decrypt de incoming passwords der er.
+      axios.post('http://localhost:4000/api/password/sendPassword', {user: shareUsername, csrftoken: csrftoken, password : encryptedPassword}, {withCredentials: true}).then((response) => {
+        console.log("it has been shared woo");
+      }).catch((error) => {
+        console.log("sharing did not work :(");
+      })
+    }).catch((error) => {
+      console.log(error);
+    });
+  };
 
   const handleSaveChanges = () => {
     if (password) {
@@ -125,9 +158,32 @@ export default function PasswordModal({ open, handleCloseModal, selectedRow }) {
           borderRadius: 4,
         }}
       >
-        <Typography variant="h5" gutterBottom>
-          Details
-        </Typography>
+        <Box sx={{display: "flex", justifyContent: "space-between"}}>
+          <Typography variant="h5" gutterBottom>
+            Details
+          </Typography>
+          <Box sx={{justifyContent: "flex-end"}}>
+            <FormControl>
+              <InputLabel id="sharelabel">Available users to share with</InputLabel>
+              <Select
+                labelId='sharelabel'
+                id="shareselect"
+                value={shareUsername}
+                onChange={handleShareChange}
+                input={<OutlinedInput label="Hello"/>}
+                renderValue={(selected) => selected}
+              >
+                {sameOrgUsers.map ((user) => (
+                  <MenuItem key={user.username} value={user.username}>
+                    <Checkbox checked={user.username === shareUsername}/>
+                    <ListItemText primary={user.username}/>
+                  </MenuItem>
+                ))}
+              </Select>
+              <Button onClick={handleSharePasswords} variant="contained" >Share password</Button>
+            </FormControl>
+          </Box>
+        </Box>
         <TextField
           label="Title"
           variant="outlined"
@@ -170,7 +226,7 @@ export default function PasswordModal({ open, handleCloseModal, selectedRow }) {
         />
         <Button variant="contained" onClick={generatePassword}>Generate Password</Button>
         <Button variant="contained" onClick={handleCloseModal} style={{ float: 'right' }}>Close</Button>
-        <Button variant="contained" onClick={handleSaveChanges} style={{ float: 'right', marginRight: '10' }}>Save Changes</Button>
+        <Button variant="contained" onClick={handleSaveChanges} style={{ float: 'right', marginRight: '' }}>Save Changes</Button>
       </Box>
     </Modal>
   );

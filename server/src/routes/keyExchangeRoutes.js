@@ -1,8 +1,8 @@
-const {getPublicKey, getPrivateKey} = require('../controllers/keyExchangeController')
+const {getKeys} = require('../controllers/keyExchangeController')
 const express = require('express');
 const router = express.Router();
+const authenticateToken = require('../middlewares/Auth/jwtMiddleware');
 
-router.get('/getPublicKey', getPublicKey);
-router.get('/getPrivateKey', getPrivateKey)
+router.get('/getKeys',authenticateToken, getKeys);
 
 module.exports = router;

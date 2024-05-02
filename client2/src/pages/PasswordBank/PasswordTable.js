@@ -1,8 +1,10 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { Table, TableCell, TableRow, TableHead, TableBody, Paper, TableContainer, TablePagination, Container, Box, Button } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { Table, TableCell, TableRow, TableHead, TableBody, Paper, TableContainer, TablePagination, Container, Button } from '@mui/material';
 import axios from 'axios';
 import PasswordModal from '../../components/PasswordPop/PasswordModal';
 import PermanentDrawerLeft from "../../components/navbars/sideBar";
+import { RSADecrypt } from '../../services/RSAEncryption';
+import {CryptoJS} from 'crypto-js';
 
 export default function PasswordTable() {
   const [data, setData] = useState([]);
@@ -10,6 +12,8 @@ export default function PasswordTable() {
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [selectedRow, setSelectedRow] = useState(null);
   const [openModal, setOpenModal] = useState(false);
+  const [canShare, setCanShare] = useState(false);
+  const [csrftoken, setCsrftoken] = useState("");
   const columns = [
     { id: 'username', label: 'Username', minWidth: 170 },
     { id: 'password', label: 'Password', minWidth: 170 },
@@ -24,6 +28,32 @@ export default function PasswordTable() {
   const fetchData = async () => {
     try {
       const response = await axios.get('http://localhost:4000/api/password/getPasswords', { withCredentials: true });
+      console.log(response.data.incomingPasswords);
+      if (response.data.incomingPasswords.length > 0) {
+        //GIVER BAD KEY SIZE PÅ DECRYPT
+        response.data.incomingPasswords.forEach( async(incomingPassword) => {
+          const keyResponse = await axios.get('http://localhost:4000/api/keyExchange/getKeys', {withCredentials: true, params: {user: incomingPassword.from} })
+          const decryptedPassword = RSADecrypt(keyResponse.data.publicKey, keyResponse.data.privateKey, incomingPassword.password);
+          const encryptedPassword = CryptoJS.AES.encrypt(decryptedPassword.password, localStorage.getItem("key")).toString();
+          axios.post('http://localhost:4000/api/password/addPasswordToUser', {
+          title: decryptedPassword.title,
+          username: decryptedPassword.username,
+          password: encryptedPassword,
+          url: decryptedPassword.url,
+          notes: null,
+          csrftoken: csrftoken
+        }, {
+          withCredentials: true,
+        }).then((response) => {
+          console.log("we added it");
+          handleCloseModal();
+
+        }).catch((error) => {
+          console.log(error);
+          console.log("we did not add it");
+        })
+        });
+      }
       setData(response.data.passwords);
     } catch (error) {
       console.error('Error fetching data:', error);
@@ -32,6 +62,7 @@ export default function PasswordTable() {
 
 
   const handleOpenModal = (row) => {
+    setCanShare(true);
     setSelectedRow(row);
     setOpenModal(true);
   };
@@ -125,6 +156,7 @@ export default function PasswordTable() {
         open={openModal}
         handleCloseModal={handleCloseModal}
         selectedRow={selectedRow}
+        canShare={canShare}
       />) : (null) }
 
     </div>

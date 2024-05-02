@@ -51,7 +51,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/password', passwordRoutes);
 app.use('/api/delete', deleteRoutes);
 app.use('/api/organization', organizationRoutes);
-app.use('/api/keyExhange', keyExchangeRoutes)
+app.use('/api/keyExchange', keyExchangeRoutes)
 
 
 

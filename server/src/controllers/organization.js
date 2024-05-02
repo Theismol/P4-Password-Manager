@@ -100,7 +100,7 @@ const addUserToOrganization = async (req, res) => {
 
 const getUserInOrganization = async (req, res) => {
     const { organistations, userId } = req.user;
-    console.log(organistations, userId);
+    //console.log(organistations, userId);
     let isAdmin = false;
 
     try {
