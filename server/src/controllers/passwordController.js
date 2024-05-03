@@ -41,10 +41,12 @@ const getRandom = async (req, res) => {
     }
 };
 const addPasswordToUser = async (req, res) => {
-    const {title, username, password, url, notes } = req.body;
+    const {title, username, password, url, notes, isIncoming } = req.body;
+    console.log(req.body);
     const { userId } = req.user;
 
     if (!title || !username || !password || !userId) {
+        console.log("fuck");
         res.status(400).json({ message: 'Missing required fields' }).send();
         return
     }
@@ -65,6 +67,7 @@ const addPasswordToUser = async (req, res) => {
         console.log(createdPassword);
         try {
             await user.findOneAndUpdate({ _id: req.user.userId }, { $push: { passwords: createdPassword._id } });
+            await incomingPassword.findOneAndDelete({to : userId});
         } catch (error) {
             try {
                 await Password.deleteOne({ _id: createdPassword._id });

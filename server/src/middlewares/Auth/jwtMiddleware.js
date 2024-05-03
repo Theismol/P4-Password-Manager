@@ -10,7 +10,7 @@ const authenticateToken = (req, res, next) => {
     
     // const authHeader = req.headers['authorization'];
     // const token = authHeader && authHeader.split(' ')[1];
-    //console.log("csrftoken: ", receivedCsrftoken)
+    console.log("csrftoken: ", receivedCsrftoken)
     //console.log("metode " + req.method)
     if ((token == null || receivedCsrftoken != csrftoken )&& req.method != "GET") {
         console.log("token is null")
@@ -29,6 +29,7 @@ const authenticateToken = (req, res, next) => {
         next(); // Call next middleware or route handler
     } catch (error) {
 
+        console.log("fuck");
         if (error.name === 'JsonWebTokenError') {
             return res.status(401).json({ message: 'Invalid token' }); // Unauthorized
         } else if (error.name === 'TokenExpiredError') {

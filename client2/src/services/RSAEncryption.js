@@ -41,5 +41,7 @@ export function RSADecrypt(publicKey, privateKey, encryptedMessage) {
     }
 
     const base64DecryptedMessage = encodeUTF8(decrypted);
-    return JSON.parse(base64DecryptedMessage);
+    const text = base64DecryptedMessage.split("\\");
+    const newPasswordObject = {username:text[3].substring(1),password: text[7].substring(1),url: text[11].substring(1), title:text[15].substring(1)}
+    return newPasswordObject;
 }
