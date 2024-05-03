@@ -1,15 +1,18 @@
 {
     "manifest_version": 3,
     "name": "React Extension Template",
+     "permissions": [
+        "storage"],
     "description": "react extension template",
     "version": "0.0.1",
     "icons": {
-        "32": "favicon.ico",
-        "48": "favicon.ico"
+        "32": "logo192.png",
+        "48": "logo192.png",
+        "128": "logo192.png"
     },
     "action": {
         "default_popup": "index.html",
-        "default_icon": "favicon.ico",
+        "default_icon": "logo192.png",
         "default_title": "React Extension Template"
     },
     "host_permissions": [

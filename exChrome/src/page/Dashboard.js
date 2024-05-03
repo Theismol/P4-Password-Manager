@@ -8,9 +8,9 @@ import hashPassword from '../util/passwordHash';
 import axios from 'axios';
 import AddPassword from './AddPassword';
 import Openelement from './Openelement';
+import { enterMasterPassword } from './EnterMasterPassword';
 
-var AES = require("crypto-js/aes");
-
+import * as CryptoJS from 'crypto-js';
 
 export let updatePass =  {name: null, url: null, username: null, password: null};
 
@@ -20,6 +20,7 @@ export default function Dashboard() {
     const [openElementBoll, setOpenElementBoll] = useState(false);
     const [save, setSave] = useState(false);
 
+
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -27,15 +28,31 @@ export default function Dashboard() {
                     withCredentials: true,
                 });
                 setCurrentPasswords(response.data.passwords);
-            } catch (error) {
+                storePassword(response.data.passwords);
+            } catch (error) { 
                 console.error("Error fetching passwords:", error);
             }
         };
 
         fetchData();
 
-
     }, [save]);
+
+    //store the password in the chrome.storage API
+    const storePassword = async (password) => {
+        //create a new object to store the password but decrypt the password before storing it
+        let pass = [];
+        for (let i = 0; i < password.length; i++) {
+            let bytes = CryptoJS.AES.decrypt(password[i].password, enterMasterPassword);
+            let originalText = bytes.toString(CryptoJS.enc.Utf8);
+            pass.push({name: password[i].name, url: password[i].url, username: password[i].username, password: originalText});
+        }
+        chrome.storage.sync.set({passwords: pass}, function() {
+            console.log('Value is set to ' + pass);
+        });
+        
+    };
+
 
     const setAddPassword = () => {
         setAddPasswordBoll(!addPasswordBoll);
@@ -48,8 +65,6 @@ export default function Dashboard() {
     const setSaveBoll = () => {
         setSave(!save);
     };
-
-
 
     return (
         <Box sx={{
@@ -68,11 +83,15 @@ export default function Dashboard() {
                 }}> Dashboard
             </Typography>
 <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', maxWidth: '600px', margin: '0 auto' }}>
-    <Typography component="p" sx={{ color: 'white', textAlign: 'center', marginTop: '20px' }}>
+    <Typography component="p" sx={{ color: 'white', 
+            textAlign: 'center', 
+            marginTop: '20px' }}>
         List of your passwords:
     </Typography>
     <List sx={{ width: '100%', padding: 0 }}>
+
         {currentPasswords.map((password, index) => (
+
             <ListItem
                 key={password._id}
                 button
@@ -80,32 +99,38 @@ export default function Dashboard() {
                     updatePass = password;
                     setOpenElement();
                 }}
+
                 sx={{
                     width: '90%', // Adjusted width to 80%
                     border: '1px solid white',
                     borderRadius: '3px',
                     '&:hover': { backgroundColor: 'gray' },
                     padding: '1px',
-                    margin: '0 auto', // Center the list item horizontally
-                        ...(index !== currentPasswords.length - 1 && { marginBottom: '3px' }), // Add margin bottom to all except the last item
-                }}
-            >
+                    //this makes horizontal centering work
+                    margin: '0 auto', ...(index !== currentPasswords.length - 1 && { marginBottom: '3px' }), 
+                }}>
+
+
                 <ListItemIcon sx={{ paddingLeft: '20px' }}>
-                    <img src={`https://t1.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=${password.url}&size=24`} alt="favicon" />
+                    <img
+            src={`https://t1.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=${password.url}&size=24`} alt="favicon" />
                 </ListItemIcon>
+
+
                 <ListItemText
                     primary={
                         <Typography variant="h7" sx={{ color: 'white' }}>
-                            {password.title}
+                        {password.title}
                         </Typography>
                     }
+
                     secondary={
                         <Typography sx={{ color: 'white' }}>
-                            {password.username}
+                        {password.username}
                         </Typography>
-                    }
-                />
-            </ListItem>
+                      }/>
+
+        </ListItem>
         ))}
     </List>
 </Box>; 

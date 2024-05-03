@@ -1,24 +1,14 @@
 import React from 'react';
 import { useState, useEffect, useCallback } from 'react';
 import { TextField, Typography,Box,  Button, Alert} from '@mui/material';
-import hashPassword from '../util/passwordHash';
-import axios from 'axios';
+
+import { enterMasterPassword } from './EnterMasterPassword';
 
 import { updatePass } from './Dashboard';
 
 import * as CryptoJS from 'crypto-js';
 
 
-
-function getCSRF() {
-    return axios.get("http://localhost:4000/api/auth/getCSRF", {
-        withCredentials: true,
-    }).then((response) => {
-        return response.data.csrftoken;
-    }).catch((error) => {
-        throw new Error("Failed to fetch CSRF token");
-    });
-}
 
 function Openelement({ onClose, onSave }) {
     const [enterPassword, setEnterPassword] = useState("");
@@ -69,16 +59,10 @@ function Openelement({ onClose, onSave }) {
                 fontSize: '20px', ml: 1
         }}> - {updatePass.title}</Typography>
             </Box>
-        {!enterPassword
-            ?
-            <EnterMasterPassword
-            onClose={onClose}
-            setEnterPassword={setEnterPassword} /> :
-
             <ShowChangeSite
             onClose={onClose}
             encryptPassword={updatePass.password}
-            hashPassword={enterPassword}/>}
+            hashPassword={enterMasterPassword} />
         </Box>
     </Box>
     );
@@ -181,62 +165,6 @@ function ShowChangeSite({onClose, encryptPassword, hashPassword}) {
     )
 }
 
- function EnterMasterPassword({onClose, setEnterPassword}) {
-     const [password, setPassword] = useState("");
-     const [csrfToken, setCsrfToken] = useState(null);
-     const [loading, setLoading] = useState(false);
-      
-     useEffect(() => {
-            getCSRF().then((token) => {
-                setCsrfToken(token);
-            });
-        }, []);
-
-    const callBackend = useCallback(async () => { 
-        const hashedPassword = await hashPassword(password);
-        try {
-            const response = await axios.post("http://localhost:4000/api/auth/checkMasterPassword", {
-                password: hashedPassword,
-                csrftoken: csrfToken // Use the fetched CSRF token
-            }, {
-                withCredentials: true,
-            });
-            if (response.status === 200) {
-                console.log("Password correct");
-                console.log(hashedPassword);
-                setEnterPassword(hashedPassword);
-            }
-        } catch (error) {
-            console.error("Error calling backend:", error);
-        }
-    }, [csrfToken, password]);
-
-    const handleSubmit = (e) => {
-        setLoading(true);
-        e.preventDefault();
-        callBackend();
-    };
-
-    return  (
-      <form onSubmit={handleSubmit}>
-        <TextField
-            label="Enter Password"
-            type="password"
-            variant="outlined"
-            fullWidth
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            sx={{
-                mb: 2,
-                borderRadius: '5px',
-                backgroundColor: 'white',
-            }}
-        />
-        <Button variant="contained" type="submit" sx={{ bgcolor: '#5ca85c', color: 'black', width: '100%', mb: 1 }}>Submit</Button>
-        <Button variant="contained" onClick={onClose} sx={{ bgcolor: '#d9534f', color: 'black', width: '100%' }}>Close</Button>
-    </form>)
-
-}
 
 export default Openelement;
 

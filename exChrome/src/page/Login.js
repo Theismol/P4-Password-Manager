@@ -3,6 +3,7 @@ import { TextField, Typography,Box,  Button} from '@mui/material';
 import React, { useState, useEffect } from 'react';
 import hashPassword from '../util/passwordHash';
 import axios from 'axios';
+import EnterMasterPassword from './EnterMasterPassword';
 
 
 function loginGet()
@@ -14,6 +15,8 @@ function loginGet()
 }
 
 export default function Login({onLogin}) {
+    const [enteredPasswordBoll, setEnteredPassword] = useState(false);
+
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -21,7 +24,7 @@ export default function Login({onLogin}) {
                     withCredentials: true,
                 });
                 if (response.status === 200) {
-                    onLogin();
+                    setEnteredPassword(true);
                 }
                 console.log(response);
             } catch (error) {
@@ -36,18 +39,19 @@ export default function Login({onLogin}) {
     <div>
       <Box sx={{
               width: '350px',
-              margin: '10px',
               height: '450px',
               justifyContent: 'center',
               alignItems: 'center',
               bgcolor: '#08192c'}}>
 
+        {enteredPasswordBoll ? <EnterMasterPassword onClose={onLogin} /> : null}
+
       <Typography variant="h4" component="h1" sx={{
               color: 'white',
               padding: '30px',
               fontWeight: 'bold',
-              textAlign: 'center',
-              mt: 3}}> Sign in
+              textAlign: 'center'
+              }}> Sign in
       </Typography>
       <Typography component="p" sx={{ color: 'white', marginLeft: '9%'}}> Press the Button to Sign in:</Typography>
             <Button

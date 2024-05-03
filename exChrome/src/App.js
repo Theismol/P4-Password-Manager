@@ -19,6 +19,7 @@ function App() {
             height: '450px',
             width: '350px'
         }}>
+        
         {loggedIn ? <Dashboard/> : <Login onLogin={handleLogin} />}
         </Box>
     );
