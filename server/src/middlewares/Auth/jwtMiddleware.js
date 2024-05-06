@@ -24,6 +24,7 @@ const authenticateToken = (req, res, next) => {
     try {
         const decoded = verifyToken(token);
         req.user = decoded;
+        console.log("decoded: ", decoded)
         
 
         next(); // Call next middleware or route handler

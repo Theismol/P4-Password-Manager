@@ -1,5 +1,7 @@
+import "./lib/bundle.js";
 let allUrls = [];
-console.log(allUrls);
+
+
 
 console.log("Chrome extension goormide content.js");
 chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {

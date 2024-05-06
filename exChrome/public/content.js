@@ -1,4 +1,13 @@
 //see if the page is any of the following:
+import CryptoJS, { AES } from './lib/crypto-js';
+
+key = "1234567890";
+message = "Hello, World!";
+
+// Encrypt
+var ciphertext = CryptoJS.AES.encrypt(message, key).toString();
+console.log(ciphertext);
+
     //get infomaion from popup.js
 chrome.runtime.onMessage.addListener(function(message, sender, sendResponse) {
     console.log('Message received in content.js:', message);
@@ -21,27 +30,42 @@ function getValueFromStorage(key) {
 }
 
 let urlsIsReady = false;
+//async function getUrls() {
+//    const allPassword = await getValueFromStorage('passwords');
+//    console.log(allPassword);
+//    const myJson = JSON.parse(allPassword);
+//    console.log(myJson);
+//        //name: allPassword.name,
+//        //url: allPassword.url,
+//        //username: allPassword.username,
+//        //password: allPassword.password
+//    let currentDown = window.location.hostname;
+//    currentDown = currentDown.replace("www.", "");
+//    for (let i = 0; i < myJson.length; i++) {
+//        console.log(myJson[i].url);
+//        //incudes in the url
+//        if (myJson[i].url.includes(currentDown)) {
+//            console.log("This page is " + myJson[i].url);
+//            return myJson[i];
+//        }
+//    }
+//    return null;
+//}
+
+
 async function getUrls() {
-    const allPassword = await getValueFromStorage('passwords');
+
+    const allPassword = await getValueFromStorage('encryptedpassword');
     console.log(allPassword);
-    const myJson = JSON.parse(allPassword);
-    console.log(myJson);
-        //name: allPassword.name,
-        //url: allPassword.url,
-        //username: allPassword.username,
-        //password: allPassword.password
-    let currentDown = window.location.hostname;
-    currentDown = currentDown.replace("www.", "");
-    for (let i = 0; i < myJson.length; i++) {
-        console.log(myJson[i].url);
-        //incudes in the url
-        if (myJson[i].url.includes(currentDown)) {
-            console.log("This page is " + myJson[i].url);
-            return myJson[i];
-        }
-    }
-    return null;
+
 }
+
+getUrls();
+
+
+    
+
+
 
 function hadenInput(input) { 
     let listOfinputs = [];

@@ -6,12 +6,15 @@ import  getCSRF  from "./getCSRF";
 
 export let enterMasterPassword = "";
  
-export default function EnterMasterPassword({onClose, setEnterPassword}) {
+export default function EnterMasterPassword({onClose, onCansel}) {
     const [csrfToken, setCsrfToken] = useState(null);
     const [password, setPassword] = useState("");
+    const [isError, setIsError] = useState(false);
 
     const callBackend = useCallback(async () => { 
+
         const hashedPassword = await hashPassword(password);
+
         try {
             const response = await axios.post("http://localhost:4000/api/auth/checkMasterPassword", {
                 password: hashedPassword,
@@ -20,6 +23,7 @@ export default function EnterMasterPassword({onClose, setEnterPassword}) {
                 withCredentials: true,
             });
             if (response.status === 200) {
+
                 console.log("Password correct");
                 console.log(hashedPassword);
                 enterMasterPassword = hashedPassword;
@@ -27,6 +31,7 @@ export default function EnterMasterPassword({onClose, setEnterPassword}) {
                 onClose();
             }
         } catch (error) {
+            setIsError(true);
             console.error("Error calling backend:", error);
         }
     }, [csrfToken, password]);
@@ -80,17 +85,24 @@ export default function EnterMasterPassword({onClose, setEnterPassword}) {
             variant="outlined"
             fullWidth
             value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            sx={{
+         onChange={(e) => {
+                    setPassword(e.target.value);
+                    setIsError(false); // Reset isError state when password changes
+                }}
+
+        sx={{
                 mb: 2,
                 borderRadius: '5px',
                 backgroundColor: 'white',
             }}
         />
-        <Button variant="contained" type="submit" sx={{ bgcolor: '#5ca85c', color: 'black', width: '100%', mb: 1 }}>Submit</Button>
-        <Button variant="contained" onClick={onClose} sx={{ bgcolor: '#d9534f', color: 'black', width: '100%' }}>Close</Button>
-    </form>
-    </Box>
+        {isError ? <Alert severity="error" sx={{ mb: 2 }}
+            >Incorrect password</Alert> : null}
+
+            <Button variant="contained" type="submit" sx={{ bgcolor: '#5ca85c',
+                    color: 'black', width: '100%', mb: 1 }}>Submit</Button>
+            </form>
+        </Box>
     </Box>
     );
 }

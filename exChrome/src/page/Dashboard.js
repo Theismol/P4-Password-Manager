@@ -10,7 +10,7 @@ import AddPassword from './AddPassword';
 import Openelement from './Openelement';
 import { enterMasterPassword } from './EnterMasterPassword';
 
-import * as CryptoJS from 'crypto-js';
+import CryptoJS from 'crypto-js';
 
 export let updatePass =  {name: null, url: null, username: null, password: null};
 
@@ -38,20 +38,40 @@ export default function Dashboard() {
 
     }, [save]);
 
-    //store the password in the chrome.storage API
-    const storePassword = async (password) => {
-        //create a new object to store the password but decrypt the password before storing it
-        let pass = [];
-        for (let i = 0; i < password.length; i++) {
-            let bytes = CryptoJS.AES.decrypt(password[i].password, enterMasterPassword);
-            let originalText = bytes.toString(CryptoJS.enc.Utf8);
-            pass.push({name: password[i].name, url: password[i].url, username: password[i].username, password: originalText});
-        }
-        chrome.storage.sync.set({passwords: pass}, function() {
-            console.log('Value is set to ' + pass);
-        });
-        
+        const storePassword = async (passwords) => {
+        //chrome.storage.sync.set({passwords: JSON.stringify(password)});
+            //
+            //use the get "getUserKey" to get the key
+            try {
+                console.log(passwords)
+                const response = await axios.get("http://localhost:4000/api/auth/getUserKey", {
+                    withCredentials: true,
+                });
+                //create a list as json list of passwords
+                const passwordList = passwords.map((password) => {
+                    let decryptedPassword = CryptoJS.AES.decrypt(password.password, enterMasterPassword).toString(CryptoJS.enc.Utf8);
+                    console.log(decryptedPassword);
+                    return {
+                        url: password.url,
+                        username: password.username,
+                        password: CryptoJS.AES.encrypt(decryptedPassword, response.data.key).toString(),
+                    };
+                });
+
+
+                //chrome.storage.sync.set({encryptedpassword: JSON.stringify(passwordList) }, function() {
+                //    console.log(passwordList);
+                //});
+
+
+
+            } catch (error) {
+                console.error("Error fetching key:", error);
+            }
     };
+
+                
+
 
 
     const setAddPassword = () => {
@@ -76,10 +96,12 @@ export default function Dashboard() {
             bgcolor: '#08192c'}}>
 
             <Typography variant="h4" component="h1" sx={{
+
                 color: 'white',
                 padding: '30px',
                 fontWeight: 'bold',
-                textAlign: 'center',
+                textAlign: 'center'
+
                 }}> Dashboard
             </Typography>
 <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', maxWidth: '600px', margin: '0 auto' }}>

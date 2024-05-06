@@ -1,4 +1,8 @@
+const crypto = require("crypto");
 const bcrypt = require("bcrypt");
+//const uuid = require('uuid');
+const { v4: uuidv4 } = require('uuid');
+
 const {
     generateToken,
     generateRefreshToken,
@@ -164,6 +168,50 @@ const verifyTOTPFirstTime = async (req, res) => {
 };
 
 
+const exntionCheckLogin = async (req, res) => {
+    try {
+        res.status(200).json({ message: "Login successful" });
+    }
+    catch (err) {
+        res.status(401).json({ message: "Login failed" });
+    }
+};
+
+const checkMasterPassword = async (req, res) => {
+    const { userId } = req.user;
+    const { password } = req.body;
+
+    try {
+        const user = await User.findById(userId);
+        const isPasswordValid = await bcrypt.compare(password, user.password);
+        if (!isPasswordValid) {
+            return res.status(401).json({ message: "Invalid password" })
+        }
+        return res.status(200).json({ message: "Password is valid" });
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ message: "Error during login" });
+    }
+};
+
+const getUserKey = async (req, res) => {
+    const { userId } = req.user;
+
+    try {
+        const key = crypto.createHash("sha256").update(userId).digest("hex");
+        console.log(key);
+        return res.status(200).json({ key: key });
+    } catch (error) {
+
+        return res.status(500).json({ message: "Error during key generation" });
+
+    }
+};
+
+
+
+
+
 const login = async (req, res) => {
     const { username, password } = req.body;
     try {
@@ -247,6 +295,9 @@ const getCSRF = async (req, res) => {
 
 module.exports = {
     login,
+    getUserKey,
+    exntionCheckLogin,
+    checkMasterPassword,
     tokenRefresh,
     logout,
     verifyTOTPFirstTime,
