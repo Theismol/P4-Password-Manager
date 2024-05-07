@@ -3,8 +3,6 @@
 import { TextField,  Typography,Box, List, ListItem, ListItemText, ListItemIcon,  Button} from '@mui/material';
 import React, {useState, useEffect} from 'react';
 
-import hashPassword from '../util/passwordHash';
-
 import axios from 'axios';
 import AddPassword from './AddPassword';
 import Openelement from './Openelement';
@@ -49,8 +47,9 @@ export default function Dashboard() {
                 });
                 //create a list as json list of passwords
                 const passwordList = passwords.map((password) => {
+
                     let decryptedPassword = CryptoJS.AES.decrypt(password.password, enterMasterPassword).toString(CryptoJS.enc.Utf8);
-                    console.log(decryptedPassword);
+
                     return {
                         url: password.url,
                         username: password.username,
@@ -58,11 +57,9 @@ export default function Dashboard() {
                     };
                 });
 
+                //store the list of passwords in the chrome storage
 
-                //chrome.storage.sync.set({encryptedpassword: JSON.stringify(passwordList) }, function() {
-                //    console.log(passwordList);
-                //});
-
+                chrome.storage.sync.set({encryptedpassword: passwordList});
 
 
             } catch (error) {
