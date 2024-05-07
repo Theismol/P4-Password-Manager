@@ -7,7 +7,7 @@ const router = express.Router();
 router.post('/createOrganization',authenticateToken ,createOrganization);
 router.post('/addUserToOrganization',authenticateToken ,addUserToOrganization);
 router.get('/getUserInOrganization' , authenticateToken, getUserInOrganization);
-router.post('/removeUserFromOrganization',authenticateToken ,removeUserFromOrganization);
+router.delete('/removeUserFromOrganization',authenticateToken ,removeUserFromOrganization);
 
 
 module.exports = router;
