@@ -3,7 +3,9 @@
 import React from 'react';
 import { useState, useEffect, useCallback }  from 'react';
 import { TextField, Typography,Box,  Button} from '@mui/material';
-import hashPassword from '../util/passwordHash';
+
+import {enterMasterPassword} from './EnterMasterPassword'
+
 import axios from 'axios';
 
 import * as CryptoJS from 'crypto-js';
@@ -60,7 +62,6 @@ function AddPassword({ onClose, onSave }) {
         setUrl(currentUrl);
         setUsername("user" + count + "name");
         setPassword("password" + count);
-        setMasterPassword("q");
         setCount(count + 1);
     };
 
@@ -76,8 +77,8 @@ function AddPassword({ onClose, onSave }) {
 
     const addPassword = useCallback(async () => {
         // Encrypt the password
-        const hashedMasterPassword = await hashPassword(masterPassword);        
-        const encryptedPassword = CryptoJS.AES.encrypt(password, hashedMasterPassword).toString();
+        
+        const encryptedPassword = CryptoJS.AES.encrypt(password, enterMasterPassword).toString();
         // Send the password to the server
         axios.post("http://localhost:4000/api/password/addPasswordToUser", {
             url: url,
@@ -174,20 +175,6 @@ function AddPassword({ onClose, onSave }) {
                 onChange={(e) => setPassword(e.target.value)}
                 sx={{ backgroundColor: 'white', borderRadius: '5px', width: '90%' }}
             />
-            <TextField
-                margin="normal"
-                required
-                size="small"
-                fullWidth
-                id="masterpassword"
-                label="Master Password"
-                name="masterpassword"
-                autoComplete="masterpassword"
-                value={masterPassword}
-                onChange={(e) => setMasterPassword(e.target.value)}
-                sx={{ backgroundColor: 'white', borderRadius: '5px', width: '90%' }}
-            />
-            
             <Box sx={{
                 display: 'flex', justifyContent: 'center' }}>
                 <Button
