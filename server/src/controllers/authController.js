@@ -24,7 +24,7 @@ const checkMFA = async (req, res) => {
     }
     console.log(user);
     //This should be changed so the string is empty instead probably, but then the field cannot be required :(
-    if (user.mfaSecret === "test") {
+    if (user.mfaSecret === "null") {
         const secret = speakeasy.generateSecret({
             length: 20,
             name: "AccessArmor",
@@ -80,7 +80,7 @@ const verifyTOTP = async (req, res) => {
             return res.status(500).json({ message: "Internal server error" }).send();
         }
     }
-
+    res.clearCookie("mfatoken");
     res.cookie("token", token, {
         sameSite: "none",
         httpOnly: true,
@@ -153,6 +153,7 @@ const verifyTOTPFirstTime = async (req, res) => {
             return res.status(500).json({ message: "Internal server error" }).send();
         }
     }
+    res.clearCookie("mfatoken");
     res.cookie("token", token, {
         sameSite: "none",
         httpOnly: true,
@@ -219,7 +220,7 @@ const login = async (req, res) => {
         if (!isPasswordValid) {
             return res.status(401).json({ message: "Invalid password" }).send();
         }
-        const mfa = user.mfaSecret !== "test";
+        const mfa = user.mfaSecret !== "null";
         const token = generateToken(
             { userId: user._id, organistations: user.organizations },
             3600
@@ -267,6 +268,7 @@ const tokenRefresh = async (req, res) => {
 };
 
 const logout = async (req, res) => {
+    console.log(req.cookies);
     try {
         const refreshToken = req.cookies.refreshtoken;
 
@@ -274,6 +276,7 @@ const logout = async (req, res) => {
         console.log(output);
         res.clearCookie("token");
         res.clearCookie("refreshtoken");
+        console.log("cookies cleared");
         res.status(200).json({ message: "Logout successful" }).send();
     } catch (error) {
         console.error("Error during logout:", error);
