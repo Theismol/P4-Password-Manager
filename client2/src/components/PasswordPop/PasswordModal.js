@@ -3,7 +3,7 @@ import { Modal, Box, Typography, Button, TextField, Select, InputLabel, Outlined
 import CryptoJS from 'crypto-js';
 import axios from 'axios';
 import { FormControl } from '@mui/base';
-import { RSAEncrypt } from '../../services/RSAEncryption';
+import { NaclDecrypt } from '../../services/NaclEncryption';
 
 
 export default function PasswordModal({ open, handleCloseModal, selectedRow, canShare }) {
@@ -124,7 +124,7 @@ export default function PasswordModal({ open, handleCloseModal, selectedRow, can
     axios.get('http://localhost:4000/api/keyExchange/getKeys', {withCredentials: true, params: {user: shareUsername}}).then((response) => {
       const publicKey = response.data.publicKey;
       const privateKey = response.data.privateKey;
-      const encryptedPassword = RSAEncrypt(publicKey, decryptPassword(privateKey), JSON.stringify({username: username, password: password, url: url, title: title}))
+      const encryptedPassword = NaclDecrypt(publicKey, decryptPassword(privateKey), JSON.stringify({username: username, password: password, url: url, title: title}))
       //Skal tjekke om her virker, kryptere key til local storage og decrypt de incoming passwords der er.
       axios.post('http://localhost:4000/api/password/sendPassword', {user: shareUsername, csrftoken: csrftoken, password : encryptedPassword}, {withCredentials: true}).then((response) => {
         open = false;

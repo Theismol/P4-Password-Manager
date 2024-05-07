@@ -3,7 +3,7 @@ import { Table, TableCell, TableRow, TableHead, TableBody, Paper, TableContainer
 import axios from 'axios';
 import PasswordModal from '../../components/PasswordPop/PasswordModal';
 import PermanentDrawerLeft from "../../components/navbars/sideBar";
-import { RSADecrypt } from '../../services/RSAEncryption';
+import { NaclDecrypt } from '../../services/NaclEncryption';
 import {CryptoJS} from 'crypto-js';
 import { AESDecrypt, AESEncrypt } from '../../services/AESEncryption';
 
@@ -41,7 +41,7 @@ export default function PasswordTable() {
         //GIVER BAD KEY SIZE PÅ DECRYPT
         response.data.incomingPasswords.forEach( async(incomingPassword) => {
           const keyResponse = await axios.get('http://localhost:4000/api/keyExchange/getKeys', {withCredentials: true, params: {user: incomingPassword.from} })
-          const decryptedPassword = RSADecrypt(keyResponse.data.publicKey, AESDecrypt(keyResponse.data.privateKey,localStorage.getItem("key")), incomingPassword.password);
+          const decryptedPassword = NaclDecrypt(keyResponse.data.publicKey, AESDecrypt(keyResponse.data.privateKey,localStorage.getItem("key")), incomingPassword.password);
           const encryptedPassword = AESEncrypt(decryptedPassword.password, localStorage.getItem("key"));
           axios.post('http://localhost:4000/api/password/addPasswordToUser', {
           title: decryptedPassword.title,

@@ -12,7 +12,7 @@ import axios from "axios";
 import { Snackbar } from "@mui/material";
 import { Alert } from "@mui/material";
 import { z } from "zod";
-import { createKeys } from "../../services/RSAEncryption";
+import { createKeys } from "../../services/NaclEncryption";
 var AES = require("crypto-js/aes");
 
 export default function SignUp() {

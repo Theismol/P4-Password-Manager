@@ -11,7 +11,7 @@ export function createKeys() {
     return {public: encodeBase64(keys.publicKey), private: encodeBase64(keys.secretKey)}
 }
 
-export function RSAEncrypt(publicKey, privateKey, message) {
+export function NaclEncrypt(publicKey, privateKey, message) {
     console.log(decodeBase64(publicKey));
     console.log(decodeBase64(privateKey));
     const sharedKey = box.before(decodeBase64(publicKey), decodeBase64(privateKey));
@@ -25,7 +25,7 @@ export function RSAEncrypt(publicKey, privateKey, message) {
     const base64FullMessage = encodeBase64(fullMessage);
     return base64FullMessage;
 }
-export function RSADecrypt(publicKey, privateKey, encryptedMessage) {
+export function NaclDecrypt(publicKey, privateKey, encryptedMessage) {
 	const sharedKey = box.before(decodeBase64(publicKey), decodeBase64(privateKey));
     const messageWithNonceAsUint8Array = decodeBase64(encryptedMessage);
     const nonce = messageWithNonceAsUint8Array.slice(0, box.nonceLength);
