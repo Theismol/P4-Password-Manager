@@ -225,7 +225,7 @@ const login = async (req, res) => {
             { userId: user._id, organistations: user.organizations },
             3600
         );
-        return res.cookie("token", token, {sameSite: "none", httpOnly: true, secure: true })
+        return res.cookie("mfatoken", token, {sameSite: "none", httpOnly: true, secure: true })
             .status(200)
             .json({mfa: mfa });
     } catch (error) {

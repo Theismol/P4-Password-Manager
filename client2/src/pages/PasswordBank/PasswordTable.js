@@ -25,8 +25,9 @@ export default function PasswordTable() {
     axios.get('http://localhost:4000/api/auth/getCSRF' , {withCredentials: true}).then((response) => {
       fetchData(response.data.csrftoken);
     }).catch((error) => {
-      console.log(error.response.data.message);
-      console.log(error);
+      if (error.response.status === 401) {
+        window.location.href = "/login"
+      }
     });
   }, [openModal]);
 

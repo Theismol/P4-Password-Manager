@@ -2,6 +2,29 @@ const { verifyToken } = require('../../utils/JWT/jwtUtils.js');
 require('dotenv').config();
 
 const csrftoken = process.env.CSRF_TOKEN;
+const authenticateMFAToken = (req, res, next) => {
+    const token = req.cookies.mfatoken;
+    try {
+        const decoded = verifyToken(token);
+        req.user = decoded;
+        //console.log("decoded: ", decoded)
+        
+
+        next(); // Call next middleware or route handler
+    } catch (error) {
+        console.log(error);
+
+        //console.log("fuck");
+        if (error.name === 'JsonWebTokenError') {
+            return res.status(401).json({ message: 'Invalid token' }); // Unauthorized
+        } else if (error.name === 'TokenExpiredError') {
+            return res.status(401).json({ message: 'Token expired' }); // Unauthorized
+        } else {
+            return res.status(500).json({ message: 'Internal server error' }); // Internal server error
+        }
+    }
+
+}
 
 const authenticateToken = (req, res, next) => {
     const token = req.cookies.token;
@@ -42,4 +65,4 @@ const authenticateToken = (req, res, next) => {
 }
 
 
-module.exports = authenticateToken;
+module.exports = {authenticateToken, authenticateMFAToken};

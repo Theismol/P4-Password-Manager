@@ -24,15 +24,6 @@ function Org() {
   const [admin, setAdmin] = useState(false);
   const [inOrg, setinOrg] = useState(false);
   const [rows, setRows] = useState([
-    { id: 1, Name: "Jon Snow", email: "Stark" },
-    { id: 2, Name: "Cersei Lannister", email: "Lannister" },
-    { id: 3, Name: "Jaime Lannister", email: "Lannister" },
-    { id: 4, Name: "Arya Stark", email: "Stark" },
-    { id: 5, Name: "Daenerys Targaryen", email: "Targaryen" },
-    { id: 6, Name: "Melisandre", email: "Lord of fire" },
-    { id: 7, Name: "Jorah Mormont", email: "Mormont" },
-    { id: 8, Name: "Robert Baratheon", email: "Baratheon" },
-    { id: 9, Name: "Margaery Tyrell", email: "Harvey" },
   ]);
   const columns = [
     { field: "id", headerName: "ID", width: 70 },
@@ -53,9 +44,9 @@ function Org() {
         })
         setRows(modifiedArray)
       }).catch((error) => {
-
-
-
+        if (error.response.status) {
+          window.location.href = "/login";
+        }
       });
       axios.get("http://localhost:4000/api/auth/getCSRF", { withCredentials: true }).then((response) => {
         setCsrftoken(response.data.csrftoken);

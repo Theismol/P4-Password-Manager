@@ -1,5 +1,5 @@
 const {createOrganization, addUserToOrganization, getUserInOrganization} = require('../controllers/organization');
-const authenticateToken = require('../middlewares/Auth/jwtMiddleware');
+const {authenticateToken} = require('../middlewares/Auth/jwtMiddleware');
 
 const express = require('express');
 const router = express.Router();
