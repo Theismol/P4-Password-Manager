@@ -12,29 +12,24 @@ export default function EnterMasterPassword({onClose, onCansel}) {
     const [isError, setIsError] = useState(false);
 
     const callBackend = useCallback(async () => { 
-
-        const hashedPassword = await hashPassword(password);
-
+        const hashedPassword = await hashPassword(password, 600000);
+        const sendPassword = await hashPassword(hashedPassword, 1);
         try {
+            
             const response = await axios.post("http://localhost:4000/api/auth/checkMasterPassword", {
-                password: hashedPassword,
-                csrftoken: csrfToken // Use the fetched CSRF token
+            password: sendPassword,
+            csrftoken: csrfToken // Use the fetched CSRF token
             }, {
                 withCredentials: true,
             });
             if (response.status === 200) {
-
-                console.log("Password correct");
-                console.log(hashedPassword);
                 enterMasterPassword = hashedPassword;
-               // this will set the password in the parent component and close the dialog and open for the user to enter the password
                 onClose();
             }
         } catch (error) {
             setIsError(true);
-            console.error("Error calling backend:", error);
         }
-    }, [csrfToken, password]);
+    }, [csrfToken, password, onClose]);
 
     useEffect(() => {
         getCSRF().then((token) => {

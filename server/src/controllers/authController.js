@@ -1,7 +1,9 @@
 const crypto = require("crypto");
 const bcrypt = require("bcrypt");
 //const uuid = require('uuid');
-const { v4: uuidv4 } = require('uuid');
+const { v5: uuidv5 } = require('uuid');
+
+
 
 const {
     generateToken,
@@ -12,6 +14,10 @@ const User = require("../models/userModel");
 const jwtModel = require("../models/jwtModel");
 const speakeasy = require("speakeasy");
 require("dotenv").config();
+
+//what is NAME_SPACE? 
+    //A namespace is a set of symbols that are used to organize objects of various kinds, so that these objects may be referred to by name.
+const NAME_SPACE = "f7b3b8b0-3b7b-11eb-b378-0242ac130002";
 
 const csrftoken = process.env.CSRF_TOKEN;
 const checkMFA = async (req, res) => {
@@ -178,9 +184,9 @@ const exntionCheckLogin = async (req, res) => {
 };
 
 const checkMasterPassword = async (req, res) => {
+
     const { userId } = req.user;
     const { password } = req.body;
-
     try {
         const user = await User.findById(userId);
         const isPasswordValid = await bcrypt.compare(password, user.password);
@@ -197,12 +203,14 @@ const checkMasterPassword = async (req, res) => {
 const getUserKey = async (req, res) => {
     const { userId } = req.user;
 
-    try {
-        const key = crypto.createHash("sha256").update(userId).digest("hex");
-        console.log(key);
-        return res.status(200).json({ key: key });
-    } catch (error) {
+    const key = uuidv5(userId, NAME_SPACE);
 
+    const hashedKey = crypto.createHash("sha256").update(key).digest("hex");
+    try {
+
+        return res.status(200).json({ key: hashedKey });
+    }
+        catch (error) {
         return res.status(500).json({ message: "Error during key generation" });
 
     }

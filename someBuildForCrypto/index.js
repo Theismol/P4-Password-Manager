@@ -15,6 +15,10 @@ console.log(listUrl);
 
 
 const fetchData = async (url) => {
+    getValueFromStorage();
+    chrome.storage.sync.get(['encryptedMasterPassword'], async function (result) {
+        const encryptedMasterPassword = result.encryptedMasterPassword;
+
     try {
         const response = await fetch("http://localhost:4000/api/auth/getUserKey", {
             method: "GET",
@@ -29,8 +33,12 @@ const fetchData = async (url) => {
         for (let i = 0; i < encryptedpassword.length; i++) {
             //check if the url is the same as the current url
             if (encryptedpassword[i].url.includes(url)) {
-                const currentPassword = CryptoJS.AES.decrypt(encryptedpassword[i].password, data.key).toString(CryptoJS.enc.Utf8);
+
+                const currentDecyptedmasterpassword = CryptoJS.AES.decrypt(encryptedMasterPassword, data.key).toString(CryptoJS.enc.Utf8);
+                const currentPassword = CryptoJS.AES.decrypt(encryptedpassword[i].password, currentDecyptedmasterpassword).toString(CryptoJS.enc.Utf8);
+
                 console.log(currentPassword);
+
                 const currenSile = {
                     username: encryptedpassword[i].username,
                     password: currentPassword,
@@ -40,10 +48,11 @@ const fetchData = async (url) => {
 
             }
         }
-    } catch (error) {
-        console.error("Error fetching passwords:", error);
-    }
 
+        } catch (error) {
+            console.error("Error fetching passwords:", error);
+        }
+    });
 };
 
 //check if the url is in the list

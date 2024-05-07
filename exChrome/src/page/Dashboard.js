@@ -18,7 +18,6 @@ export default function Dashboard() {
     const [openElementBoll, setOpenElementBoll] = useState(false);
     const [save, setSave] = useState(false);
 
-
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -37,29 +36,25 @@ export default function Dashboard() {
     }, [save]);
 
         const storePassword = async (passwords) => {
-        //chrome.storage.sync.set({passwords: JSON.stringify(password)});
-            //
-            //use the get "getUserKey" to get the key
             try {
                 console.log(passwords)
                 const response = await axios.get("http://localhost:4000/api/auth/getUserKey", {
                     withCredentials: true,
                 });
-                //create a list as json list of passwords
                 const passwordList = passwords.map((password) => {
-
-                    let decryptedPassword = CryptoJS.AES.decrypt(password.password, enterMasterPassword).toString(CryptoJS.enc.Utf8);
-
+                    
                     return {
                         url: password.url,
                         username: password.username,
-                        password: CryptoJS.AES.encrypt(decryptedPassword, response.data.key).toString(),
+                        password: password.password,
                     };
                 });
-
-                //store the list of passwords in the chrome storage
+                
+                const encryptedPassword = CryptoJS.AES.encrypt(enterMasterPassword, response.data.key).toString();
 
                 chrome.storage.sync.set({encryptedpassword: passwordList});
+                chrome.storage.sync.set({encryptedMasterPassword: encryptedPassword});
+
 
 
             } catch (error) {
