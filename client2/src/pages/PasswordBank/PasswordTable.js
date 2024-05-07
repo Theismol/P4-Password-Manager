@@ -5,6 +5,7 @@ import PasswordModal from '../../components/PasswordPop/PasswordModal';
 import PermanentDrawerLeft from "../../components/navbars/sideBar";
 import { RSADecrypt } from '../../services/RSAEncryption';
 import {CryptoJS} from 'crypto-js';
+import { AESDecrypt, AESEncrypt } from '../../services/AESEncryption';
 
 export default function PasswordTable() {
   const [data, setData] = useState([]);
@@ -13,7 +14,6 @@ export default function PasswordTable() {
   const [selectedRow, setSelectedRow] = useState(null);
   const [openModal, setOpenModal] = useState(false);
   const [canShare, setCanShare] = useState(false);
-  const [csrftoken, setCsrftoken] = useState("");
   const columns = [
     { id: 'username', label: 'Username', minWidth: 170 },
     { id: 'password', label: 'Password', minWidth: 170 },
@@ -22,25 +22,33 @@ export default function PasswordTable() {
 
   useEffect(() => {
     console.log("fetching");
-    fetchData();
+    axios.get('http://localhost:4000/api/auth/getCSRF' , {withCredentials: true}).then((response) => {
+      fetchData(response.data.csrftoken);
+    }).catch((error) => {
+      console.log(error.response.data.message);
+      console.log(error);
+    });
   }, [openModal]);
 
-  const fetchData = async () => {
+  const fetchData = async (csrftoken) => {
     try {
+
       const response = await axios.get('http://localhost:4000/api/password/getPasswords', { withCredentials: true });
       console.log(response.data.incomingPasswords);
+      console.log(csrftoken);
       if (response.data.incomingPasswords.length > 0) {
         //GIVER BAD KEY SIZE PÅ DECRYPT
         response.data.incomingPasswords.forEach( async(incomingPassword) => {
           const keyResponse = await axios.get('http://localhost:4000/api/keyExchange/getKeys', {withCredentials: true, params: {user: incomingPassword.from} })
-          const decryptedPassword = RSADecrypt(keyResponse.data.publicKey, keyResponse.data.privateKey, incomingPassword.password);
-          const encryptedPassword = CryptoJS.AES.encrypt(decryptedPassword.password, localStorage.getItem("key")).toString();
+          const decryptedPassword = RSADecrypt(keyResponse.data.publicKey, AESDecrypt(keyResponse.data.privateKey,localStorage.getItem("key")), incomingPassword.password);
+          const encryptedPassword = AESEncrypt(decryptedPassword.password, localStorage.getItem("key"));
           axios.post('http://localhost:4000/api/password/addPasswordToUser', {
           title: decryptedPassword.title,
           username: decryptedPassword.username,
           password: encryptedPassword,
           url: decryptedPassword.url,
-          notes: null,
+          isIncoming: true,
+          notes: "",
           csrftoken: csrftoken
         }, {
           withCredentials: true,

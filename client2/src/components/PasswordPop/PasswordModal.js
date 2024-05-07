@@ -83,6 +83,7 @@ export default function PasswordModal({ open, handleCloseModal, selectedRow, can
           password: encryptedPassword,
           url: url,
           notes: notes,
+          isIncoming: false,
           csrftoken: csrftoken
         }, {
           withCredentials: true,
