@@ -219,17 +219,15 @@ function Org() {
                   component: "form",
                   onSubmit: (event) => {
                     try {
-                      event.preventDefault();
                       const formData = new FormData(event.currentTarget);
                       const formJson = Object.fromEntries(formData.entries());
-                      axios.delete("http://localhost:4000/api/organization/removeUserFromOrganization", {
-                        email: formJson.email,
-                        csrftoken: csrftoken,
-                      }, {
-                        withCredentials: true,
+                      axios.delete("http://localhost:4000/api/organization/removeUserFromOrganization", {data : {
+                        email:formJson.email,
+                        csrftoken:csrftoken,
+
+                      },
+                      withCredentials: true,
                       });
-                      const email = formJson.email;
-                      console.log(email);
                       handleCloseRemove();
                     } catch (error) {
                       console.log(error);
@@ -286,7 +284,6 @@ function Org() {
                               component: "form",
                               onSubmit: (event) => {
                                 try {
-                                  event.preventDefault();
                                   const formData = new FormData(event.currentTarget);
                                   const formJson = Object.fromEntries(formData.entries());
                                   axios.post("http://localhost:4000/api/organization/addUserToOrganization", {
