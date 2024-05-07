@@ -49,7 +49,7 @@ export default function SignUp() {
             return;
         }
         const password = await hashPassword(validatedForm.password, 600000);
-        const passwordToSend = await hashPassword(password, 12)
+        const passwordToSend = await hashPassword(password, 1)
         const encryptedPrivateKey = AES.encrypt(
             keys.private,
             password

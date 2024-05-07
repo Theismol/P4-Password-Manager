@@ -18,7 +18,7 @@ export default function Login() {
         const hashedPassword = hashPassword(data.get("password"),600000);
         hashedPassword.then((result) => {
             console.log(result);
-            const passwordToSend = hashPassword(result,12)
+            const passwordToSend = hashPassword(result,1)
             localStorage.setItem("key", result);
             passwordToSend.then( (newResult) => {
                 axios.post("http://localhost:4000/api/auth/login", {
