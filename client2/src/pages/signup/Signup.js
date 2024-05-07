@@ -19,13 +19,12 @@ export default function SignUp() {
     const [error, setError] = React.useState(false);
     const [open, setOpen] = React.useState(false);
     const [alertMessage, setAlertMessage] = React.useState("");
-    //Zod object that validates the form data. We can add minimum length to password/usernames later and custom error messages for each field
     const signupSchema = z
         .object({
-            email: z.string().email().min(5),
+            email: z.string().email(),
             username: z.string(),
-            password: z.string(),
-            confirmPassword: z.string(),
+            password: z.string().min(10),
+            confirmPassword: z.string().min(10),
         })
         .refine((data) => data.password === data.confirmPassword, {
             message: "Passwords do not match",
@@ -49,7 +48,8 @@ export default function SignUp() {
             setError(true);
             return;
         }
-        const password = await hashPassword(validatedForm.password);
+        const password = await hashPassword(validatedForm.password, 600000);
+        const passwordToSend = await hashPassword(password, 12)
         const encryptedPrivateKey = AES.encrypt(
             keys.private,
             password
@@ -57,7 +57,7 @@ export default function SignUp() {
         axios.post("http://localhost:4000/api/signup", {
                 email: validatedForm.email,
                 username: validatedForm.username,
-                password: password,
+                password: passwordToSend,
                 publicKey: keys.public,
                 privateKey: encryptedPrivateKey,
             })

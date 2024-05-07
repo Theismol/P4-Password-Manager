@@ -7,7 +7,6 @@ const {
     generateToken,
     generateRefreshToken,
     verifyRefreshToken,
-    verifyToken,
 } = require("../utils/JWT/jwtUtils");
 const User = require("../models/userModel");
 const jwtModel = require("../models/jwtModel");

@@ -1,9 +1,20 @@
+const z = require("zod");
 const bcrypt = require("bcrypt");
 const User = require("../models/userModel");
 
 const signup = async (req, res) => {
     const { email, username, password, privateKey, publicKey } = req.body;
-    console.log(req.body);
+    const emailSchema = z
+    .object({
+        email: z.string().email(),
+    })
+    try {
+        const validatedForm = emailSchema.parse({email:email})
+
+    }
+    catch (error) {
+        return res.status(400).send();
+    }
 
     try {
         const user = await User.findOne({ username });
@@ -20,7 +31,7 @@ const signup = async (req, res) => {
                 email: email,
                 username: username,
                 password: hashedPassword,
-                mfaSecret: "test",
+                mfaSecret: "null",
                 organizations: null,
                 publicKey: publicKey,
                 privateKey: privateKey,

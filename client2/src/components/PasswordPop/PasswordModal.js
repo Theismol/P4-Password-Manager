@@ -127,6 +127,7 @@ export default function PasswordModal({ open, handleCloseModal, selectedRow, can
       const encryptedPassword = RSAEncrypt(publicKey, decryptPassword(privateKey), JSON.stringify({username: username, password: password, url: url, title: title}))
       //Skal tjekke om her virker, kryptere key til local storage og decrypt de incoming passwords der er.
       axios.post('http://localhost:4000/api/password/sendPassword', {user: shareUsername, csrftoken: csrftoken, password : encryptedPassword}, {withCredentials: true}).then((response) => {
+        open = false;
         console.log("it has been shared woo");
       }).catch((error) => {
         console.log("sharing did not work :(");
