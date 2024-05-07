@@ -20,7 +20,8 @@ function Org() {
   const [selectedRow, setSelectedRow] = useState(null);
   const [openModal, setOpenModal] = useState(false);
   const [csrftoken, setCsrftoken] = useState("");
-  const [open, setOpen] = React.useState(false);
+  const [openAdd, setOpenAdd] = useState(false);
+  const [openRemove, setOpenRemove] = useState(false);
   const [admin, setAdmin] = useState(false);
   const [inOrg, setinOrg] = useState(false);
   const [rows, setRows] = useState([
@@ -63,21 +64,22 @@ function Org() {
     , [inOrg]);
 
 
-  function handleSubmit() {
 
-  }
-  const handleClickOpen = (event) => {
+  const handleClickOpenAdd = (event) => {
     event.preventDefault();
-    setOpen(true);
-    console.log("clicked");
+    setOpenAdd(true);
   };
 
-  const handleClose = () => {
-    setOpen(false);
+  const handleCloseAdd = () => {
+    setOpenAdd(false);
   };
-
-
-  function handleSubmit() { }
+  const handleCloseRemove = () => {
+    setOpenRemove(false);
+  }
+  const handleClickOpenRemove = (event) => {
+    event.preventDefault();
+    setOpenRemove(true);
+  }
   if (inOrg === false) {
     return (
       <div>
@@ -93,7 +95,7 @@ function Org() {
 
             <Box
               component="form"
-              onSubmit={handleClickOpen}
+              onSubmit={handleClickOpenAdd}
               noValidate
               sx={{ mt: 1 }}>
 
@@ -108,8 +110,8 @@ function Org() {
                 Add organization
               </Button>
               <Dialog
-                open={open}
-                onClose={handleClose}
+                open={openAdd}
+                onClose={handleCloseAdd}
                 PaperProps={{
                   component: "form",
                   onSubmit: (event) => {
@@ -129,7 +131,7 @@ function Org() {
                           console.log(response.data.message);
                           if (response.status === 200) {
                             setinOrg(true);
-                            console.log("Organization created");
+                            handleCloseAdd();
                             axios.post("http://localhost:4000/api/auth/tokenRefresh", {
 
                               csrftoken: csrftoken,
@@ -140,8 +142,6 @@ function Org() {
 
                           }
                         });
-                      
-                      handleClose();
                     } catch (error) {
                       console.log(error.data.message);
                       console.log(error);
@@ -168,7 +168,7 @@ function Org() {
                   />
                 </DialogContent>
                 <DialogActions>
-                  <Button onClick={handleClose}>Cancel</Button>
+                  <Button onClick={handleCloseAdd}>Cancel</Button>
                   <Button type="submit">Create organization</Button>
                 </DialogActions>
               </Dialog>
@@ -198,7 +198,7 @@ function Org() {
             {admin && (
             <Box
               component="form"
-              onSubmit={handleClickOpen}
+              onSubmit={handleClickOpenRemove}
               noValidate
               sx={{ mt: 1 }}
               style={{display: "flex", justifyContent: "center", alignItems: "center"}}
@@ -210,11 +210,11 @@ function Org() {
                 color="primary"
                 sx={{ mt: 3, mb: 2 }}
               >
-                Add user
+                Remove user
               </Button>
               <Dialog
-                open={open}
-                onClose={handleClose}
+                open={openRemove}
+                onClose={handleCloseRemove}
                 PaperProps={{
                   component: "form",
                   onSubmit: (event) => {
@@ -222,7 +222,7 @@ function Org() {
                       event.preventDefault();
                       const formData = new FormData(event.currentTarget);
                       const formJson = Object.fromEntries(formData.entries());
-                      axios.post("http://localhost:4000/api/organization/addUserToOrganization", {
+                      axios.delete("http://localhost:4000/api/organization/removeUserFromOrganization", {
                         email: formJson.email,
                         csrftoken: csrftoken,
                       }, {
@@ -230,7 +230,7 @@ function Org() {
                       });
                       const email = formJson.email;
                       console.log(email);
-                      handleClose();
+                      handleCloseRemove();
                     } catch (error) {
                       console.log(error);
                     }
@@ -238,10 +238,10 @@ function Org() {
                   },
                 }}
               >
-                <DialogTitle>Add user</DialogTitle>
+                <DialogTitle>Remove user</DialogTitle>
                 <DialogContent>
                   <DialogContentText>
-                    To Add a user to the organization, please enter the email.
+                    To remove a user from the organization, please enter the email.
                   </DialogContentText>
                   <TextField
                     autoFocus
@@ -256,11 +256,78 @@ function Org() {
                   />
                 </DialogContent>
                 <DialogActions>
-                  <Button onClick={handleClose}>Cancel</Button>
-                  <Button type="submit">Add user</Button>
+                  <Button onClick={handleCloseRemove}>Cancel</Button>
+                  <Button type="submit">Remove user</Button>
                 </DialogActions>
               </Dialog>
             </Box>
+            )}
+            {admin && (
+                          <Box
+                          component="form"
+                          onSubmit={handleClickOpenAdd}
+                          noValidate
+                          sx={{ mt: 1 }}
+                          style={{display: "flex", justifyContent: "center", alignItems: "center"}}
+                        >
+                          <Button
+                            type="submit"
+                            fullWidth
+                            variant="contained"
+                            color="primary"
+                            sx={{ mt: 3, mb: 2 }}
+                          >
+                            Add user
+                          </Button>
+                          <Dialog
+                            open={openAdd}
+                            onClose={handleCloseAdd}
+                            PaperProps={{
+                              component: "form",
+                              onSubmit: (event) => {
+                                try {
+                                  event.preventDefault();
+                                  const formData = new FormData(event.currentTarget);
+                                  const formJson = Object.fromEntries(formData.entries());
+                                  axios.post("http://localhost:4000/api/organization/addUserToOrganization", {
+                                    email: formJson.email,
+                                    csrftoken: csrftoken,
+                                  }, {
+                                    withCredentials: true,
+                                  });
+                                  const email = formJson.email;
+                                  console.log(email);
+                                  handleCloseAdd();
+                                } catch (error) {
+                                  console.log(error);
+                                }
+            
+                              },
+                            }}
+                          >
+                            <DialogTitle>Add user</DialogTitle>
+                            <DialogContent>
+                              <DialogContentText>
+                                To Add a user to the organization, please enter the email.
+                              </DialogContentText>
+                              <TextField
+                                autoFocus
+                                required
+                                margin="dense"
+                                id="name"
+                                name="email"
+                                label="Email Address"
+                                type="email"
+                                fullWidth
+                                variant="standard"
+                              />
+                            </DialogContent>
+                            <DialogActions>
+                              <Button onClick={handleCloseAdd}>Cancel</Button>
+                              <Button type="submit">Add user</Button>
+                            </DialogActions>
+                          </Dialog>
+                        </Box>
             )}
           </div>
         }
