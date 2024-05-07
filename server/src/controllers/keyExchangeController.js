@@ -10,7 +10,7 @@ const getKeys = async (req, res) => {
     let toUserObject;
     try {
         user = await User.findById(userId);
-        toUserObject = await User.findOne({$or : [{username: toUser}, {_id: toUser}], $and: [{organizations: {$in : organistations}}]})
+        toUserObject = await User.findOne({username: toUser, organizations : {$in : organistations}});
         console.log(organistations);
 
     } catch (error) {
