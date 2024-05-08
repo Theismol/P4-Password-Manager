@@ -4,6 +4,7 @@ import CryptoJS from 'crypto-js';
 import axios from 'axios';
 import { FormControl } from '@mui/base';
 import { NaclEncrypt } from '../../services/NaclEncryption';
+import { AESDecrypt, AESEncrypt } from '../../services/AESEncryption';
 
 
 export default function PasswordModal({ open, handleCloseModal, selectedRow, canShare }) {
@@ -26,7 +27,7 @@ export default function PasswordModal({ open, handleCloseModal, selectedRow, can
     } )
     if (selectedRow) {
       setUsername(selectedRow.username);
-      setPassword(decryptPassword(selectedRow.password));
+      setPassword(AESDecrypt(selectedRow.password));
       setTitle(selectedRow.title);
       setUrl(selectedRow.url);
       setNotes(selectedRow.url);
@@ -66,15 +67,9 @@ export default function PasswordModal({ open, handleCloseModal, selectedRow, can
     setPassword(passwordString);
 
   }
-  const encryptPassword = (password) => {
-    return CryptoJS.AES.encrypt(password, localStorage.getItem("key")).toString();
-  };
-  const decryptPassword = (password) => {
-    return CryptoJS.AES.decrypt(password, localStorage.getItem("key")).toString(CryptoJS.enc.Utf8);
-  }
   
   const savePasswordToBackend = async () => {
-    const encryptedPassword = encryptPassword(password);
+    const encryptedPassword = AESEncrypt(password);
     try {
       if (!selectedRow) {
         axios.post('http://localhost:4000/api/password/addPasswordToUser', {
@@ -124,7 +119,7 @@ export default function PasswordModal({ open, handleCloseModal, selectedRow, can
     axios.get('http://localhost:4000/api/keyExchange/getKeys', {withCredentials: true, params: {user: shareUsername}}).then((response) => {
       const publicKey = response.data.publicKey;
       const privateKey = response.data.privateKey;
-      const encryptedPassword = NaclEncrypt(publicKey, decryptPassword(privateKey), JSON.stringify({username: username, password: password, url: url, title: title}))
+      const encryptedPassword = NaclEncrypt(publicKey, AESDecrypt(privateKey), JSON.stringify({username: username, password: password, url: url, title: title}))
       //Skal tjekke om her virker, kryptere key til local storage og decrypt de incoming passwords der er.
       axios.post('http://localhost:4000/api/password/sendPassword', {user: shareUsername, csrftoken: csrftoken, password : encryptedPassword}, {withCredentials: true}).then((response) => {
         open = false;
