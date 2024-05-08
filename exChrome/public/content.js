@@ -1,14 +1,4 @@
-//see if the page is any of the following:
 
-let urlsIsReady = false;
-let currentPasswrd = null;
-let listOfinputs = [];
-
-chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-    console.log(request.currentPassword);
-    if(request.currentPassword != null) {
-        console.log(request.currentPassword);
-        currentPasswrd = request.currentPassword;
     }
 });
 
@@ -23,8 +13,7 @@ function getUrlsAndCheck() {
     //send a message to the background.js
     chrome.runtime.sendMessage({message: "fetchData", url: domain}, function(response) {
         if (response != null) {
-            urlsIsReady = true;
-            createCheck(listOfinputs);
+            
             return true;
         }
     });
@@ -44,10 +33,9 @@ function hadenInput(input) {
         input.type == "email" ||
         input.name == "email") {
         // unfocus the input
-        input.blur();
         listOfinputs.push(input);
-
         getUrlsAndCheck();
+
     }
     //get all inputs
     var allInputs = document.getElementsByTagName('input');
@@ -73,6 +61,7 @@ document.addEventListener('click', function(e) {
 );
 
 function createCheck(input) {
+    input[0].blur();
 const div = document.createElement('div');
 div.id = 'exDiv';
 div.innerHTML = `
