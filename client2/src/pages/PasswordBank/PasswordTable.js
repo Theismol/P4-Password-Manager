@@ -38,7 +38,6 @@ export default function PasswordTable() {
       console.log(response.data.incomingPasswords);
       console.log(csrftoken);
       if (response.data.incomingPasswords.length > 0) {
-        //GIVER BAD KEY SIZE PÅ DECRYPT
         response.data.incomingPasswords.forEach( async(incomingPassword) => {
           const keyResponse = await axios.get('http://localhost:4000/api/keyExchange/getKeys', {withCredentials: true, params: {user: incomingPassword.from} })
           const decryptedPassword = NaclDecrypt(keyResponse.data.publicKey, AESDecrypt(keyResponse.data.privateKey,localStorage.getItem("key")), incomingPassword.password);

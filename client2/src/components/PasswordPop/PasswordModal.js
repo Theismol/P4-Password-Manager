@@ -27,7 +27,7 @@ export default function PasswordModal({ open, handleCloseModal, selectedRow, can
     } )
     if (selectedRow) {
       setUsername(selectedRow.username);
-      setPassword(AESDecrypt(selectedRow.password));
+      setPassword(AESDecrypt(selectedRow.password,localStorage.getItem("key")));
       setTitle(selectedRow.title);
       setUrl(selectedRow.url);
       setNotes(selectedRow.url);
@@ -69,7 +69,7 @@ export default function PasswordModal({ open, handleCloseModal, selectedRow, can
   }
   
   const savePasswordToBackend = async () => {
-    const encryptedPassword = AESEncrypt(password);
+    const encryptedPassword = AESEncrypt(password,localStorage.getItem("key"));
     try {
       if (!selectedRow) {
         axios.post('http://localhost:4000/api/password/addPasswordToUser', {
@@ -119,7 +119,7 @@ export default function PasswordModal({ open, handleCloseModal, selectedRow, can
     axios.get('http://localhost:4000/api/keyExchange/getKeys', {withCredentials: true, params: {user: shareUsername}}).then((response) => {
       const publicKey = response.data.publicKey;
       const privateKey = response.data.privateKey;
-      const encryptedPassword = NaclEncrypt(publicKey, AESDecrypt(privateKey), JSON.stringify({username: username, password: password, url: url, title: title}))
+      const encryptedPassword = NaclEncrypt(publicKey, AESDecrypt(privateKey,localStorage.getItem("key")), JSON.stringify({username: username, password: password, url: url, title: title}))
       //Skal tjekke om her virker, kryptere key til local storage og decrypt de incoming passwords der er.
       axios.post('http://localhost:4000/api/password/sendPassword', {user: shareUsername, csrftoken: csrftoken, password : encryptedPassword}, {withCredentials: true}).then((response) => {
         open = false;

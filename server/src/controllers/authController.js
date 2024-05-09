@@ -13,6 +13,7 @@ const {
 const User = require("../models/userModel");
 const jwtModel = require("../models/jwtModel");
 const speakeasy = require("speakeasy");
+const { Domain } = require("domain");
 require("dotenv").config();
 
 //what is NAME_SPACE? 
