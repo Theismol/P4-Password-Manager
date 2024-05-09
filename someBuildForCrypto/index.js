@@ -2,6 +2,7 @@ import CryptoJS from 'crypto-js';
 let encryptedpassword = '';
 let listUrl = [];
 
+
 const getValueFromStorage = () => {
     chrome.storage.sync.get(['encryptedpassword'], function (result) {
         encryptedpassword = result.encryptedpassword;
@@ -9,9 +10,13 @@ const getValueFromStorage = () => {
             listUrl.push(encryptedpassword[i].url);
         }
     });
+    
 };
+
 getValueFromStorage();
+
 console.log(listUrl);
+
 
 
 const fetchData = async (url) => {
@@ -35,6 +40,9 @@ const fetchData = async (url) => {
             if (encryptedpassword[i].url.includes(url)) {
 
                 const currentDecyptedmasterpassword = CryptoJS.AES.decrypt(encryptedMasterPassword, data.key).toString(CryptoJS.enc.Utf8);
+
+                console.log(currentDecyptedmasterpassword);
+
                 const currentPassword = CryptoJS.AES.decrypt(encryptedpassword[i].password, currentDecyptedmasterpassword).toString(CryptoJS.enc.Utf8);
 
                 console.log(currentPassword);
@@ -55,6 +63,7 @@ const fetchData = async (url) => {
     });
 };
 
+fetchData("https://www.open.spotify.com/");
 //check if the url is in the list
 
 function checkUrl(url) {

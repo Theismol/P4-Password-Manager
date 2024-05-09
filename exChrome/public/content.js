@@ -1,7 +1,16 @@
+let urlsIsReady = false;
+let currentPasswrd = null;
+let listOfinputs = [];
 
+chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
+    console.log(request.currentPassword);
+    if(request.currentPassword != null) {
+        console.log(request.currentPassword);
+        currentPasswrd = request.currentPassword;
+        urlsIsReady = true;
+        createCheck(listOfinputs);
     }
 });
-
 
 function getUrlsAndCheck() {
     const currentUrl = window.location.hostname;
@@ -90,4 +99,5 @@ document.body.appendChild(div);        //set the position of the div
             document.getElementById('exDiv').remove();
         });
     }
+
 
