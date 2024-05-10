@@ -14,6 +14,7 @@ export default function PasswordModal({ open, handleCloseModal, selectedRow, can
   const [url, setUrl] = useState('');
   const [notes, setNotes] = useState('');
   const [csrftoken, setCsrftoken] = useState("");
+  const [shareID, setShareID] = useState("");
   const [shareUsername, setShareusername] = useState("");
   const [sameOrgUsers, setSameOrgUsers] = useState([]);
 
@@ -54,7 +55,13 @@ export default function PasswordModal({ open, handleCloseModal, selectedRow, can
     const {
       target: { value },
     } = event;
-    setShareusername(value);
+    for (let i=0;i<sameOrgUsers.length;i++) {
+      if (value === sameOrgUsers[0].username) {
+        setShareusername(value);
+        setShareID(sameOrgUsers[0]._id)
+        break;
+      }
+    }
   };
   const generatePassword = () => {
     const characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+{}|:"<>?';
@@ -116,12 +123,12 @@ export default function PasswordModal({ open, handleCloseModal, selectedRow, can
     }
   };
   const handleSharePasswords= () => {
-    axios.get('http://localhost:4000/api/keyExchange/getKeys', {withCredentials: true, params: {user: shareUsername}}).then((response) => {
+    axios.get('http://localhost:4000/api/keyExchange/getKeys', {withCredentials: true, params: {user: shareID}}).then((response) => {
       const publicKey = response.data.publicKey;
       const privateKey = response.data.privateKey;
       const encryptedPassword = NaclEncrypt(publicKey, AESDecrypt(privateKey,localStorage.getItem("key")), JSON.stringify({username: username, password: password, url: url, title: title}))
       //Skal tjekke om her virker, kryptere key til local storage og decrypt de incoming passwords der er.
-      axios.post('http://localhost:4000/api/password/sendPassword', {user: shareUsername, csrftoken: csrftoken, password : encryptedPassword}, {withCredentials: true}).then((response) => {
+      axios.post('http://localhost:4000/api/password/sendPassword', {user: shareID, csrftoken: csrftoken, password : encryptedPassword}, {withCredentials: true}).then((response) => {
         open = false;
         console.log("it has been shared woo");
       }).catch((error) => {

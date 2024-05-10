@@ -4,13 +4,15 @@ const organization = require('../models/organizationModel');
 
 const getKeys = async (req, res) => {
     const toUser = req.query.user;
+    console.log("touser");
     console.log(toUser);
     const { userId, organistations } = req.user;
     let user;
     let toUserObject;
     try {
         user = await User.findById(userId);
-        toUserObject = await User.findOne({username: toUser, organizations : {$in : organistations}});
+        toUserObject = await User.findOne({_id: toUser, organizations : {$in : organistations}});
+        console.log(toUserObject);
         console.log(organistations);
 
     } catch (error) {
