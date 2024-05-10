@@ -92,11 +92,13 @@ const verifyTOTP = async (req, res) => {
         sameSite: "strict",
         httpOnly: true,
         secure: true,
+        domain: "accessarmor.server"
     })
         .cookie("refreshtoken", refreshToken, {
             sameSite: "strict",
             httpOnly: true,
             secure: true,
+            domain: "accessarmor.server"
         })
         .status(200).send();
 };
@@ -165,11 +167,13 @@ const verifyTOTPFirstTime = async (req, res) => {
         sameSite: "strict",
         httpOnly: true,
         secure: true,
+        domain: "accessarmor.server"
     })
         .cookie("refreshtoken", refreshToken, {
             sameSite: "strict",
             httpOnly: true,
             secure: true,
+            domain: "accessarmor.server"
         })
         .status(200).send();
 };
@@ -234,7 +238,7 @@ const login = async (req, res) => {
             { userId: user._id, organistations: user.organizations },
             3600
         );
-        return res.cookie("mfatoken", token, {sameSite: "strict", httpOnly: true, secure: true })
+        return res.cookie("mfatoken", token, {sameSite: "strict", httpOnly: true, secure: true, domain: "accessarmor.server" })
             .status(200)
             .json({mfa: mfa });
     } catch (error) {
@@ -267,6 +271,7 @@ const tokenRefresh = async (req, res) => {
             sameSite: "strict",
             httpOnly: true,
             secure: true,
+            domain: "accessarmor.server"
         }).status(200).json({ message: "Token refreshed" }).send();
         console.log(out, token);
 
