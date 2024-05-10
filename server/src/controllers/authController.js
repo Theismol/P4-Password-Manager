@@ -89,12 +89,12 @@ const verifyTOTP = async (req, res) => {
     }
     res.clearCookie("mfatoken");
     res.cookie("token", token, {
-        sameSite: "none",
+        sameSite: "strict",
         httpOnly: true,
         secure: true,
     })
         .cookie("refreshtoken", refreshToken, {
-            sameSite: "none",
+            sameSite: "strict",
             httpOnly: true,
             secure: true,
         })
@@ -162,12 +162,12 @@ const verifyTOTPFirstTime = async (req, res) => {
     }
     res.clearCookie("mfatoken");
     res.cookie("token", token, {
-        sameSite: "none",
+        sameSite: "strict",
         httpOnly: true,
         secure: true,
     })
         .cookie("refreshtoken", refreshToken, {
-            sameSite: "none",
+            sameSite: "strict",
             httpOnly: true,
             secure: true,
         })
@@ -234,7 +234,7 @@ const login = async (req, res) => {
             { userId: user._id, organistations: user.organizations },
             3600
         );
-        return res.cookie("mfatoken", token, {sameSite: "none", httpOnly: true, secure: true })
+        return res.cookie("mfatoken", token, {sameSite: "strict", httpOnly: true, secure: true })
             .status(200)
             .json({mfa: mfa });
     } catch (error) {
@@ -264,7 +264,7 @@ const tokenRefresh = async (req, res) => {
         }, 3600);
         console.log(token);
         res.cookie("token", token, {
-            sameSite: "none",
+            sameSite: "strict",
             httpOnly: true,
             secure: true,
         }).status(200).json({ message: "Token refreshed" }).send();

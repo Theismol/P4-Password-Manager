@@ -15,7 +15,7 @@ export default function Login() {
     const handleSubmit = (event) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
-        const hashedPassword = hashPassword(data.get("password"),600000);
+        const hashedPassword = hashPassword(data.get("password"),1000);
         hashedPassword.then((result) => {
             console.log(result);
             const passwordToSend = hashPassword(result,1)
