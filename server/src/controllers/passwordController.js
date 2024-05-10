@@ -162,7 +162,7 @@ const sendPassword = async (req, res) => {
     let toUserObject;
     try {
         fromUser = await user.findById(userId);
-        toUserObject = await user.findOne({username: toUser, organizations : {$in : organistations}});
+        toUserObject = await user.findOne({_id: toUser, organizations : {$in : organistations}});
         console.log(password);
         try {
             const newIncomingPassword = new incomingPassword(
