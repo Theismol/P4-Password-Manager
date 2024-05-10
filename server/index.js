@@ -28,7 +28,7 @@ app.use(cookieParser());
 
 // Allow cross-origin requests
 app.use(cors({
-  origin: true,
+  origin: ["https://accessarmor.server","https://www.accessarmor.server"],
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true // Allow cookies to be sent with requests
