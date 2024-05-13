@@ -1,11 +1,11 @@
-const { verifyToken } = require('../../utils/JWT/jwtUtils.js');
+const { verifyToken, verifyMFAToken } = require('../../utils/JWT/jwtUtils.js');
 require('dotenv').config();
 
 const csrftoken = process.env.CSRF_TOKEN;
 const authenticateMFAToken = (req, res, next) => {
     const token = req.cookies.mfatoken;
     try {
-        const decoded = verifyToken(token);
+        const decoded = verifyMFAToken(token);
         req.user = decoded;
         //console.log("decoded: ", decoded)
         
