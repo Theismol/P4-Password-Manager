@@ -9,6 +9,7 @@ const {
     generateToken,
     generateRefreshToken,
     verifyRefreshToken,
+    generateMFAToken,
 } = require("../utils/JWT/jwtUtils");
 const User = require("../models/userModel");
 const jwtModel = require("../models/jwtModel");
@@ -230,7 +231,7 @@ const login = async (req, res) => {
             return res.status(401).json({ message: "Invalid password" }).send();
         }
         const mfa = user.mfaSecret !== "null";
-        const token = generateToken(
+        const token = generateMFAToken(
             { userId: user._id, organistations: user.organizations },
             3600
         );
