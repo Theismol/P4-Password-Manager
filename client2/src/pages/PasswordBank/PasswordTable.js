@@ -100,14 +100,14 @@ export default function PasswordTable() {
           component="main"
           sx={{
               display: "flex",
-              justifyContent: "center", // Horizontally center the content
+              justifyContent: "right", // Horizontally center the content
           }}
           maxWidth="xl"
       >
       <Button
         onClick = {createOpenModal}
         variant="contained"
-        sx={{ margin: "auto" }}>
+        sx={{marginTop: "auto", marginBottom: "auto", marginRight: "1%"}}>
           Create new password
       </Button>
       <Paper sx={{ width: '70%', overflow: 'hidden', alignItems: "center", justifyContent: "center",   }}>
