@@ -63,6 +63,7 @@ export default function PasswordModal({ open, handleCloseModal, selectedRow, can
       }
     }
   };
+
   const generatePassword = () => {
     const characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+{}|:"<>?';
     const passwordLength = 26;
@@ -72,7 +73,6 @@ export default function PasswordModal({ open, handleCloseModal, selectedRow, can
         passwordString += characters[randomValues[i] % characters.length];
     }
     setPassword(passwordString);
-
   }
   
   const savePasswordToBackend = async () => {
