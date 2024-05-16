@@ -14,6 +14,7 @@ export default function MFAPage() {
     const [alertMessage, setAlertMessage] = React.useState("");
     const [isLoading, setIsLoading] = React.useState(true);
     const [csrftoken, setCsrftoken] = React.useState("");
+
     useEffect(() => {
         (async function () {
             try {

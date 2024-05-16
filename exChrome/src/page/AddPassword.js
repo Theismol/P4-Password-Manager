@@ -24,9 +24,31 @@ function AddPassword({ onClose, onSave }) {
     const [url, setUrl] = useState("");
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
-    const [masterPassword, setMasterPassword] = useState("");
     const [csrfToken, setCsrfToken] = useState(null);
     const [count, setCount] = useState(0);
+
+    //caleback to generate a new password
+    //  const generatePassword = () => {
+  //  const characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+{}|:"<>?';
+  //  const passwordLength = 26;
+  //  let passwordString = '';
+  //  const randomValues = window.crypto.getRandomValues(new Uint32Array(passwordLength));
+  //  for (let i = 0; i < passwordLength; i++) {
+  //      passwordString += characters[randomValues[i] % characters.length];
+  //  }
+  //  setPassword(passwordString);
+  //}
+  
+    const genereatePassword = useCallback(async () => {
+        const characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+{}|:"<>?';
+            const passwordLength = 26;
+            let passwordString = '';
+            const randomValues = window.crypto.getRandomValues(new Uint32Array(passwordLength));
+            for (let i = 0; i < passwordLength; i++) {
+                passwordString += characters[randomValues[i] % characters.length];
+            }
+            setPassword(passwordString);
+    }, []);
 
     useEffect(() => {
         fetchCsrfToken();
@@ -38,34 +60,6 @@ function AddPassword({ onClose, onSave }) {
             .catch((error) => console.error(error)); 
     }, []); 
 
-        const allUrls = [
-            "https://spotify.com",
-            "https://twitter.com",
-            "https://facebook.com",
-            "https://google.com",
-            "https://yahoo.com",
-            "https://outlook.com",
-            "https://amazon.com",
-            "https://netflix.com",
-            "https://github.com",
-            "https://openai.com",
-            "http://geeksforgeeks.org",
-            "https://messenger.com",
-            "https://chat.openai.com/",
-        ];
-
-    const hadelGenerate = () => {
-        if (count >= allUrls.length) {
-            setCount(0);
-        }
-        const currentUrl = allUrls[count];
-        setUrl(currentUrl);
-        setUsername("user" + count + "name");
-        setPassword("password" + count);
-        setCount(count + 1);
-    };
-
-     //when the user clicks the save button, the addPassword function is called
     const handleSave = useCallback(() => {
         if (csrfToken !== null) {
             //
@@ -98,136 +92,134 @@ function AddPassword({ onClose, onSave }) {
     }, [url, username, password, csrfToken]); // Add dependencies
 
     return ( 
-        <Box sx={{
-                top: 0,
-                left: 0,
-                margin: '20px',
-                height: '90%',
-                position: 'absolute',
-                textAlign: 'center',
-                display: 'flex',
-                alignItems: 'center',
-                textAlign: 'center',
-                width: '350px',
-                bgcolor: 'rgba(0,0,0,0.5)',
-                zIndex: 10,
-            }}>
-
-        <Box sx={{
-            minHeight: '450px',
-            justifyContent: 'center',
-                textAlign: 'center',
-                margin: '20px',
-            borderRadius: '10px',
-            textAlign: 'center',
-            bgcolor: '#748EAB',
-        }}>
-
-        <Typography variant="h4" component="h1" sx={{
-                color: 'white',
-                padding: '30px',
-                fontWeight: 'bold',
-                textAlign: 'center',
-                mt: 3}}> Add Password
-        </Typography>
-        <form
-        onSubmit={(e) => {
-            e.preventDefault();
-            addPassword();
-        }}
+         <Box
+                sx={{
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    width: '100vw',
+                    overflow: 'auto', // Enable scrolling if content exceeds 
+                    height: '100vh',
+                    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent black color
+                    zIndex: 9, // Ensure it's behind Openelement but above other content
+                }}
+            >
+        <Box
+            sx={{
+                position: 'fixed',
+                top: '50%',
+                left: '0%',
+                zIndex: 10, // Ensure it's above the semi-transparent background
+                bgcolor: 'rgba(0, 0, 0, 0.5)', 
+                transform: 'translate(0%, -50%)',
+                    width: '310px',
+                maxHeight: '80vh', // Set maximum height to 80% of viewport height
+                overflow: 'auto', // Enable scrolling if content exceeds dimensions
+                bgcolor: '#748EAB',
+                borderRadius: '10px',
+                padding: '20px',
+            }}
         >
-            <TextField
-                margin="normal"
-                required
-                id="url"
-                label="URL"
-                name="url"
-                autoComplete="url"
-                size="small"
-                autoFocus
-                value={url}
-                onChange={(e) => setUrl(e.target.value)}
-                sx={{ backgroundColor: 'white', borderRadius: '5px', width: '90%' }}
-            />
-            <TextField
-                margin="normal"
-                required
-                fullWidth
-                id="username"
-                label="Username"
-                size="small"
-                name="username"
-                autoComplete="username"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
-                sx={{ backgroundColor: 'white', borderRadius: '5px', width: '90%' }}
-            />
-            <TextField
-                margin="normal"
-                required
-                size="small"
-                fullWidth
-                id="password"
-                label="Password"
-                name="password"
-                autoComplete="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                sx={{ backgroundColor: 'white', borderRadius: '5px', width: '90%' }}
-            />
-            <Box sx={{
-                display: 'flex', justifyContent: 'center' }}>
-                <Button
-                    variant="contained"
-                    type="submit"
-                    sx={{
-                        bgcolor: '#5ca85c',
+                <Typography variant="h4" component="h1" sx={{
+                    color: 'white',
+                    fontWeight: 'bold',
+                    mb: 2,
+                }}>Add Password
+                </Typography>
+                <form
+                    onSubmit={(e) => {
+                        e.preventDefault();
+                        addPassword();
+                    }}
+                >
+                    <TextField
+                        fullWidth
+                        margin="normal"
+                        required
+                        id="url"
+                        label="URL"
+                        name="url"
+                        autoComplete="url"
+                        size="small"
+                        autoFocus
+                        value={url}
+                        onChange={(e) => setUrl(e.target.value)}
+                        sx={{ backgroundColor: 'white', borderRadius: '5px' }}
+                    />
+                    <TextField
+                        fullWidth
+                        margin="normal"
+                        required
+                        id="username"
+                        label="Username"
+                        name="username"
+                        autoComplete="username"
+                        size="small"
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                        sx={{ backgroundColor: 'white', borderRadius: '5px' }}
+                    />
+                    <TextField
+                        fullWidth
+                        margin="normal"
+                        required
+                        id="password"
+                        label="Password"
+                        name="password"
+                        autoComplete="password"
+                        size="small"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        sx={{ backgroundColor: 'white', borderRadius: '5px' }}
+                    />
+                    <Box sx={{
+                        display: 'flex', justifyContent: 'center', width: '100%', mt: 2
+                    }}>
+                        <Button
+                            variant="contained"
+                            type="submit"
+                            sx={{
+                                bgcolor: '#5ca85c',
+                                color: 'black',
+                                width: '40%',
+                                '&:hover': {
+                                    bgcolor: '#5ca85c',
+                                    color: 'black',
+                                    transition: '0.5s',
+                                }
+                            }}> Save </Button>
+                        <Button
+                            variant="contained"
+                            onClick={onClose}
+                            sx={{
+                                bgcolor: '#d9534f',
+                                color: 'black',
+                                width: '40%',
+                                ml: 2,
+                                '&:hover': {
+                                    bgcolor: '#d9534f',
+                                    color: 'black',
+                                    transition: '0.5s',
+                                }
+                            }}> Close </Button>
+                    </Box>
+                </form>
+                <Button onClick={genereatePassword} sx={{
+                    bgcolor: '#5bc0de',
+                    color: 'black',
+                    width: '90%',
+                    mt: 2,
+                    '&:hover': {
+                        bgcolor: '#5bc0de',
                         color: 'black',
-                        width: '80%',
-                        bottom: '0',
-                        m: 2,
-                        '&:hover': {
-                            bgcolor: '#5ca85c',
-                            color: 'black',
-                            transition: '0.5s',
-                        }
-                    }}> Save </Button>
-                <Button
-                    variant="contained"
-                    onClick={onClose}
-                    sx={{
-                        bgcolor: '#d9534f',
-                        color: 'black',
-                        width: '80%',
-                        m: 2,
-                        '&:hover': {
-                            bgcolor: '#d9534f',
-                            color: 'black',
-                            transition: '0.5s',
-                        }
-                    }}> Close </Button>
+                        transition: '0.5s',
+                    }
+                }} > Generate Password </Button>
             </Box>
-        </form>
-        <Button onClick={hadelGenerate} sx={{
-            display: 'flex',
-            itemAlign: 'center',
-            textAlign: 'center',
-            justifyContent: 'center',
-            bgcolor: '#5bc0de',
-            color: 'black',
-            width: '100%',
-            mb: 2,
-            '&:hover': {
-                bgcolor: '#5bc0de',
-                color: 'black',
-                transition: '0.5s',
-            }
-        }} > Generate Password </Button>
-        <h3> {count} </h3>
-        </Box>
         </Box>
     );
-}
+};
+
 
 export default AddPassword;
         

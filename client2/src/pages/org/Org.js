@@ -61,7 +61,7 @@ function Org() {
 
   }
 
-    , [inOrg]);
+    , [inOrg, openAdd, openRemove]);
 
 
 
@@ -79,6 +79,69 @@ function Org() {
   const handleClickOpenRemove = (event) => {
     event.preventDefault();
     setOpenRemove(true);
+  }
+  const createOrganization = (event) => {
+    handleCloseRemove();      
+      const formData = new FormData(event.currentTarget);
+      const formJson = Object.fromEntries(formData.entries());
+      const organization = formJson.organization;
+      axios.post("http://localhost:4000/api/organization/createOrganization", {
+        name: formJson.organization,
+        csrftoken: csrftoken,
+      }, {
+        withCredentials: true,
+      })
+        .then((response) => {
+          console.log(response.data.message);
+          if (response.status === 200) {
+            setinOrg(true);
+            axios.post("http://localhost:4000/api/auth/tokenRefresh", {
+              
+              csrftoken: csrftoken,
+            },
+            {
+              withCredentials: true,
+            });
+            
+          }
+        }).catch ((error) => {
+        console.log(error.data.message);
+        console.log(error);
+      });
+
+  }
+  const addUser = (event) => {
+      const formData = new FormData(event.currentTarget);
+      const formJson = Object.fromEntries(formData.entries());
+      axios.post("http://localhost:4000/api/organization/addUserToOrganization", {
+        email: formJson.email,
+        csrftoken: csrftoken,
+      }, {
+        withCredentials: true,
+      }).then((response) => {
+        handleCloseAdd();
+
+      }).catch ((error) => {
+        console.log(error);
+      });
+  }
+  const removeUser = (event) => {
+      const formData = new FormData(event.currentTarget);
+      const formJson = Object.fromEntries(formData.entries());
+      axios.delete("http://localhost:4000/api/organization/removeUserFromOrganization", {data : {
+        email:formJson.email,
+        csrftoken:csrftoken,
+
+      },
+      withCredentials: true,
+      }).then ((response) => {
+        handleCloseRemove();
+      }).catch((error) => 
+        {
+          console.log(error);
+        }
+      );
+
   }
   if (inOrg === false) {
     return (
@@ -114,40 +177,7 @@ function Org() {
                 onClose={handleCloseAdd}
                 PaperProps={{
                   component: "form",
-                  onSubmit: (event) => {
-                    try {
-                      
-                      const formData = new FormData(event.currentTarget);
-                      const formJson = Object.fromEntries(formData.entries());
-                      const organization = formJson.organization;
-                      console.log(organization);
-                      axios.post("http://localhost:4000/api/organization/createOrganization", {
-                        name: formJson.organization,
-                        csrftoken: csrftoken,
-                      }, {
-                        withCredentials: true,
-                      })
-                        .then((response) => {
-                          console.log(response.data.message);
-                          if (response.status === 200) {
-                            setinOrg(true);
-                            handleCloseAdd();
-                            axios.post("http://localhost:4000/api/auth/tokenRefresh", {
-
-                              csrftoken: csrftoken,
-                            },
-                              {
-                                withCredentials: true,
-                              });
-
-                          }
-                        });
-                    } catch (error) {
-                      console.log(error.data.message);
-                      console.log(error);
-                    }
-
-                  },
+                  onSubmit: (event) => createOrganization(event),
                 }}
               >
                 <DialogTitle>create organization</DialogTitle>
@@ -217,23 +247,7 @@ function Org() {
                 onClose={handleCloseRemove}
                 PaperProps={{
                   component: "form",
-                  onSubmit: (event) => {
-                    try {
-                      const formData = new FormData(event.currentTarget);
-                      const formJson = Object.fromEntries(formData.entries());
-                      axios.delete("http://localhost:4000/api/organization/removeUserFromOrganization", {data : {
-                        email:formJson.email,
-                        csrftoken:csrftoken,
-
-                      },
-                      withCredentials: true,
-                      });
-                      handleCloseRemove();
-                    } catch (error) {
-                      console.log(error);
-                    }
-
-                  },
+                  onSubmit: (event) => removeUser(event),
                 }}
               >
                 <DialogTitle>Remove user</DialogTitle>
@@ -282,24 +296,7 @@ function Org() {
                             onClose={handleCloseAdd}
                             PaperProps={{
                               component: "form",
-                              onSubmit: (event) => {
-                                try {
-                                  const formData = new FormData(event.currentTarget);
-                                  const formJson = Object.fromEntries(formData.entries());
-                                  axios.post("http://localhost:4000/api/organization/addUserToOrganization", {
-                                    email: formJson.email,
-                                    csrftoken: csrftoken,
-                                  }, {
-                                    withCredentials: true,
-                                  });
-                                  const email = formJson.email;
-                                  console.log(email);
-                                  handleCloseAdd();
-                                } catch (error) {
-                                  console.log(error);
-                                }
-            
-                              },
+                              onSubmit: (event) => addUser(event),
                             }}
                           >
                             <DialogTitle>Add user</DialogTitle>
@@ -321,7 +318,7 @@ function Org() {
                             </DialogContent>
                             <DialogActions>
                               <Button onClick={handleCloseAdd}>Cancel</Button>
-                              <Button type="submit">Add user</Button>
+                              <Button onClick={handleCloseAdd} type="submit">Add user</Button>
                             </DialogActions>
                           </Dialog>
                         </Box>

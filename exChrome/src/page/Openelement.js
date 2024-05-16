@@ -3,31 +3,21 @@ import { useState, useEffect, useCallback } from 'react';
 import { TextField, Typography,Box,  Button, Alert} from '@mui/material';
 
 import { enterMasterPassword } from './EnterMasterPassword';
-
 import { updatePass } from './Dashboard';
-
 import * as CryptoJS from 'crypto-js';
 
 
 
 function Openelement({ onClose, onSave }) {
-    const [enterPassword, setEnterPassword] = useState("");
-    const [encryptPassword, setCurrentPasswords] = useState("");
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        // Your logic for handling form submission
-    };
 
     return (
-         //simi transparent background
          <Box
                 sx={{
                     position: 'fixed',
                     top: 0,
                     left: 0,
                     width: '100vw',
-                    overflow: 'auto', // Enable scrolling if content exceeds viewport dimensions
+                    overflow: 'auto', // Enable scrolling if content exceeds 
                     height: '100vh',
                     backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent black color
                     zIndex: 9, // Ensure it's behind Openelement but above other content
@@ -70,6 +60,20 @@ function Openelement({ onClose, onSave }) {
 function ShowChangeSite({onClose, encryptPassword, hashPassword}) {
     //encrypt password
     const [originalPassword, setUpdatePass] = useState("");
+    const [isHovered, setIsHovered] = useState({
+        url: false,
+        username: false,
+        password: false
+
+    });
+
+    const handleMouseEnter = (field) => {
+        setIsHovered(prev => ({ ...prev, [field]: true }));
+    };
+
+    const handleMouseLeave = (field) => {
+        setIsHovered(prev => ({ ...prev, [field]: false }));
+    };
 
     useEffect(() => {
         console.log(encryptPassword);
@@ -84,22 +88,37 @@ function ShowChangeSite({onClose, encryptPassword, hashPassword}) {
     return (
         <form>
             <TextField
-                margin="normal"
-                required
-                
-                id="url"
-                label="URL"
-                name="url"
-                size="small"
-                autoComplete="url"
-                value={updatePass.url} 
-                sx={{ backgroundColor: 'white',
-                        marginTop: '20px',
-                        borderRadius: '5px', width: '90%' }}
+        //url
+        margin="normal"
+        required
+        fullWidth
+        id="url"
+        label="URL"
+        name="url"
+        size="small"
+        autoComplete="url"
+        value={updatePass.url}
+        disabled={isHovered.url} // Conditionally disable based on hover
+        onMouseEnter={() => handleMouseEnter('url')}
+        onMouseLeave={() => handleMouseLeave('url')}
+        sx={{
+            filter: 'brightness(85%)',
+            backgroundColor: 'white',
+            marginTop: '20px',
+            borderRadius: '5px',
+            width: '90%',
+            '& .MuiInputLabel-root': {
+                color: 'black', // 
+            },
+            '.Mui-disabled': {
+                color: 'black', 
+                WebkitTextFillColor: 'black', 
+                filter: 'brightness(85%)',
+                },
+        }}
+    />
 
-            />
-
-            <TextField
+        <TextField
                 margin="normal"
                 required
                 fullWidth
@@ -109,44 +128,58 @@ function ShowChangeSite({onClose, encryptPassword, hashPassword}) {
                 size="small"
                 autoComplete="username"
                 value={updatePass.username}
-                sx={{ backgroundColor: 'white', 
-                        marginTop: '20px',
-                        borderRadius: '5px', 
-                        width: '90%' }}
+                disabled={isHovered.username} // Conditionally disable based on hover
+                onMouseEnter={() => handleMouseEnter('username')}
+                onMouseLeave={() => handleMouseLeave('username')}
+                sx={{
+                    filter: 'brightness(85%)',
+                    backgroundColor: 'white',
+                    marginTop: '20px',
+                    borderRadius: '5px',
+                    width: '90%',
+            '& .MuiInputLabel-root': {
+                color: 'black', // 
+            },
+            '.Mui-disabled': {
+                color: 'black', 
+                WebkitTextFillColor: 'black', 
+                filter: 'brightness(85%)',
+                },
+                }}
             />
-            <TextField
+        <TextField
                 margin="normal"
                 required
-                size="small"
                 fullWidth
                 id="password"
                 label="Password"
                 name="password"
+                size="small"
                 autoComplete="password"
                 value={originalPassword}
-                sx={{ backgroundColor: 'white', 
-                        borderRadius: '5px', 
-                        marginTop: '20px',
-                        width: '90%' }}
+                disabled={isHovered.username} // Conditionally disable based on hover
+                onMouseEnter={() => handleMouseEnter('username')}
+                onMouseLeave={() => handleMouseLeave('username')}
+                sx={{
+                    filter: 'brightness(85%)',
+                    backgroundColor: 'white',
+                    marginTop: '20px',
+                    borderRadius: '5px',
+                    width: '90%',
+            '& .MuiInputLabel-root': {
+                color: 'black', // 
+            },
+            '.Mui-disabled': {
+                    color: 'black', 
+                    WebkitTextFillColor: 'black', 
+                    filter: 'brightness(85%)',
+                    },
+                }}
             />
+
             <Box sx={{
                 display: 'flex', justifyContent: 'center' }}>
-                <Button
-                    variant="contained"
-                    onClick={onClose}
-                    sx={{
-                        bgcolor: '#5ca85c',
-                        color: 'black',
-                        width: '80%',
-                        bottom: '0',
-                        m: 2,
-                        '&:hover': {
-                            bgcolor: '#5ca85c',
-                            color: 'black',
-                            transition: '0.5s',
-                        }
-                    }}> Save </Button>
-                <Button
+               <Button
                     variant="contained"
                     onClick={onClose}
                     sx={{

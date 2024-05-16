@@ -5,7 +5,7 @@ const {authenticateToken} = require('../middlewares/Auth/jwtMiddleware');
 router.get('/getAllPasswords', getAllPasswords);
 router.get('/getRandom', getRandom);
 router.post('/addPasswordToUser',authenticateToken, addPasswordToUser);
-router.delete('/deletePassword/:passwordId',authenticateToken, deletePassword);
+router.delete('/deletePassword',authenticateToken, deletePassword);
 router.get('/getPasswords', authenticateToken, getPasswords);
 router.post('/sendPassword', authenticateToken, sendPassword);
 router.put('/updatePassword', authenticateToken, updatePassword )

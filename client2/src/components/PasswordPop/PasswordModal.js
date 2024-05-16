@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Box, Typography, Button, TextField, Select, InputLabel, OutlinedInput, MenuItem, Checkbox, ListItemText } from '@mui/material';
-import CryptoJS from 'crypto-js';
 import axios from 'axios';
 import { FormControl } from '@mui/base';
 import { NaclEncrypt } from '../../services/NaclEncryption';
@@ -63,6 +62,7 @@ export default function PasswordModal({ open, handleCloseModal, selectedRow, can
       }
     }
   };
+
   const generatePassword = () => {
     const characters = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+{}|:"<>?';
     const passwordLength = 26;
@@ -72,7 +72,6 @@ export default function PasswordModal({ open, handleCloseModal, selectedRow, can
         passwordString += characters[randomValues[i] % characters.length];
     }
     setPassword(passwordString);
-
   }
   
   const savePasswordToBackend = async () => {
@@ -137,13 +136,26 @@ export default function PasswordModal({ open, handleCloseModal, selectedRow, can
     }).catch((error) => {
       console.log(error);
     });
+    handleCloseModal();
   };
 
   const handleSaveChanges = () => {
     if (password) {
       savePasswordToBackend(); // Save the generated password
     }
+    handleCloseModal();
   };
+  const deletePassword = () => {
+    console.log("deleting");
+    axios.delete("http://localhost:4000/api/password/deletePassword", {data : {
+      passwordId: selectedRow._id,
+      csrftoken:csrftoken,
+    },
+    withCredentials: true,
+    });
+    handleCloseModal();
+    
+  }
 
   return (
     <Modal open={open} onClose={handleCloseModal}>
@@ -166,27 +178,30 @@ export default function PasswordModal({ open, handleCloseModal, selectedRow, can
           <Typography variant="h5" gutterBottom>
             Details
           </Typography>
-          <Box sx={{justifyContent: "flex-end"}}>
-            <FormControl>
-              <InputLabel id="sharelabel">Available users to share with</InputLabel>
-              <Select
-                labelId='sharelabel'
-                id="shareselect"
-                value={shareUsername}
-                onChange={handleShareChange}
-                input={<OutlinedInput label="Hello"/>}
-                renderValue={(selected) => selected}
-              >
-                {sameOrgUsers.map ((user) => (
-                  <MenuItem key={user.username} value={user.username}>
-                    <Checkbox checked={user.username === shareUsername}/>
-                    <ListItemText primary={user.username}/>
-                  </MenuItem>
-                ))}
-              </Select>
-              <Button onClick={handleSharePasswords} variant="contained" >Share password</Button>
-            </FormControl>
-          </Box>
+          {canShare && (
+            <Box sx={{justifyContent: "flex-end"}}>
+              <FormControl>
+                <InputLabel id="sharelabel">Available users to share with</InputLabel>
+                <Select
+                  labelId='sharelabel'
+                  id="shareselect"
+                  value={shareUsername}
+                  onChange={handleShareChange}
+                  input={<OutlinedInput label="Hello"/>}
+                  renderValue={(selected) => selected}
+                >
+                  {sameOrgUsers.map ((user) => (
+                    <MenuItem key={user.username} value={user.username}>
+                      <Checkbox checked={user.username === shareUsername}/>
+                      <ListItemText primary={user.username}/>
+                    </MenuItem>
+                  ))}
+                </Select>
+                <Button onClick={handleSharePasswords} variant="contained" >Share password</Button>
+              </FormControl>
+            </Box>
+
+          )}
         </Box>
         <TextField
           label="Title"
@@ -229,6 +244,9 @@ export default function PasswordModal({ open, handleCloseModal, selectedRow, can
           margin="normal"
         />
         <Button variant="contained" onClick={generatePassword}>Generate Password</Button>
+        {canShare && (
+          <Button variant="contained" onClick={deletePassword}>Delete Password</Button>
+        )}
         <Button variant="contained" onClick={handleCloseModal} style={{ float: 'right' }}>Close</Button>
         <Button variant="contained" onClick={handleSaveChanges} style={{ float: 'right', marginRight: '' }}>Save Changes</Button>
       </Box>

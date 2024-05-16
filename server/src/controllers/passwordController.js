@@ -98,8 +98,9 @@ const updatePassword = async (req, res) => {
 }
 
 const deletePassword = async (req, res) => {
-    const { passwordId } = req.params;
+    const { passwordId } = req.body;
     const { userId } = req.user;
+    console.log(passwordId);
 
     if (!passwordId || !userId) {
         res.status(400).json({ message: 'Missing required fields' }).send();
