@@ -76,6 +76,7 @@ export default function PasswordTable() {
   };
   const createOpenModal = () => {
     setSelectedRow(null);
+    setCanShare(false);
     setOpenModal(true);
     
   }
