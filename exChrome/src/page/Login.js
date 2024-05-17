@@ -20,7 +20,7 @@ export default function Login({onLogin}) {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get("http://localhost:4000/api/auth/exntionCheckLogin", {
+                const response = await axios.get("https://api.accessarmor.server/api/auth/exntionCheckLogin", {
                     withCredentials: true,
                 });
                 if (response.status === 200) {

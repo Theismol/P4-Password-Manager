@@ -16,7 +16,7 @@ export default function LoginForExtension() {
         const data = new FormData(event.currentTarget);
         const hashedPassword = hashPassword(data.get("password"));
         hashedPassword.then((result) => {
-            axios.post("http://localhost:4000/api/auth/login", {
+            axios.post("https://api.accessarmor.server/api/auth/login", {
                 username: data.get("username"),
                 password: result,
             }, {

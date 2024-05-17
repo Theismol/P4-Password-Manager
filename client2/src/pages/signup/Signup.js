@@ -54,7 +54,7 @@ export default function SignUp() {
             keys.private,
             password
         ).toString();
-        axios.post("http://localhost:4000/api/signup", {
+        axios.post("https://api.accessarmor.server/api/signup", {
                 email: validatedForm.email,
                 username: validatedForm.username,
                 password: passwordToSend,

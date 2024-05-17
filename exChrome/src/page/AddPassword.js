@@ -11,7 +11,7 @@ import axios from 'axios';
 import * as CryptoJS from 'crypto-js';
 
 function getCSRF() {
-    return axios.get("http://localhost:4000/api/auth/getCSRF", {
+    return axios.get("httpss://api.accessarmor.server/api/auth/getCSRF", {
         withCredentials: true,
     }).then((response) => {
         return response.data.csrftoken;
@@ -74,7 +74,7 @@ function AddPassword({ onClose, onSave }) {
         
         const encryptedPassword = CryptoJS.AES.encrypt(password, enterMasterPassword).toString();
         // Send the password to the server
-        axios.post("http://localhost:4000/api/password/addPasswordToUser", {
+        axios.post("httpss://api.accessarmor.server/api/password/addPasswordToUser", {
             url: url,
             title: url,
             username: username,

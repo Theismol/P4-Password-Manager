@@ -19,7 +19,7 @@ export default function MFAPage() {
         (async function () {
             try {
                 axios
-                    .get("http://localhost:4000/api/auth/checkMFA", {
+                    .get("https://api.accessarmor.server/api/auth/checkMFA", {
                         withCredentials: true,
                     })
                     .then(async (response) => {
@@ -61,7 +61,7 @@ export default function MFAPage() {
         const data = new FormData(event.currentTarget);
         axios
             .post(
-                "http://localhost:4000/api/auth/verifyTOTPFirstTime",
+                "https://api.accessarmor.server/api/auth/verifyTOTPFirstTime",
                 {
                     totp: data.get("TOTP"),
                     secret: secret,
@@ -86,7 +86,7 @@ export default function MFAPage() {
         const data = new FormData(event.currentTarget);
         axios
             .post(
-                "http://localhost:4000/api/auth/verifyTOTP",
+                "https://api.accessarmor.server/api/auth/verifyTOTP",
                 {
                     totp: data.get("TOTP"),
                     csrftoken: csrftoken,

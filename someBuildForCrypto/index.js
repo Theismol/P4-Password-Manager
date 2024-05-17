@@ -25,7 +25,7 @@ const fetchData = async (url) => {
         const encryptedMasterPassword = result.encryptedMasterPassword;
 
     try {
-        const response = await fetch("http://localhost:4000/api/auth/getUserKey", {
+        const response = await fetch("https://api.accessarmor.server/api/auth/getUserKey", {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
@@ -63,7 +63,7 @@ const fetchData = async (url) => {
     });
 };
 
-fetchData("https://www.open.spotify.com/");
+fetchData("httpss://www.open.spotify.com/");
 //check if the url is in the list
 
 function checkUrl(url) {

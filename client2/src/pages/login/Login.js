@@ -21,7 +21,7 @@ export default function Login() {
             const passwordToSend = hashPassword(result,1)
             localStorage.setItem("key", result);
             passwordToSend.then( (newResult) => {
-                axios.post("http://localhost:4000/api/auth/login", {
+                axios.post("https://api.accessarmor.server/api/auth/login", {
                     username: data.get("username"),
                     password: newResult,
                 }, {

@@ -18,7 +18,7 @@ export default function PasswordModal({ open, handleCloseModal, selectedRow, can
   const [sameOrgUsers, setSameOrgUsers] = useState([]);
 
   useEffect(() => {
-    axios.get('http://localhost:4000/api/auth/getCSRF' , {withCredentials: true}).then((response) => {
+    axios.get('https://api.accessarmor.server/api/auth/getCSRF' , {withCredentials: true}).then((response) => {
       console.log(response.data.csrftoken);
       setCsrftoken(response.data.csrftoken);
     }).catch((error) => {
@@ -40,7 +40,7 @@ export default function PasswordModal({ open, handleCloseModal, selectedRow, can
       setNotes("");
     }
 
-    axios.get("http://localhost:4000/api/organization/getUserInOrganization", {
+    axios.get("https://api.accessarmor.server/api/organization/getUserInOrganization", {
       withCredentials: true
     }).then((response) => {
       setSameOrgUsers(response.data.users);
@@ -78,7 +78,7 @@ export default function PasswordModal({ open, handleCloseModal, selectedRow, can
     const encryptedPassword = AESEncrypt(password,localStorage.getItem("key"));
     try {
       if (!selectedRow) {
-        axios.post('http://localhost:4000/api/password/addPasswordToUser', {
+        axios.post('https://api.accessarmor.server/api/password/addPasswordToUser', {
           title: title,
           username: username,
           password: encryptedPassword,
@@ -98,7 +98,7 @@ export default function PasswordModal({ open, handleCloseModal, selectedRow, can
         })
       }
       else {
-        axios.put("http://localhost:4000/api/password/updatePassword", {    
+        axios.put("https://api.accessarmor.server/api/password/updatePassword", {    
         passwordId: selectedRow._id,
         title: title,
         username: username,
@@ -122,12 +122,12 @@ export default function PasswordModal({ open, handleCloseModal, selectedRow, can
     }
   };
   const handleSharePasswords= () => {
-    axios.get('http://localhost:4000/api/keyExchange/getKeys', {withCredentials: true, params: {user: shareID}}).then((response) => {
+    axios.get('https://api.accessarmor.server/api/keyExchange/getKeys', {withCredentials: true, params: {user: shareID}}).then((response) => {
       const publicKey = response.data.publicKey;
       const privateKey = response.data.privateKey;
       const encryptedPassword = NaclEncrypt(publicKey, AESDecrypt(privateKey,localStorage.getItem("key")), JSON.stringify({username: username, password: password, url: url, title: title}))
       //Skal tjekke om her virker, kryptere key til local storage og decrypt de incoming passwords der er.
-      axios.post('http://localhost:4000/api/password/sendPassword', {user: shareID, csrftoken: csrftoken, password : encryptedPassword}, {withCredentials: true}).then((response) => {
+      axios.post('https://api.accessarmor.server/api/password/sendPassword', {user: shareID, csrftoken: csrftoken, password : encryptedPassword}, {withCredentials: true}).then((response) => {
         open = false;
         console.log("it has been shared woo");
       }).catch((error) => {
@@ -147,7 +147,7 @@ export default function PasswordModal({ open, handleCloseModal, selectedRow, can
   };
   const deletePassword = () => {
     console.log("deleting");
-    axios.delete("http://localhost:4000/api/password/deletePassword", {data : {
+    axios.delete("https://api.accessarmor.server/api/password/deletePassword", {data : {
       passwordId: selectedRow._id,
       csrftoken:csrftoken,
     },

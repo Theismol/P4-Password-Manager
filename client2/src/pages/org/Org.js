@@ -35,7 +35,7 @@ function Org() {
 
   useEffect(() => {
     try {
-      axios.get("http://localhost:4000/api/organization/getUserInOrganization", {
+      axios.get("https://api.accessarmor.server/api/organization/getUserInOrganization", {
         withCredentials: true
       }).then((response) => {
         setinOrg(true);
@@ -49,7 +49,7 @@ function Org() {
           window.location.href = "/login";
         }
       });
-      axios.get("http://localhost:4000/api/auth/getCSRF", { withCredentials: true }).then((response) => {
+      axios.get("https://api.accessarmor.server/api/auth/getCSRF", { withCredentials: true }).then((response) => {
         setCsrftoken(response.data.csrftoken);
       }).catch((error) => {
         console.log(error);
@@ -85,7 +85,7 @@ function Org() {
       const formData = new FormData(event.currentTarget);
       const formJson = Object.fromEntries(formData.entries());
       const organization = formJson.organization;
-      axios.post("http://localhost:4000/api/organization/createOrganization", {
+      axios.post("https://api.accessarmor.server/api/organization/createOrganization", {
         name: formJson.organization,
         csrftoken: csrftoken,
       }, {
@@ -95,7 +95,7 @@ function Org() {
           console.log(response.data.message);
           if (response.status === 200) {
             setinOrg(true);
-            axios.post("http://localhost:4000/api/auth/tokenRefresh", {
+            axios.post("https://api.accessarmor.server/api/auth/tokenRefresh", {
               
               csrftoken: csrftoken,
             },
@@ -113,7 +113,7 @@ function Org() {
   const addUser = (event) => {
       const formData = new FormData(event.currentTarget);
       const formJson = Object.fromEntries(formData.entries());
-      axios.post("http://localhost:4000/api/organization/addUserToOrganization", {
+      axios.post("https://api.accessarmor.server/api/organization/addUserToOrganization", {
         email: formJson.email,
         csrftoken: csrftoken,
       }, {
@@ -128,7 +128,7 @@ function Org() {
   const removeUser = (event) => {
       const formData = new FormData(event.currentTarget);
       const formJson = Object.fromEntries(formData.entries());
-      axios.delete("http://localhost:4000/api/organization/removeUserFromOrganization", {data : {
+      axios.delete("https://api.accessarmor.server/api/organization/removeUserFromOrganization", {data : {
         email:formJson.email,
         csrftoken:csrftoken,
 

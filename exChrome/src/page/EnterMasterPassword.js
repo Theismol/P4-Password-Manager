@@ -16,7 +16,7 @@ export default function EnterMasterPassword({onClose, onCansel}) {
         const sendPassword = await hashPassword(hashedPassword, 1);
         try {
             
-            const response = await axios.post("http://localhost:4000/api/auth/checkMasterPassword", {
+            const response = await axios.post("https://api.accessarmor.server/api/auth/checkMasterPassword", {
             password: sendPassword,
             csrftoken: csrfToken // Use the fetched CSRF token
             }, {

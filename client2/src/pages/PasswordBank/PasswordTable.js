@@ -22,7 +22,7 @@ export default function PasswordTable() {
 
   useEffect(() => {
     console.log("fetching");
-    axios.get('http://localhost:4000/api/auth/getCSRF' , {withCredentials: true}).then((response) => {
+    axios.get('https://api.accessarmor.server/api/auth/getCSRF' , {withCredentials: true}).then((response) => {
       fetchData(response.data.csrftoken);
     }).catch((error) => {
       if (error.response.status === 401) {
@@ -34,15 +34,15 @@ export default function PasswordTable() {
   const fetchData = async (csrftoken) => {
     try {
 
-      const response = await axios.get('http://localhost:4000/api/password/getPasswords', { withCredentials: true });
+      const response = await axios.get('https://api.accessarmor.server/api/password/getPasswords', { withCredentials: true });
       console.log(response.data.incomingPasswords);
       console.log(csrftoken);
       if (response.data.incomingPasswords.length > 0) {
         response.data.incomingPasswords.forEach( async(incomingPassword) => {
-          const keyResponse = await axios.get('http://localhost:4000/api/keyExchange/getKeys', {withCredentials: true, params: {user: incomingPassword.from} })
+          const keyResponse = await axios.get('https://api.accessarmor.server/api/keyExchange/getKeys', {withCredentials: true, params: {user: incomingPassword.from} })
           const decryptedPassword = NaclDecrypt(keyResponse.data.publicKey, AESDecrypt(keyResponse.data.privateKey,localStorage.getItem("key")), incomingPassword.password);
           const encryptedPassword = AESEncrypt(decryptedPassword.password, localStorage.getItem("key"));
-          axios.post('http://localhost:4000/api/password/addPasswordToUser', {
+          axios.post('https://api.accessarmor.server/api/password/addPasswordToUser', {
           title: decryptedPassword.title,
           username: decryptedPassword.username,
           password: encryptedPassword,

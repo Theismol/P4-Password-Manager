@@ -21,7 +21,7 @@ export default function Dashboard() {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get("http://localhost:4000/api/password/getPasswords", {
+                const response = await axios.get("https://api.accessarmor.server/api/password/getPasswords", {
                     withCredentials: true,
                 });
                 setCurrentPasswords(response.data.passwords);
@@ -38,7 +38,7 @@ export default function Dashboard() {
         const storePassword = async (passwords) => {
             try {
                 console.log(passwords)
-                const response = await axios.get("http://localhost:4000/api/auth/getUserKey", {
+                const response = await axios.get("https://api.accessarmor.server/api/auth/getUserKey", {
                     withCredentials: true,
                 });
                 const passwordList = passwords.map((password) => {
@@ -127,7 +127,7 @@ export default function Dashboard() {
 
                 <ListItemIcon sx={{ paddingLeft: '20px' }}>
                     <img
-            src={`https://t1.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=${password.url}&size=24`} alt="favicon" />
+            src={`httpss://t1.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=${password.url}&size=24`} alt="favicon" />
                 </ListItemIcon>
 
 

@@ -27,7 +27,7 @@ const drawerWidth = 240;
 export default function PermanentDrawerLeft() {
   const handleLogout = (event) => {
     event.preventDefault();
-      axios.post("http://localhost:4000/api/auth/logout",{}, {withCredentials: true}).then((response) => {
+      axios.post("https://api.accessarmor.server/api/auth/logout",{}, {withCredentials: true}).then((response) => {
         window.location.href="/";
       }).catch((error) => {
         console.log(error);
@@ -57,7 +57,7 @@ export default function PermanentDrawerLeft() {
         <List>
           {["Home", "Passwords", "Org", "Github","Logout"].map((text, index) => (
             <ListItem key={text} disablePadding>
-               <Link style={{textDecoration:'none'}} to={index === 0 ? "/home" : index === 1 ? "/PasswordBank" : index === 2 ? "/org" : index === 3 ? "https://github.com/Theismol/P4-Password-Manager/" : null}>
+               <Link style={{textDecoration:'none'}} to={index === 0 ? "/home" : index === 1 ? "/PasswordBank" : index === 2 ? "/org" : index === 3 ? "httpss://github.com/Theismol/P4-Password-Manager/" : null}>
                 <ListItemButton onClick={index=== 4 ? handleLogout : () => {return}}>
                   <ListItemIcon>
                     {index === 0 ? <HomeIcon /> : index === 1 ? <LockIcon /> : index === 2 ? <PeopleIcon /> : index === 3 ? <GitHubIcon /> : <LogoutIcon/>}
