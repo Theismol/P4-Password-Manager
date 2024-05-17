@@ -1,58 +1,66 @@
 {
-  "name": "client",
-  "version": "0.0.1",
+  "name": "client2",
+  "version": "0.1.0",
   "private": true,
+  "dependencies": {
+    "@emotion/react": "^11.11.4",
+    "@emotion/styled": "^11.11.5",
+    "@fontsource/roboto": "^5.0.12",
+    "@mui/base": "^5.0.0-beta.40",
+    "@mui/icons-material": "^5.15.15",
+    "@mui/material": "^5.15.15",
+    "@mui/styled-engine-sc": "^6.0.0-alpha.18",
+    "@mui/x-data-grid": "^7.3.0",
+    "@testing-library/jest-dom": "^5.17.0",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^13.5.0",
+    "axios": "^1.6.8",
+    "buffer": "^6.0.3",
+    "crypto-js": "^4.2.0",
+    "install": "^0.13.0",
+    "node-rsa": "^1.1.1",
+    "npm": "^10.5.2",
+    "pbkdf2": "^3.1.2",
+    "qrcode": "^1.5.3",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.22.3",
+    "react-scripts": "5.0.1",
+    "speakeasy": "^2.0.0",
+    "styled-components": "^6.1.8",
+    "tweetnacl": "^1.0.3",
+    "tweetnacl-util": "^0.15.1",
+    "web-vitals": "^2.1.4",
+    "zod": "^3.22.5"
+  },
   "scripts": {
-    "dev": "vite dev",
-    "build": "vite build",
-    "preview": "vite preview",
-    "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
-    "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
-    "test": "vitest",
-    "lint": "prettier --check . && eslint .",
-    "format": "prettier --write ."
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
   },
   "devDependencies": {
-    "@iconify/svelte": "^3.1.6",
-    "@iconify/tailwind": "^0.1.4",
-    "@skeletonlabs/skeleton": "2.9.0",
-    "@skeletonlabs/tw-plugin": "0.3.1",
-    "@sveltejs/adapter-auto": "^3.0.0",
-    "@sveltejs/kit": "^2.0.0",
-    "@sveltejs/vite-plugin-svelte": "^3.0.0",
-    "@tailwindcss/forms": "0.5.7",
-    "@tailwindcss/typography": "0.5.10",
-    "@types/eslint": "^8.56.0",
-    "@types/node": "20.11.24",
-    "@types/qrcode": "^1.5.5",
-    "@types/speakeasy": "^2.0.10",
-    "@typescript-eslint/eslint-plugin": "^7.0.0",
-    "@typescript-eslint/parser": "^7.0.0",
-    "autoprefixer": "10.4.18",
-    "eslint": "^8.56.0",
-    "eslint-config-prettier": "^9.1.0",
-    "eslint-plugin-svelte": "^2.35.1",
-    "postcss": "8.4.35",
-    "prettier": "^3.1.1",
-    "prettier-plugin-svelte": "^3.1.2",
-    "svelte": "^4.2.7",
-    "svelte-check": "^3.6.0",
-    "tailwindcss": "3.4.1",
-    "tslib": "^2.4.1",
-    "typescript": "^5.0.0",
-    "vite": "^5.0.3",
-    "vite-plugin-tailwind-purgecss": "0.2.0",
-    "vitest": "^1.2.0"
-  },
-  "type": "module",
-  "dependencies": {
-    "@floating-ui/dom": "1.6.3",
-    "@types/axios": "^0.14.0",
-    "axios": "^1.6.7",
-    "highlight.js": "11.9.0",
-    "qrcode": "^1.5.3",
-    "speakeasy": "^2.0.0",
-    "flowbite-svelte": "^0.44.24",
-    "flowbite-svelte-icons": "^1.5.0"
+    "process": "^0.11.10",
+    "react-error-overlay": "^6.0.9",
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "tailwindcss": "^3.4.3"
   }
 }

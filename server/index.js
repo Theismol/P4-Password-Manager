@@ -7,11 +7,9 @@ const router = express.Router();
 
 //routes
 const connectDB = require('./src/utils/DB/Mongo.js');
-const userRoutes = require('./src/routes/userRoutes.js');
 const signupRoutes = require('./src/routes/signupRoutes.js');
 const authRoutes = require('./src/routes/authRoutes.js');
 const passwordRoutes = require('./src/routes/passwordRoutes.js');
-const deleteRoutes = require('./src/routes/deleteRoutes.js');
 const organizationRoutes = require('./src/routes/organizationRoutes.js');
 const keyExchangeRoutes = require('./src/routes/keyExchangeRoutes.js');
 

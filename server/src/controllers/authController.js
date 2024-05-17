@@ -17,8 +17,6 @@ const speakeasy = require("speakeasy");
 const { Domain } = require("domain");
 require("dotenv").config();
 
-//what is NAME_SPACE? 
-    //A namespace is a set of symbols that are used to organize objects of various kinds, so that these objects may be referred to by name.
 const NAME_SPACE = "f7b3b8b0-3b7b-11eb-b378-0242ac130002";
 
 const csrftoken = process.env.CSRF_TOKEN;
@@ -30,8 +28,6 @@ const checkMFA = async (req, res) => {
     } catch (error) {
         return res.status(404).json({ message: "User not found" }).send();
     }
-    console.log(user);
-    //This should be changed so the string is empty instead probably, but then the field cannot be required :(
     if (user.mfaSecret === "null") {
         const secret = speakeasy.generateSecret({
             length: 20,
@@ -58,12 +54,12 @@ const verifyTOTP = async (req, res) => {
         return res.status(401).json({ message: "Token is invalid" }).send();
     }
     const token = generateToken(
-        { userId: user._id, organistations: user.organizations },
+        { userId: user._id, organizations: user.organizations },
         3600
     );
     const refreshToken = generateRefreshToken({
         userId: user._id,
-        organistations: user.organizations,
+        organizations: user.organizations,
     });
     try {
         await jwtModel.create({
@@ -119,7 +115,6 @@ const verifyTOTPFirstTime = async (req, res) => {
     if (!verified) {
         return res.status(401).json({ message: "Token is invalid" }).send();
     } else {
-        console.log("updating secret" + secret);
         try {
             user.mfaSecret = secret;
             user.save();
@@ -131,12 +126,12 @@ const verifyTOTPFirstTime = async (req, res) => {
         }
     }
     const token = generateToken(
-        { userId: user._id, organistations: user.organizations },
+        { userId: user._id, organizations: user.organizations },
         3600
     );
     const refreshToken = generateRefreshToken({
         userId: user._id,
-        organistations: user.organizations,
+        organizations: user.organizations,
     });
     try {
         await jwtModel.create({
@@ -197,7 +192,6 @@ const checkMasterPassword = async (req, res) => {
         }
         return res.status(200).json({ message: "Password is valid" });
     } catch (error) {
-        console.log(error);
         return res.status(500).json({ message: "Error during login" });
     }
 };
@@ -232,7 +226,7 @@ const login = async (req, res) => {
         }
         const mfa = user.mfaSecret !== "null";
         const token = generateMFAToken(
-            { userId: user._id, organistations: user.organizations },
+            { userId: user._id, organizations: user.organizations },
             3600
         );
         return res.cookie("mfatoken", token, {sameSite: "none", httpOnly: true, secure: true })
@@ -258,18 +252,15 @@ const tokenRefresh = async (req, res) => {
                 .json({ message: "Invalid refresh token" })
                 .send();
         }
-        console.log(user);
         const token = generateToken({
             userId: user._id,
-            organistations: user.organizations[0],
+            organizations: user.organizations[0],
         }, 3600);
-        console.log(token);
         res.cookie("token", token, {
             sameSite: "none",
             httpOnly: true,
             secure: true,
         }).status(200).json({ message: "Token refreshed" }).send();
-        console.log(out, token);
 
     } catch (error) {
         console.error("Error during token refresh:", error);
@@ -278,15 +269,12 @@ const tokenRefresh = async (req, res) => {
 };
 
 const logout = async (req, res) => {
-    console.log(req.cookies);
     try {
         const refreshToken = req.cookies.refreshtoken;
 
         const output = await jwtModel.deleteOne({ RefreshToken: refreshToken });
-        console.log(output);
         res.clearCookie("token");
         res.clearCookie("refreshtoken");
-        console.log("cookies cleared");
         res.status(200).json({ message: "Logout successful" }).send();
     } catch (error) {
         console.error("Error during logout:", error);

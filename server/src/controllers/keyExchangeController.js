@@ -6,14 +6,14 @@ const getKeys = async (req, res) => {
     const toUser = req.query.user;
     console.log("touser");
     console.log(toUser);
-    const { userId, organistations } = req.user;
+    const { userId, organizations } = req.user;
     let user;
     let toUserObject;
     try {
         user = await User.findById(userId);
-        toUserObject = await User.findOne({_id: toUser, organizations : {$in : organistations}});
+        toUserObject = await User.findOne({_id: toUser, organizations : {$in : organizations}});
         console.log(toUserObject);
-        console.log(organistations);
+        console.log(organizations);
 
     } catch (error) {
         console.log("shit maan");

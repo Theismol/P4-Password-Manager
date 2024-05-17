@@ -158,12 +158,12 @@ const getPasswords = async (req, res) => {
 const sendPassword = async (req, res) => {
     const toUser = req.body.user;
     const password = req.body.password;
-    const { userId, organistations } = req.user;
+    const { userId, organizations } = req.user;
     let fromUser;
     let toUserObject;
     try {
         fromUser = await user.findById(userId);
-        toUserObject = await user.findOne({_id: toUser, organizations : {$in : organistations}});
+        toUserObject = await user.findOne({_id: toUser, organizations : {$in : organizations}});
         console.log(password);
         try {
             const newIncomingPassword = new incomingPassword(

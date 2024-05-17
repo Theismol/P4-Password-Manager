@@ -58,13 +58,13 @@ const createOrganization = async (req, res) => {
 }
 
 const addUserToOrganization = async (req, res) => {
-    const { organistations, userId } = req.user;
+    const { organizations, userId } = req.user;
     const { email} = req.body;
 
-    console.log(organistations);
+    console.log(organizations);
 
     try {
-        const foundorganization = await organization.findById(organistations);
+        const foundorganization = await organization.findById(organizations);
         if(!foundorganization){
             res.status(400).json({ message: 'Organization not found' }).send();
             return;
@@ -99,12 +99,12 @@ const addUserToOrganization = async (req, res) => {
 }
 
 const getUserInOrganization = async (req, res) => {
-    const { organistations, userId } = req.user;
-    //console.log(organistations, userId);
+    const { organizations, userId } = req.user;
+    //console.log(organizations, userId);
     let isAdmin = false;
 
     try {
-        const foundOrganization = await organization.findById(organistations);
+        const foundOrganization = await organization.findById(organizations);
         if (!foundOrganization) {
             return res.status(309).json({ message: 'Organization not found' });
         }
@@ -125,11 +125,11 @@ const getUserInOrganization = async (req, res) => {
 };
 
 const removeUserFromOrganization = async (req, res) => {
-    const { organistations, userId } = req.user;
+    const { organizations, userId } = req.user;
     const { email } = req.body;
 
     try {
-        const foundOrganization = await organization.findById(organistations);
+        const foundOrganization = await organization.findById(organizations);
         if (!foundOrganization) {
             return res.status(309).json({ message: 'Organization not found' });
         }
@@ -146,7 +146,7 @@ const removeUserFromOrganization = async (req, res) => {
             return res.status(400).json({ message: 'User is not in the organization' });
         }
 
-        await organization.findOneAndUpdate({ _id: organistations }, { $pull: { users: foundUser._id } });
+        await organization.findOneAndUpdate({ _id: organizations }, { $pull: { users: foundUser._id } });
         await user.findOneAndUpdate({ _id: foundUser._id }, { organizations: null });
 
         return res.status(200).json({ message: 'User removed from organization' });
