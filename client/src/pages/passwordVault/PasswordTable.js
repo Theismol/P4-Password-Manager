@@ -21,7 +21,6 @@ export default function PasswordTable() {
   ];
 
   useEffect(() => {
-    console.log("fetching");
     axios.get('http://localhost:4000/api/auth/getCSRF' , {withCredentials: true}).then((response) => {
       fetchData(response.data.csrftoken);
     }).catch((error) => {

@@ -43,13 +43,11 @@ connectDB();
 
 
 // Use the user routes
-app.use('/api/user', userRoutes);
 app.use('/api/signup', signupRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/password', passwordRoutes);
-app.use('/api/delete', deleteRoutes);
 app.use('/api/organization', organizationRoutes);
-app.use('/api/keyExchange', keyExchangeRoutes)
+app.use('/api/keyExchange', keyExchangeRoutes);
 
 
 

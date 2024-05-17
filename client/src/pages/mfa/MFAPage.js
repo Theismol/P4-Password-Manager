@@ -72,7 +72,7 @@ export default function MFAPage() {
                 }
             )
             .then((response) => {
-                window.location.href = "/PasswordBank";
+                window.location.href = "/passwords";
             })
             .catch((error) => {
                 setAlertMessage(error.response.data.message);
