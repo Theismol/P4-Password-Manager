@@ -96,7 +96,7 @@ export default function MFAPage() {
                 }
             )
             .then((response) => {
-                window.location.href = "/PasswordBank";
+                window.location.href = "/passwords";
             })
             .catch((error) => {
                 console.log(error);
